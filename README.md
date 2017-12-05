@@ -1,8 +1,8 @@
 # Redhat Openstack 10 deployment and Intergration with ScaleIO
 
-During topenstack deployment, i will cater for OVS-DPDK as virtual forwarding plane with Neutron. And we will deploy a full DellEMC software defiend storage ScaleIO in two modes:
+During the openstack deployment, i will cater for OVS-DPDK as virtual forwarding plane with Neutron. And we will deploy a full DellEMC software defined storage ScaleIO in two modes:
 1. Two tiers => dedicated storage node
-2. hypered-converaged where compute node will be a storage nodes as well
+2. hypered-converged where compute node will be a storage nodes as well
 
 ## Getting Started
 
@@ -15,7 +15,7 @@ These instructions will reflect the RHOSP10 on a CIP blueprint along with scaleI
 1  | Public/Floating/IPMI Network  | 172.17.84.0/24| 3084 | mgmt/Global
 2  | Undercloud Private  | 10.30.100.0/24 | 100 | mgmt/Internal
 3 | Internal network | 10.30.200.0/24 | 200 | ToR Switches/Internal
-4| Admin network | 10.30.201.0/24 | 201 | ToR Switches/Internal
+4| Tenant network | 10.30.201.0/24 | 201 | ToR Switches/Internal
 5| Storage network | 10.30.202.0/24 | 202 | ToR Switches/Internal
 6| Storage management | 10.30.203.0/24 | 203 | ToR Switches/Internal
 7 | Data network01 | 10.30.220.0/24 | 220 | ToR Switches/Internal
@@ -23,7 +23,8 @@ These instructions will reflect the RHOSP10 on a CIP blueprint along with scaleI
 9 | Data Network Range | | 220:230 |ToR Switches/Internal	
 
 
-
+> Network Topology
+> ![](https://i.imgur.com/xt5TWOT.png)
 ### Installation
 
 A step by step deployment
