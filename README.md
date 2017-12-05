@@ -25,6 +25,8 @@ These instructions will reflect the RHOSP10 on a CIP blueprint along with scaleI
 
 > Network Topology
 > ![](https://i.imgur.com/xt5TWOT.png)
+In case of HCI "Hyper-Converged Infrastructure, SDS will be co-exist with the SDC on the compute nodes.
+
 ### Installation
 
 A step by step deployment
@@ -57,6 +59,7 @@ undercloud.sio.lab
        valid_lft forever preferred_lft forever
     inet6 fe80::250:56ff:fe92:530f/64 scope link
        valid_lft forever preferred_lft forever
+
 [root@undercloud ~]# ls  -ltr  /etc/yum.repos.d/
 total 8
 -rw-r--r--. 1 root root  358 Nov 19 12:38 redhat.repo
@@ -141,10 +144,10 @@ SELINUX=permissive
 #     minimum - Modification of targeted policy. Only selected processes are protected.
 #     mls - Multi Level Security protection.
 SELINUXTYPE=targeted
+
+[root@undercloud ~]# reboot
 ```
 
-
-And reboot
 
 > **Undercloud Installation** 
 
