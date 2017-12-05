@@ -27,7 +27,8 @@ These instructions will reflect the RHOSP10 on a CIP blueprint along with scaleI
 > ![](https://i.imgur.com/xt5TWOT.png)
 In case of HCI "Hyper-Converged Infrastructure, SDS will be co-exist with the SDC on the compute nodes.
 
-### Installation
+## Deployment Guide
+### Undercloud
 
 A step by step deployment
 
@@ -243,6 +244,182 @@ secured.
 
 #############################################################################
 ```
+
+### Overcloud
+> **Overcloud Basic Configuration**
+
+We will got through a step by step verification in order to prepare for overcloud deployment
+
+```
+[stack@undercloud ~]$ sudo systemctl list-units openstack-*
+UNIT                                       LOAD   ACTIVE SUB     DESCRIPTION
+openstack-aodh-evaluator.service           loaded active running OpenStack Alarm evaluator service
+openstack-aodh-listener.service            loaded active running OpenStack Alarm listener service
+openstack-aodh-notifier.service            loaded active running OpenStack Alarm notifier service
+openstack-ceilometer-central.service       loaded active running OpenStack ceilometer central agent
+openstack-ceilometer-collector.service     loaded active running OpenStack ceilometer collection service
+openstack-ceilometer-notification.service  loaded active running OpenStack ceilometer notification agent
+openstack-glance-api.service               loaded active running OpenStack Image Service (code-named Glance) API server
+openstack-glance-registry.service          loaded active running OpenStack Image Service (code-named Glance) Registry server
+openstack-heat-api-cfn.service             loaded active running Openstack Heat CFN-compatible API Service
+openstack-heat-api.service                 loaded active running OpenStack Heat API Service
+openstack-heat-engine.service              loaded active running Openstack Heat Engine Service
+openstack-ironic-api.service               loaded active running OpenStack Ironic API service
+openstack-ironic-conductor.service         loaded active running OpenStack Ironic Conductor service
+openstack-ironic-inspector-dnsmasq.service loaded active running PXE boot dnsmasq service for Ironic Inspector
+openstack-ironic-inspector.service         loaded active running Hardware introspection service for OpenStack Ironic
+openstack-mistral-api.service              loaded active running Mistral API Server
+openstack-mistral-engine.service           loaded active running Mistral Engine Server
+openstack-mistral-executor.service         loaded active running Mistral Executor Server
+openstack-nova-api.service                 loaded active running OpenStack Nova API Server
+openstack-nova-cert.service                loaded active running OpenStack Nova Cert Server
+openstack-nova-compute.service             loaded active running OpenStack Nova Compute Server
+openstack-nova-conductor.service           loaded active running OpenStack Nova Conductor Server
+openstack-nova-scheduler.service           loaded active running OpenStack Nova Scheduler Server
+openstack-swift-account-reaper.service     loaded active running OpenStack Object Storage (swift) - Account Reaper
+openstack-swift-account.service            loaded active running OpenStack Object Storage (swift) - Account Server
+openstack-swift-container-updater.service  loaded active running OpenStack Object Storage (swift) - Container Updater
+openstack-swift-container.service          loaded active running OpenStack Object Storage (swift) - Container Server
+openstack-swift-object-updater.service     loaded active running OpenStack Object Storage (swift) - Object Updater
+openstack-swift-object.service             loaded active running OpenStack Object Storage (swift) - Object Server
+openstack-swift-proxy.service              loaded active running OpenStack Object Storage (swift) - Proxy Server
+openstack-zaqar.service                    loaded active running OpenStack Message Queuing Service (code-named Zaqar) Server
+openstack-zaqar@1.service                  loaded active running OpenStack Message Queuing Service (code-named Zaqar) Server Instance 1
+
+LOAD   = Reflects whether the unit definition was properly loaded.
+ACTIVE = The high-level unit activation state, i.e. generalization of SUB.
+SUB    = The low-level unit activation state, values depend on unit type.
+
+32 loaded units listed. Pass --all to see loaded but inactive units, too.
+To show all installed unit files use 'systemctl list-unit-files'.
+
+[stack@undercloud ~]$ source ~/stackrc
+
+``` 
+
+Refer to the below link to download the redhat openstack overcloud:
+[https://access.redhat.com/downloads/content/191/ver=11/rhel---7/11/x86_64/product-software](https://access.redhat.com/downloads/content/191/ver=11/rhel---7/11/x86_64/product-software)
+
+1) Ironic Python Agent Image for RHOSP 10.0.4
+2) Overcloud Image for RHOSP 10.0.4
+
+Extract the archives to the images directory on the stack user’s home (/home/stack/images): 
+```
+[stack@undercloud ~]$ source ~/stackrc
+[stack@undercloud ~]$ cd images/
+[stack@undercloud images]$ ll
+total 1694128
+-rw-r--r--. 1 stack stack  366536581 Jun 15 14:28 ironic-python-agent.initramfs
+-rwxr-xr-x. 1 stack stack    5394912 Jun 15 14:28 ironic-python-agent.kernel
+-rw-r--r--. 1 stack stack   53936058 Jun 15 15:12 overcloud-full.initrd
+-rw-r--r--. 1 stack stack 1303512064 Jun 15 15:15 overcloud-full.qcow2
+-rwxr-xr-x. 1 stack stack    5394912 Jun 15 15:12 overcloud-full.vmlinuz
+[stack@undercloud images]$ openstack overcloud image upload --image-path /home/stack/images/
+Image "overcloud-full-vmlinuz" was uploaded.
++--------------------------------------+------------------------+-------------+---------+--------+
+|                  ID                  |          Name          | Disk Format |   Size  | Status |
++--------------------------------------+------------------------+-------------+---------+--------+
+| 608af3de-128a-4f81-8d4f-b5ca98ac6262 | overcloud-full-vmlinuz |     aki     | 5394912 | active |
++--------------------------------------+------------------------+-------------+---------+--------+
+Image "overcloud-full-initrd" was uploaded.
++--------------------------------------+-----------------------+-------------+----------+--------+
+|                  ID                  |          Name         | Disk Format |   Size   | Status |
++--------------------------------------+-----------------------+-------------+----------+--------+
+| 4eb48023-e865-49ce-a04c-4b90a1d43403 | overcloud-full-initrd |     ari     | 53936058 | active |
++--------------------------------------+-----------------------+-------------+----------+--------+
+Image "overcloud-full" was uploaded.
++--------------------------------------+----------------+-------------+------------+--------+
+|                  ID                  |      Name      | Disk Format |    Size    | Status |
++--------------------------------------+----------------+-------------+------------+--------+
+| 94a4e0f2-4541-459a-9cba-3ccabb2f3e3c | overcloud-full |    qcow2    | 1303512064 | active |
++--------------------------------------+----------------+-------------+------------+--------+
+Image "bm-deploy-kernel" was uploaded.
++--------------------------------------+------------------+-------------+---------+--------+
+|                  ID                  |       Name       | Disk Format |   Size  | Status |
++--------------------------------------+------------------+-------------+---------+--------+
+| 76a87244-66c8-4018-a10e-642711fa6948 | bm-deploy-kernel |     aki     | 5394912 | active |
++--------------------------------------+------------------+-------------+---------+--------+
+Image "bm-deploy-ramdisk" was uploaded.
++--------------------------------------+-------------------+-------------+-----------+--------+
+|                  ID                  |        Name       | Disk Format |    Size   | Status |
++--------------------------------------+-------------------+-------------+-----------+--------+
+| 3a38bd3f-359e-4240-9d70-8c4ab13cc078 | bm-deploy-ramdisk |     ari     | 366536581 | active |
++--------------------------------------+-------------------+-------------+-----------+--------+
+
+```
+
+Add a nameserver to the undercloud neutron subnet:
+```
+[stack@undercloud images]$ openstack subnet list
++--------------------------------------+------+--------------------------------------+----------------+
+| ID                                   | Name | Network                              | Subnet         |
++--------------------------------------+------+--------------------------------------+----------------+
+| e07027e6-91a6-49f8-8247-0beb303eaa3d |      | 1b76f686-b92e-40b2-9390-cef258abd6d4 | 172.17.84.0/24 |
++--------------------------------------+------+--------------------------------------+----------------+
+[stack@undercloud images]$ openstack subnet set --dns-nameserver 172.17.84.4 --dns-nameserver 8.8.8.8 e07027e6-91a6-49f8-8247-0beb303eaa3d
+[stack@undercloud images]$ openstack subnet show e07027e6-91a6-49f8-8247-0beb303eaa3d
++-------------------+----------------------------------------------------------+
+| Field             | Value                                                    |
++-------------------+----------------------------------------------------------+
+| allocation_pools  | 172.17.84.45-172.17.84.79                                |
+| cidr              | 172.17.84.0/24                                           |
+| created_at        | 2017-12-04T16:35:18Z                                     |
+| description       |                                                          |
+| dns_nameservers   | 172.17.84.4, 8.8.8.8                                     |
+| enable_dhcp       | True                                                     |
+| gateway_ip        | 172.17.84.254                                            |
+| host_routes       | destination='169.254.169.254/32', gateway='172.17.84.10' |
+| id                | e07027e6-91a6-49f8-8247-0beb303eaa3d                     |
+| ip_version        | 4                                                        |
+| ipv6_address_mode | None                                                     |
+| ipv6_ra_mode      | None                                                     |
+| name              |                                                          |
+| network_id        | 1b76f686-b92e-40b2-9390-cef258abd6d4                     |
+| project_id        | 60ced212c3ae4d889323c41803f1eab4                         |
+| project_id        | 60ced212c3ae4d889323c41803f1eab4                         |
+| revision_number   | 3                                                        |
+| service_types     | []                                                       |
+| subnetpool_id     | None                                                     |
+| updated_at        | 2017-12-05T15:28:07Z                                     |
++-------------------+----------------------------------------------------------+
+```
+Ironic service: is the baremetal service used by TripleO to bootstrap the overcloud nodes.
+(/home/stack/instackenv.json) is a json template which contains the hardware and power management details for your nodes.
+
+```
+[stack@undercloud ~]$ openstack overcloud node import ~/instackenv.json
+Started Mistral Workflow. Execution ID: c5845bda-d4a5-4aeb-a2f7-8ee315a31f83
+Successfully registered node UUID 87f93584-e3ff-42cb-a3b8-d1336a725ab1
+Successfully registered node UUID 9a0f0450-6aed-45f0-ae58-2cf603ce8d01
+Successfully registered node UUID 991aca8b-2f1f-49c5-ad4c-c5b93c31e3a2
+Successfully registered node UUID 7e5bf215-0f9b-48f6-90e0-2442b2cb6d6e
+Successfully registered node UUID 8a184931-abb7-4268-8fd8-a73313eed598
+Successfully registered node UUID 256f06d4-0cd3-4209-b0b1-89017670711f
+Successfully registered node UUID 874b1450-670e-4ef9-a3c0-e2915274ad5c
+Successfully registered node UUID 7e0653d3-f975-48b0-9761-cad834479cdb
+Successfully registered node UUID bf1b4bd8-273e-4495-8a6f-6eb338645c6c
+
+[stack@undercloud ~]$ openstack baremetal node list
++--------------------------------------+------+---------------+-------------+--------------------+-------------+
+| UUID                                 | Name | Instance UUID | Power State | Provisioning State | Maintenance |
++--------------------------------------+------+---------------+-------------+--------------------+-------------+
+| 87f93584-e3ff-42cb-a3b8-d1336a725ab1 | None | None          | None        | enroll             | False       |
+| 9a0f0450-6aed-45f0-ae58-2cf603ce8d01 | None | None          | None        | enroll             | False       |
+| 991aca8b-2f1f-49c5-ad4c-c5b93c31e3a2 | None | None          | None        | enroll             | False       |
+| 7e5bf215-0f9b-48f6-90e0-2442b2cb6d6e | None | None          | power off   | manageable         | False       |
+| 8a184931-abb7-4268-8fd8-a73313eed598 | None | None          | power off   | manageable         | False       |
+| 256f06d4-0cd3-4209-b0b1-89017670711f | None | None          | power off   | manageable         | False       |
+| 874b1450-670e-4ef9-a3c0-e2915274ad5c | None | None          | power off   | manageable         | False       |
+| 7e0653d3-f975-48b0-9761-cad834479cdb | None | None          | power off   | manageable         | False       |
+| bf1b4bd8-273e-4495-8a6f-6eb338645c6c | None | None          | power off   | manageable         | False       |
++--------------------------------------+------+---------------+-------------+--------------------+-------------+
+```
+As noticed above, i have three nodes in an enroll status: this status is due to failed IPMI communication:
+1) Either password and username is incorrect.
+2) the iDrac version needs to be updated ( Driver issues )
+
+In my case, my iDRAC driver was old and different than the other 6 servers. I have updated the nodes to the latest driver, using a bootable media, refer the below link for further details
+[https://www.dell.com/support/article/us/en/04/sln156799/how-to-subscribe-to-receive-dell-driver-and-firmware-update-notifications?lang=en](https://www.dell.com/support/article/us/en/04/sln156799/how-to-subscribe-to-receive-dell-driver-and-firmware-update-notifications?lang=en)
 ## Acknowledgments
 
 * Hat tip to anyone who's code was used
