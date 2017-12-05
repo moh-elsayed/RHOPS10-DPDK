@@ -1,6 +1,8 @@
-# Project Title
+# Redhat Openstack 10 deployment and Intergration with ScaleIO
 
-One Paragraph of project description goes here
+During topenstack deployment, i will cater for OVS-DPDK as virtual forwarding plane with Neutron. And we will deploy a full DellEMC software defiend storage ScaleIO in two modes:
+1. Two tiers => dedicated storage node
+2. hypered-converaged where compute node will be a storage nodes as well
 
 ## Getting Started
 
