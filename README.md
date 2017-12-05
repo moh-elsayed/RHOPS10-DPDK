@@ -22,6 +22,31 @@ These instructions will reflect the RHOSP10 on a CIP blueprint along with scaleI
 8 | Data Network02 | 10.30.221.0/24 | 221 | ToR Switches/Internal
 9 | Data Network Range | | 220:230 |ToR Switches/Internal	
 
+### Physical Hardware
+   Seq  | Server Role | Model | Storage | Deployment NIC
+------------- | ------------- | ------------- | ------------- | -------------
+1  |Controller  | Dell R730 | 2 x 400 SSD & 4 x 1 TB | EC:F4:BB:E7:FC:24
+2 | Controller  | Dell R730 | 2 x 400 SSD & 4 x 1 TB | EC:F4:BB:E8:03:54
+3 | Controller  | Dell R730 | 2 x 400 SSD & 4 x 1 TB | EC:F4:BB:E8:02:24
+4 | Compute  | Dell R730 | 2 x 400 SSD & 4 x 1 TB | EC:F4:BB:E8:03:5C
+5 | Compute  | Dell R730 | 2 x 400 SSD & 4 x 1 TB | EC:F4:BB:E7:FC:4C
+6 | Compute  | Dell R730 | 2 x 400 SSD & 4 x 1 TB | EC:F4:BB:E8:03:A4
+7 | Ceph  | Dell R730 | 2 x 400 SSD & 4 x 1 TB | EC:F4:BB:E8:DA:B4
+8 | Ceph  | Dell R730 | 2 x 400 SSD & 4 x 1 TB | EC:F4:BB:E8:DF:8C
+9 | Ceph  | Dell R730 | 2 x 400 SSD & 4 x 1 TB | EC:F4:BB:E7:FC:74
+10 | ScaleIO_SDS  | Dell R730 | 2 x 400 SSD & 4 x 1 TB | EC:F4:BB:E7:F8:3C
+11 | ScaleIO_SDS  | Dell R730 | 2 x 400 SSD & 4 x 1 TB | EC:F4:BB:E8:03:74
+12 | ScaleIO_SDS  | Dell R730 | 2 x 400 SSD & 4 x 1 TB | EC:F4:BB:E8:03:8C
+
+### Virtual Machine
+The entire virtual machines are running on tope ESXi R730 server. 
+
+   Seq  | VM Role | OS | vCPU | RAM
+------------- | ------------- | ------------- | ------------- | -------------
+1 | Redhat Undercloud  | RHEL7.3 | 6 | 14G
+2 | Domain Controller | Windows 2012 | 4 | 4G
+3 | Local Repo server  | RHEL7.3 | 4 | 2G
+4 | ScaleIO Gateway | RHEL7.3 | 4 | 4G
 
 > Network Topology
 > ![](https://i.imgur.com/xt5TWOT.png)
@@ -413,13 +438,63 @@ Successfully registered node UUID bf1b4bd8-273e-4495-8a6f-6eb338645c6c
 | 7e0653d3-f975-48b0-9761-cad834479cdb | None | None          | power off   | manageable         | False       |
 | bf1b4bd8-273e-4495-8a6f-6eb338645c6c | None | None          | power off   | manageable         | False       |
 +--------------------------------------+------+---------------+-------------+--------------------+-------------+
+[stack@undercloud log]$ ipmitool -I lanplus -H 172.17.84.5 -L ADMINISTRATOR -U root  power status
+Password:
+Error: Unable to establish IPMI v2 / RMCP+ session
 ```
 As noticed above, i have three nodes in an enroll status: this status is due to failed IPMI communication:
 1) Either password and username is incorrect.
-2) the iDrac version needs to be updated ( Driver issues )
+2) Make sure IPMI Over LAN in the iDRAC settings. 
+3) the iDrac version needs to be updated ( Driver issues )
 
 In my case, my iDRAC driver was old and different than the other 6 servers. I have updated the nodes to the latest driver, using a bootable media, refer the below link for further details
 [https://www.dell.com/support/article/us/en/04/sln156799/how-to-subscribe-to-receive-dell-driver-and-firmware-update-notifications?lang=en](https://www.dell.com/support/article/us/en/04/sln156799/how-to-subscribe-to-receive-dell-driver-and-firmware-update-notifications?lang=en)
+
+![](https://i.imgur.com/N6mF7gf.png)
+
+![](https://i.imgur.com/XtRFed8.png)
+
+After driver update and configuration update:
+
+```
+[stack@undercloud log]$ for node in $(openstack baremetal node list -c UUID -f value) ; do openstack baremetal node manage $node ; done
+The requested action "manage" can not be performed on node "7e5bf215-0f9b-48f6-90e0-2442b2cb6d6e" while it is in state "manageable". (HTTP 400)
+The requested action "manage" can not be performed on node "8a184931-abb7-4268-8fd8-a73313eed598" while it is in state "manageable". (HTTP 400)
+The requested action "manage" can not be performed on node "256f06d4-0cd3-4209-b0b1-89017670711f" while it is in state "manageable". (HTTP 400)
+The requested action "manage" can not be performed on node "874b1450-670e-4ef9-a3c0-e2915274ad5c" while it is in state "manageable". (HTTP 400)
+The requested action "manage" can not be performed on node "7e0653d3-f975-48b0-9761-cad834479cdb" while it is in state "manageable". (HTTP 400)
+The requested action "manage" can not be performed on node "bf1b4bd8-273e-4495-8a6f-6eb338645c6c" while it is in state "manageable". (HTTP 400)
+[stack@undercloud log]$ openstack baremetal node list
++--------------------------------------+------+---------------+-------------+--------------------+-------------+
+| UUID                                 | Name | Instance UUID | Power State | Provisioning State | Maintenance |
++--------------------------------------+------+---------------+-------------+--------------------+-------------+
+| 87f93584-e3ff-42cb-a3b8-d1336a725ab1 | None | None          | None        | verifying          | False       |
+| 9a0f0450-6aed-45f0-ae58-2cf603ce8d01 | None | None          | None        | verifying          | False       |
+| 991aca8b-2f1f-49c5-ad4c-c5b93c31e3a2 | None | None          | None        | verifying          | False       |
+| 7e5bf215-0f9b-48f6-90e0-2442b2cb6d6e | None | None          | power off   | manageable         | False       |
+| 8a184931-abb7-4268-8fd8-a73313eed598 | None | None          | power off   | manageable         | False       |
+| 256f06d4-0cd3-4209-b0b1-89017670711f | None | None          | power off   | manageable         | False       |
+| 874b1450-670e-4ef9-a3c0-e2915274ad5c | None | None          | power off   | manageable         | False       |
+| 7e0653d3-f975-48b0-9761-cad834479cdb | None | None          | power off   | manageable         | False       |
+| bf1b4bd8-273e-4495-8a6f-6eb338645c6c | None | None          | power off   | manageable         | False       |
++--------------------------------------+------+---------------+-------------+--------------------+-------------+
+
+[stack@undercloud log]$ openstack baremetal node list
++--------------------------------------+------+---------------+-------------+--------------------+-------------+
+| UUID                                 | Name | Instance UUID | Power State | Provisioning State | Maintenance |
++--------------------------------------+------+---------------+-------------+--------------------+-------------+
+| 87f93584-e3ff-42cb-a3b8-d1336a725ab1 | None | None          | power on    | manageable         | False       |
+| 9a0f0450-6aed-45f0-ae58-2cf603ce8d01 | None | None          | power on    | manageable         | False       |
+| 991aca8b-2f1f-49c5-ad4c-c5b93c31e3a2 | None | None          | power on    | manageable         | False       |
+| 7e5bf215-0f9b-48f6-90e0-2442b2cb6d6e | None | None          | power off   | manageable         | False       |
+| 8a184931-abb7-4268-8fd8-a73313eed598 | None | None          | power off   | manageable         | False       |
+| 256f06d4-0cd3-4209-b0b1-89017670711f | None | None          | power off   | manageable         | False       |
+| 874b1450-670e-4ef9-a3c0-e2915274ad5c | None | None          | power off   | manageable         | False       |
+| 7e0653d3-f975-48b0-9761-cad834479cdb | None | None          | power off   | manageable         | False       |
+| bf1b4bd8-273e-4495-8a6f-6eb338645c6c | None | None          | power off   | manageable         | False       |
++--------------------------------------+------+---------------+-------------+--------------------+-------------+
+
+```
 ## Acknowledgments
 
 * Hat tip to anyone who's code was used
