@@ -21,6 +21,53 @@ These instructions will reflect the RHOSP10 on a CIP blueprint along with scaleI
 7 | Data network01 | 10.30.220.0/24 | 220 | ToR Switches/Internal
 8 | Data Network02 | 10.30.221.0/24 | 221 | ToR Switches/Internal
 9 | Data Network Range | | 220:230 |ToR Switches/Internal	
+> Note:
+> Undercloud deployment network must be untagged network:
+> Since i'm using a single interface for my External public network and undercloud deployment network. So VLAN 100 must be untagged and VLAN3084 should be tagged on the Dell network switch. to do that, follow the steps below:
+> ```
+> ** Show the running configuration for one of the ports **
+> 
+> $ R3R5-Perimeter/TOR(conf-if-te-1/6)#do show running-config interface tengigabitethernet 1/6
+> $ !
+> $ interface TenGigabitEthernet 1/6
+> $  no ip address
+> $  portmode hybrid
+> $  switchport
+> $  spanning-tree rstp edge-port bpduguard shutdown-on-violation
+> $  spanning-tree rstp rootguard
+> $  storm-control broadcast 1 in
+> $  storm-control unknown-unicast 1 in
+> $  storm-control multicast 1 in
+> $  no shutdown
+>          
+> ** Clear the port configuration in order to be able to set the port mode to hybird **
+> 
+> $ interface tengigabitethernet 1/6
+> $ no spanning-tree rstp edge-port bpduguard shutdown-on-violation
+> $ no spanning-tree rstp rootguard
+> $ no storm-control broadcast 1 in 
+> $ no storm-control unknown-unicast 1 in
+> $ no storm-control multicast 1 in 
+> $ no switchport
+> 
+> ** Set the correct port configuration**
+> 
+> $ portmode hybrid
+> $ switchport
+> $ spanning-tree rstp edge-port bpduguard shutdown-on-violation
+> $ spanning-tree rstp rootguard
+> $ storm-control broadcast 1 in
+> $ storm-control unknown-unicast 1 in
+> $ storm-control multicast 1 in
+> $ no shut
+> 
+> ** Set the VLAN information on all ports **
+> 
+> $ interface Vlan 3084
+> $ tagged tengigabitethernet 1/6,1/8,1/10,1/12,1/14,1/16,1/32,1/34,1/36,1/38,1/40,1/42
+> $ interface Vlan 100
+> $ untagged tengigabitethernet 1/6,1/8,1/10,1/12,1/14,1/16,1/32,1/34,1/36,1/38,1/40,1/42
+> ```
 
 ### Physical Hardware
    Seq  | Server Role | Model | Storage | Deployment NIC
