@@ -513,6 +513,7 @@ Started Mistral Workflow. Execution ID: da882a31-befa-4d9f-92f4-410c76d17496
 
 ```
 The command will take about 10 mins to inspect 12 nodes, you can verfiy by openning all nodes's console view to check the PXE boot process:
+
 ![](https://i.imgur.com/0ayR17z.png)
 
 During the Inspection all nodes should be powered up:
@@ -551,6 +552,7 @@ After the inspection: all nodes will be powered-off and Provisioning Stated swit
 | bf1b4bd8-273e-4495-8a6f-6eb338645c6c | None | None          | power off   | available          | False       |
 +--------------------------------------+------+---------------+-------------+--------------------+-------------+
 ```
+## TO Be Continued ##
 ## Acknowledgments
 
 * Hat tip to anyone who's code was used
