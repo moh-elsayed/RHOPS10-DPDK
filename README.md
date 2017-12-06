@@ -96,7 +96,7 @@ The entire virtual machines are running on tope ESXi R730 server.
 4 | ScaleIO Gateway | RHEL7.3 | 4 | 4G
 
 > Network Topology
-> ![](https://i.imgur.com/xt5TWOT.png)
+> ![](https://i.imgur.com/EBByxXy.png)
 In case of HCI "Hyper-Converged Infrastructure, SDS will be co-exist with the SDC on the compute nodes.
 
 ## Deployment Guide
@@ -469,31 +469,33 @@ Ironic service: is the baremetal service used by TripleO to bootstrap the overcl
 
 ```
 [stack@undercloud ~]$ openstack overcloud node import ~/instackenv.json
-Started Mistral Workflow. Execution ID: c5845bda-d4a5-4aeb-a2f7-8ee315a31f83
-Successfully registered node UUID 87f93584-e3ff-42cb-a3b8-d1336a725ab1
-Successfully registered node UUID 9a0f0450-6aed-45f0-ae58-2cf603ce8d01
-Successfully registered node UUID 991aca8b-2f1f-49c5-ad4c-c5b93c31e3a2
-Successfully registered node UUID 7e5bf215-0f9b-48f6-90e0-2442b2cb6d6e
-Successfully registered node UUID 8a184931-abb7-4268-8fd8-a73313eed598
-Successfully registered node UUID 256f06d4-0cd3-4209-b0b1-89017670711f
-Successfully registered node UUID 874b1450-670e-4ef9-a3c0-e2915274ad5c
-Successfully registered node UUID 7e0653d3-f975-48b0-9761-cad834479cdb
-Successfully registered node UUID bf1b4bd8-273e-4495-8a6f-6eb338645c6c
+Started Mistral Workflow. Execution ID: f883f537-7d0d-4da8-8578-43a214926d00
+Successfully registered node UUID 931bcdcf-85d9-459c-ac43-828cd779d140
+Successfully registered node UUID 0687a312-e431-49d5-94e2-e278a9f9b541
+Successfully registered node UUID ac71493d-c575-4e5a-8aef-dc376376bf97
+Successfully registered node UUID 47fc4a92-8338-44e2-8d30-614f18da8d5c
+Successfully registered node UUID b248739b-f79c-4d0e-b404-19831e40fbf4
+Successfully registered node UUID a36835aa-4d9d-42ce-a80d-a576bcb8182e
+Successfully registered node UUID e6327431-8571-4355-b095-fc52923d4031
+Successfully registered node UUID 74b3376b-6a4e-4e8e-85e2-4032a15e0494
+Successfully registered node UUID c7aa3aab-e57a-4936-b55f-e5ce02c7f4b2
+
 
 [stack@undercloud ~]$ openstack baremetal node list
-+--------------------------------------+------+---------------+-------------+--------------------+-------------+
-| UUID                                 | Name | Instance UUID | Power State | Provisioning State | Maintenance |
-+--------------------------------------+------+---------------+-------------+--------------------+-------------+
-| 87f93584-e3ff-42cb-a3b8-d1336a725ab1 | None | None          | None        | enroll             | False       |
-| 9a0f0450-6aed-45f0-ae58-2cf603ce8d01 | None | None          | None        | enroll             | False       |
-| 991aca8b-2f1f-49c5-ad4c-c5b93c31e3a2 | None | None          | None        | enroll             | False       |
-| 7e5bf215-0f9b-48f6-90e0-2442b2cb6d6e | None | None          | power off   | manageable         | False       |
-| 8a184931-abb7-4268-8fd8-a73313eed598 | None | None          | power off   | manageable         | False       |
-| 256f06d4-0cd3-4209-b0b1-89017670711f | None | None          | power off   | manageable         | False       |
-| 874b1450-670e-4ef9-a3c0-e2915274ad5c | None | None          | power off   | manageable         | False       |
-| 7e0653d3-f975-48b0-9761-cad834479cdb | None | None          | power off   | manageable         | False       |
-| bf1b4bd8-273e-4495-8a6f-6eb338645c6c | None | None          | power off   | manageable         | False       |
-+--------------------------------------+------+---------------+-------------+--------------------+-------------+
++--------------------------------------+--------+---------------+-------------+--------------------+-------------+
+| UUID                                 | Name   | Instance UUID | Power State | Provisioning State | Maintenance |
++--------------------------------------+--------+---------------+-------------+--------------------+-------------+
+| 931bcdcf-85d9-459c-ac43-828cd779d140 | cont01 | None          | None        | enroll             | False       |
+| 0687a312-e431-49d5-94e2-e278a9f9b541 | cont02 | None          | None        | enroll             | False       |
+| ac71493d-c575-4e5a-8aef-dc376376bf97 | cont03 | None          | None        | enroll             | False       |
+| 47fc4a92-8338-44e2-8d30-614f18da8d5c | comp01 | None          | power off   | manageable         | False       |
+| b248739b-f79c-4d0e-b404-19831e40fbf4 | comp02 | None          | power off   | manageable         | False       |
+| a36835aa-4d9d-42ce-a80d-a576bcb8182e | comp03 | None          | power off   | manageable         | False       |
+| e6327431-8571-4355-b095-fc52923d4031 | ceph01 | None          | power off   | manageable         | False       |
+| 74b3376b-6a4e-4e8e-85e2-4032a15e0494 | ceph02 | None          | power off   | manageable         | False       |
+| c7aa3aab-e57a-4936-b55f-e5ce02c7f4b2 | ceph03 | None          | power off   | manageable         | False       |
++--------------------------------------+--------+---------------+-------------+--------------------+-------------+
+
 [stack@undercloud log]$ ipmitool -I lanplus -H 172.17.84.5 -L ADMINISTRATOR -U root  power status
 Password:
 Error: Unable to establish IPMI v2 / RMCP+ session
@@ -513,59 +515,64 @@ In my case, my iDRAC driver was old and different than the other 6 servers. I ha
 After driver update and configuration update:
 
 ```
-[stack@undercloud log]$ for node in $(openstack baremetal node list -c UUID -f value) ; do openstack baremetal node manage $node ; done
-The requested action "manage" can not be performed on node "7e5bf215-0f9b-48f6-90e0-2442b2cb6d6e" while it is in state "manageable". (HTTP 400)
-The requested action "manage" can not be performed on node "8a184931-abb7-4268-8fd8-a73313eed598" while it is in state "manageable". (HTTP 400)
-The requested action "manage" can not be performed on node "256f06d4-0cd3-4209-b0b1-89017670711f" while it is in state "manageable". (HTTP 400)
-The requested action "manage" can not be performed on node "874b1450-670e-4ef9-a3c0-e2915274ad5c" while it is in state "manageable". (HTTP 400)
-The requested action "manage" can not be performed on node "7e0653d3-f975-48b0-9761-cad834479cdb" while it is in state "manageable". (HTTP 400)
-The requested action "manage" can not be performed on node "bf1b4bd8-273e-4495-8a6f-6eb338645c6c" while it is in state "manageable". (HTTP 400)
-[stack@undercloud log]$ openstack baremetal node list
-+--------------------------------------+------+---------------+-------------+--------------------+-------------+
-| UUID                                 | Name | Instance UUID | Power State | Provisioning State | Maintenance |
-+--------------------------------------+------+---------------+-------------+--------------------+-------------+
-| 87f93584-e3ff-42cb-a3b8-d1336a725ab1 | None | None          | None        | verifying          | False       |
-| 9a0f0450-6aed-45f0-ae58-2cf603ce8d01 | None | None          | None        | verifying          | False       |
-| 991aca8b-2f1f-49c5-ad4c-c5b93c31e3a2 | None | None          | None        | verifying          | False       |
-| 7e5bf215-0f9b-48f6-90e0-2442b2cb6d6e | None | None          | power off   | manageable         | False       |
-| 8a184931-abb7-4268-8fd8-a73313eed598 | None | None          | power off   | manageable         | False       |
-| 256f06d4-0cd3-4209-b0b1-89017670711f | None | None          | power off   | manageable         | False       |
-| 874b1450-670e-4ef9-a3c0-e2915274ad5c | None | None          | power off   | manageable         | False       |
-| 7e0653d3-f975-48b0-9761-cad834479cdb | None | None          | power off   | manageable         | False       |
-| bf1b4bd8-273e-4495-8a6f-6eb338645c6c | None | None          | power off   | manageable         | False       |
-+--------------------------------------+------+---------------+-------------+--------------------+-------------+
+[stack@undercloud ~]$ for node in $(openstack baremetal node list -c UUID -f value) ; do openstack baremetal node manage $node ; done
+The requested action "manage" can not be performed on node "931bcdcf-85d9-459c-ac43-828cd779d140" while it is in state "manageable". (HTTP 400)
+The requested action "manage" can not be performed on node "0687a312-e431-49d5-94e2-e278a9f9b541" while it is in state "manageable". (HTTP 400)
+The requested action "manage" can not be performed on node "ac71493d-c575-4e5a-8aef-dc376376bf97" while it is in state "manageable". (HTTP 400)
+The requested action "manage" can not be performed on node "47fc4a92-8338-44e2-8d30-614f18da8d5c" while it is in state "manageable". (HTTP 400)
+The requested action "manage" can not be performed on node "b248739b-f79c-4d0e-b404-19831e40fbf4" while it is in state "manageable". (HTTP 400)
+The requested action "manage" can not be performed on node "a36835aa-4d9d-42ce-a80d-a576bcb8182e" while it is in state "manageable". (HTTP 400)
+The requested action "manage" can not be performed on node "e6327431-8571-4355-b095-fc52923d4031" while it is in state "manageable". (HTTP 400)
+The requested action "manage" can not be performed on node "74b3376b-6a4e-4e8e-85e2-4032a15e0494" while it is in state "manageable". (HTTP 400)
+The requested action "manage" can not be performed on node "c7aa3aab-e57a-4936-b55f-e5ce02c7f4b2" while it is in state "manageable". (HTTP 400)
 
 [stack@undercloud log]$ openstack baremetal node list
-+--------------------------------------+------+---------------+-------------+--------------------+-------------+
-| UUID                                 | Name | Instance UUID | Power State | Provisioning State | Maintenance |
-+--------------------------------------+------+---------------+-------------+--------------------+-------------+
-| 87f93584-e3ff-42cb-a3b8-d1336a725ab1 | None | None          | power on    | manageable         | False       |
-| 9a0f0450-6aed-45f0-ae58-2cf603ce8d01 | None | None          | power on    | manageable         | False       |
-| 991aca8b-2f1f-49c5-ad4c-c5b93c31e3a2 | None | None          | power on    | manageable         | False       |
-| 7e5bf215-0f9b-48f6-90e0-2442b2cb6d6e | None | None          | power off   | manageable         | False       |
-| 8a184931-abb7-4268-8fd8-a73313eed598 | None | None          | power off   | manageable         | False       |
-| 256f06d4-0cd3-4209-b0b1-89017670711f | None | None          | power off   | manageable         | False       |
-| 874b1450-670e-4ef9-a3c0-e2915274ad5c | None | None          | power off   | manageable         | False       |
-| 7e0653d3-f975-48b0-9761-cad834479cdb | None | None          | power off   | manageable         | False       |
-| bf1b4bd8-273e-4495-8a6f-6eb338645c6c | None | None          | power off   | manageable         | False       |
-+--------------------------------------+------+---------------+-------------+--------------------+-------------+
++--------------------------------------+--------+---------------+-------------+--------------------+-------------+
+| UUID                                 | Name   | Instance UUID | Power State | Provisioning State | Maintenance |
++--------------------------------------+--------+---------------+-------------+--------------------+-------------+
+| 931bcdcf-85d9-459c-ac43-828cd779d140 | cont01 | None          | None        | verifying          | False       |
+| 0687a312-e431-49d5-94e2-e278a9f9b541 | cont02 | None          | None        | verifying          | False       |
+| ac71493d-c575-4e5a-8aef-dc376376bf97 | cont03 | None          | None        | verifying          | False       |
+| 47fc4a92-8338-44e2-8d30-614f18da8d5c | comp01 | None          | power off   | manageable         | False       |
+| b248739b-f79c-4d0e-b404-19831e40fbf4 | comp02 | None          | power off   | manageable         | False       |
+| a36835aa-4d9d-42ce-a80d-a576bcb8182e | comp03 | None          | power off   | manageable         | False       |
+| e6327431-8571-4355-b095-fc52923d4031 | ceph01 | None          | power off   | manageable         | False       |
+| 74b3376b-6a4e-4e8e-85e2-4032a15e0494 | ceph02 | None          | power off   | manageable         | False       |
+| c7aa3aab-e57a-4936-b55f-e5ce02c7f4b2 | ceph03 | None          | power off   | manageable         | False       |
++--------------------------------------+--------+---------------+-------------+--------------------+-------------+
+
+[stack@undercloud log]$ openstack baremetal node list
++--------------------------------------+--------+---------------+-------------+--------------------+-------------+
+| UUID                                 | Name   | Instance UUID | Power State | Provisioning State | Maintenance |
++--------------------------------------+--------+---------------+-------------+--------------------+-------------+
+| 931bcdcf-85d9-459c-ac43-828cd779d140 | cont01 | None          | power off   | manageable         | False       |
+| 0687a312-e431-49d5-94e2-e278a9f9b541 | cont02 | None          | power off   | manageable         | False       |
+| ac71493d-c575-4e5a-8aef-dc376376bf97 | cont03 | None          | power off   | manageable         | False       |
+| 47fc4a92-8338-44e2-8d30-614f18da8d5c | comp01 | None          | power off   | manageable         | False       |
+| b248739b-f79c-4d0e-b404-19831e40fbf4 | comp02 | None          | power off   | manageable         | False       |
+| a36835aa-4d9d-42ce-a80d-a576bcb8182e | comp03 | None          | power off   | manageable         | False       |
+| e6327431-8571-4355-b095-fc52923d4031 | ceph01 | None          | power off   | manageable         | False       |
+| 74b3376b-6a4e-4e8e-85e2-4032a15e0494 | ceph02 | None          | power off   | manageable         | False       |
+| c7aa3aab-e57a-4936-b55f-e5ce02c7f4b2 | ceph03 | None          | power off   | manageable         | False       |
++--------------------------------------+--------+---------------+-------------+--------------------+-------------+
+
 ```
 Run the following command to inspect the hardware attributes of each node:
 ```
-[stack@undercloud log]$ openstack overcloud node introspect --all-manageable --provide
-Started Mistral Workflow. Execution ID: f5fd2afd-7bbf-4d57-a0e9-1d9f98be58a8
+[stack@undercloud ~]$ openstack overcloud node introspect --all-manageable --provide
+Started Mistral Workflow. Execution ID: 591e75e9-7f83-43e9-936f-90387260c148
 Waiting for introspection to finish...
-Introspection for UUID 87f93584-e3ff-42cb-a3b8-d1336a725ab1 finished successfully.
-Introspection for UUID 256f06d4-0cd3-4209-b0b1-89017670711f finished successfully.
-Introspection for UUID 7e5bf215-0f9b-48f6-90e0-2442b2cb6d6e finished successfully.
-Introspection for UUID 7e0653d3-f975-48b0-9761-cad834479cdb finished successfully.
-Introspection for UUID bf1b4bd8-273e-4495-8a6f-6eb338645c6c finished successfully.
-Introspection for UUID 874b1450-670e-4ef9-a3c0-e2915274ad5c finished successfully.
-Introspection for UUID 991aca8b-2f1f-49c5-ad4c-c5b93c31e3a2 finished successfully.
-Introspection for UUID 8a184931-abb7-4268-8fd8-a73313eed598 finished successfully.
-Introspection for UUID 9a0f0450-6aed-45f0-ae58-2cf603ce8d01 finished successfully.
+Introspection for UUID b248739b-f79c-4d0e-b404-19831e40fbf4 finished successfully.
+Introspection for UUID 0687a312-e431-49d5-94e2-e278a9f9b541 finished successfully.
+Introspection for UUID e6327431-8571-4355-b095-fc52923d4031 finished successfully.
+Introspection for UUID ac71493d-c575-4e5a-8aef-dc376376bf97 finished successfully.
+Introspection for UUID 931bcdcf-85d9-459c-ac43-828cd779d140 finished successfully.
+Introspection for UUID c7aa3aab-e57a-4936-b55f-e5ce02c7f4b2 finished successfully.
+Introspection for UUID 74b3376b-6a4e-4e8e-85e2-4032a15e0494 finished successfully.
+Introspection for UUID a36835aa-4d9d-42ce-a80d-a576bcb8182e finished successfully.
+Introspection for UUID 47fc4a92-8338-44e2-8d30-614f18da8d5c finished successfully.
 Introspection completed.
-Started Mistral Workflow. Execution ID: da882a31-befa-4d9f-92f4-410c76d17496
+Started Mistral Workflow. Execution ID: 288b14f5-f4f6-41d0-aa10-f588d87741fc
 
 ```
 The command will take about 10 mins to inspect 12 nodes, you can verfiy by openning all nodes's console view to check the PXE boot process:
@@ -576,37 +583,229 @@ During the Inspection all nodes should be powered up:
 
 ```
 [stack@undercloud ~]$ openstack baremetal node list
-+--------------------------------------+------+---------------+-------------+--------------------+-------------+
-| UUID                                 | Name | Instance UUID | Power State | Provisioning State | Maintenance |
-+--------------------------------------+------+---------------+-------------+--------------------+-------------+
-| 87f93584-e3ff-42cb-a3b8-d1336a725ab1 | None | None          | power on    | manageable         | False       |
-| 9a0f0450-6aed-45f0-ae58-2cf603ce8d01 | None | None          | power on    | manageable         | False       |
-| 991aca8b-2f1f-49c5-ad4c-c5b93c31e3a2 | None | None          | power on    | manageable         | False       |
-| 7e5bf215-0f9b-48f6-90e0-2442b2cb6d6e | None | None          | power on    | manageable         | False       |
-| 8a184931-abb7-4268-8fd8-a73313eed598 | None | None          | power on    | manageable         | False       |
-| 256f06d4-0cd3-4209-b0b1-89017670711f | None | None          | power on    | manageable         | False       |
-| 874b1450-670e-4ef9-a3c0-e2915274ad5c | None | None          | power on    | manageable         | False       |
-| 7e0653d3-f975-48b0-9761-cad834479cdb | None | None          | power on    | manageable         | False       |
-| bf1b4bd8-273e-4495-8a6f-6eb338645c6c | None | None          | power on    | manageable         | False       |
-+--------------------------------------+------+---------------+-------------+--------------------+-------------+
++--------------------------------------+--------+---------------+-------------+--------------------+-------------+
+| UUID                                 | Name   | Instance UUID | Power State | Provisioning State | Maintenance |
++--------------------------------------+--------+---------------+-------------+--------------------+-------------+
+| 931bcdcf-85d9-459c-ac43-828cd779d140 | cont01 | None          | power on    | manageable         | False       |
+| 0687a312-e431-49d5-94e2-e278a9f9b541 | cont02 | None          | power on    | manageable         | False       |
+| ac71493d-c575-4e5a-8aef-dc376376bf97 | cont03 | None          | power on    | manageable         | False       |
+| 47fc4a92-8338-44e2-8d30-614f18da8d5c | comp01 | None          | power on    | manageable         | False       |
+| b248739b-f79c-4d0e-b404-19831e40fbf4 | comp02 | None          | power on    | manageable         | False       |
+| a36835aa-4d9d-42ce-a80d-a576bcb8182e | comp03 | None          | power on    | manageable         | False       |
+| e6327431-8571-4355-b095-fc52923d4031 | ceph01 | None          | power on    | manageable         | False       |
+| 74b3376b-6a4e-4e8e-85e2-4032a15e0494 | ceph02 | None          | power on    | manageable         | False       |
+| c7aa3aab-e57a-4936-b55f-e5ce02c7f4b2 | ceph03 | None          | power on    | manageable         | False       |
++--------------------------------------+--------+---------------+-------------+--------------------+-------------+
+
 ```
 
 After the inspection: all nodes will be powered-off and Provisioning Stated switched from manageable to **available**. 
 ```
 [stack@undercloud log]$ openstack baremetal node list
-+--------------------------------------+------+---------------+-------------+--------------------+-------------+
-| UUID                                 | Name | Instance UUID | Power State | Provisioning State | Maintenance |
-+--------------------------------------+------+---------------+-------------+--------------------+-------------+
-| 87f93584-e3ff-42cb-a3b8-d1336a725ab1 | None | None          | power off   | available          | False       |
-| 9a0f0450-6aed-45f0-ae58-2cf603ce8d01 | None | None          | power off   | available          | False       |
-| 991aca8b-2f1f-49c5-ad4c-c5b93c31e3a2 | None | None          | power off   | available          | False       |
-| 7e5bf215-0f9b-48f6-90e0-2442b2cb6d6e | None | None          | power off   | available          | False       |
-| 8a184931-abb7-4268-8fd8-a73313eed598 | None | None          | power off   | available          | False       |
-| 256f06d4-0cd3-4209-b0b1-89017670711f | None | None          | power off   | available          | False       |
-| 874b1450-670e-4ef9-a3c0-e2915274ad5c | None | None          | power off   | available          | False       |
-| 7e0653d3-f975-48b0-9761-cad834479cdb | None | None          | power off   | available          | False       |
-| bf1b4bd8-273e-4495-8a6f-6eb338645c6c | None | None          | power off   | available          | False       |
-+--------------------------------------+------+---------------+-------------+--------------------+-------------+
++--------------------------------------+--------+---------------+-------------+--------------------+-------------+
+| UUID                                 | Name   | Instance UUID | Power State | Provisioning State | Maintenance |
++--------------------------------------+--------+---------------+-------------+--------------------+-------------+
+| 931bcdcf-85d9-459c-ac43-828cd779d140 | cont01 | None          | power off   | available          | False       |
+| 0687a312-e431-49d5-94e2-e278a9f9b541 | cont02 | None          | power off   | available          | False       |
+| ac71493d-c575-4e5a-8aef-dc376376bf97 | cont03 | None          | power off   | available          | False       |
+| 47fc4a92-8338-44e2-8d30-614f18da8d5c | comp01 | None          | power off   | available          | False       |
+| b248739b-f79c-4d0e-b404-19831e40fbf4 | comp02 | None          | power off   | available          | False       |
+| a36835aa-4d9d-42ce-a80d-a576bcb8182e | comp03 | None          | power off   | available          | False       |
+| e6327431-8571-4355-b095-fc52923d4031 | ceph01 | None          | power off   | available          | False       |
+| 74b3376b-6a4e-4e8e-85e2-4032a15e0494 | ceph02 | None          | power off   | available          | False       |
+| c7aa3aab-e57a-4936-b55f-e5ce02c7f4b2 | ceph03 | None          | power off   | available          | False       |
++--------------------------------------+--------+---------------+-------------+--------------------+-------------+
+
+```
+> **Introspection Data Analysis**
+
+The following section will show how to check the introspection data collected during the pervious steps:
+
+```
+[stack@undercloud ~]$ mkdir swift-data
+[stack@undercloud ~]$ cd swift-data
+[stack@undercloud swift-data]$ export SWIFT_PASSWORD=`sudo crudini --get /etc/ironic-inspector/inspector.conf swift password`
+
+[stack@undercloud swift-data]$ for node in $(ironic node-list | grep -v UUID| awk '{print $2}'); do swift -U service:ironic -K $SWIFT_PASSWORD download ironic-inspector inspector_data-$node; done
+inspector_data-931bcdcf-85d9-459c-ac43-828cd779d140 [auth 0.470s, headers 0.664s, total 0.664s, 0.242 MB/s]
+inspector_data-0687a312-e431-49d5-94e2-e278a9f9b541 [auth 0.403s, headers 0.516s, total 0.517s, 0.414 MB/s]
+inspector_data-ac71493d-c575-4e5a-8aef-dc376376bf97 [auth 0.388s, headers 0.517s, total 0.518s, 0.248 MB/s]
+inspector_data-47fc4a92-8338-44e2-8d30-614f18da8d5c [auth 0.393s, headers 0.513s, total 0.513s, 0.354 MB/s]
+inspector_data-b248739b-f79c-4d0e-b404-19831e40fbf4 [auth 0.409s, headers 0.557s, total 0.558s, 0.318 MB/s]
+inspector_data-a36835aa-4d9d-42ce-a80d-a576bcb8182e [auth 0.481s, headers 0.700s, total 0.701s, 0.215 MB/s]
+inspector_data-e6327431-8571-4355-b095-fc52923d4031 [auth 0.395s, headers 0.523s, total 0.524s, 0.367 MB/s]
+inspector_data-74b3376b-6a4e-4e8e-85e2-4032a15e0494 [auth 0.391s, headers 0.520s, total 0.520s, 0.366 MB/s]
+inspector_data-c7aa3aab-e57a-4936-b55f-e5ce02c7f4b2 [auth 0.399s, headers 0.515s, total 0.516s, 0.405 MB/s]
+
+[stack@undercloud swift-data]$ ll
+total 412
+-rw-rw-r--. 1 stack stack 47149 Dec  6 07:16 inspector_data-0687a312-e431-49d5-94e2-e278a9f9b541
+-rw-rw-r--. 1 stack stack 42540 Dec  6 07:16 inspector_data-47fc4a92-8338-44e2-8d30-614f18da8d5c
+-rw-rw-r--. 1 stack stack 47438 Dec  6 07:16 inspector_data-74b3376b-6a4e-4e8e-85e2-4032a15e0494
+-rw-rw-r--. 1 stack stack 47126 Dec  6 07:16 inspector_data-931bcdcf-85d9-459c-ac43-828cd779d140
+-rw-rw-r--. 1 stack stack 47311 Dec  6 07:16 inspector_data-a36835aa-4d9d-42ce-a80d-a576bcb8182e
+-rw-rw-r--. 1 stack stack 32131 Dec  6 07:16 inspector_data-ac71493d-c575-4e5a-8aef-dc376376bf97
+-rw-rw-r--. 1 stack stack 47312 Dec  6 07:16 inspector_data-b248739b-f79c-4d0e-b404-19831e40fbf4
+-rw-rw-r--. 1 stack stack 47284 Dec  6 07:16 inspector_data-c7aa3aab-e57a-4936-b55f-e5ce02c7f4b2
+-rw-rw-r--. 1 stack stack 47422 Dec  6 07:16 inspector_data-e6327431-8571-4355-b095-fc52923d4031
+
+[stack@undercloud swift-data]$ openstack baremetal node list  -f value -c UUID -c Name | tee /tmp/1
+931bcdcf-85d9-459c-ac43-828cd779d140 cont01
+0687a312-e431-49d5-94e2-e278a9f9b541 cont02
+ac71493d-c575-4e5a-8aef-dc376376bf97 cont03
+47fc4a92-8338-44e2-8d30-614f18da8d5c comp01
+b248739b-f79c-4d0e-b404-19831e40fbf4 comp02
+a36835aa-4d9d-42ce-a80d-a576bcb8182e comp03
+e6327431-8571-4355-b095-fc52923d4031 ceph01
+74b3376b-6a4e-4e8e-85e2-4032a15e0494 ceph02
+c7aa3aab-e57a-4936-b55f-e5ce02c7f4b2 ceph03
+
+[stack@undercloud swift-data]$ while read i n; do mv inspector_data-$i inspector_data-$n; done < /tmp/1
+[stack@undercloud swift-data]$ ll
+total 412
+-rw-rw-r--. 1 stack stack 47422 Dec  6 07:16 inspector_data-ceph01
+-rw-rw-r--. 1 stack stack 47438 Dec  6 07:16 inspector_data-ceph02
+-rw-rw-r--. 1 stack stack 47284 Dec  6 07:16 inspector_data-ceph03
+-rw-rw-r--. 1 stack stack 42540 Dec  6 07:16 inspector_data-comp01
+-rw-rw-r--. 1 stack stack 47312 Dec  6 07:16 inspector_data-comp02
+-rw-rw-r--. 1 stack stack 47311 Dec  6 07:16 inspector_data-comp03
+-rw-rw-r--. 1 stack stack 47126 Dec  6 07:16 inspector_data-cont01
+-rw-rw-r--. 1 stack stack 47149 Dec  6 07:16 inspector_data-cont02
+-rw-rw-r--. 1 stack stack 32131 Dec  6 07:16 inspector_data-cont03
+
+[stack@undercloud swift-data]$ for name in `openstack baremetal node list  -f value -c Name`
+> do
+> echo "NODE: $name"
+> echo ============================
+> cat inspector_data-$name | jq '.inventory.disks' | tee ${name}.disk
+> echo "---------------------------"
+> done >all_disk.out
+
+[stack@undercloud swift-data]$ ll
+total 468
+-rw-rw-r--. 1 stack stack 16489 Dec  6 07:25 all_disk.out
+-rw-rw-r--. 1 stack stack  1762 Dec  6 07:25 ceph01.disk
+-rw-rw-r--. 1 stack stack  1762 Dec  6 07:25 ceph02.disk
+-rw-rw-r--. 1 stack stack  1762 Dec  6 07:25 ceph03.disk
+-rw-rw-r--. 1 stack stack  1762 Dec  6 07:25 comp01.disk
+-rw-rw-r--. 1 stack stack  1762 Dec  6 07:25 comp02.disk
+-rw-rw-r--. 1 stack stack  1762 Dec  6 07:25 comp03.disk
+-rw-rw-r--. 1 stack stack  1762 Dec  6 07:25 cont01.disk
+-rw-rw-r--. 1 stack stack  1764 Dec  6 07:25 cont02.disk
+-rw-rw-r--. 1 stack stack  1761 Dec  6 07:25 cont03.disk
+-rw-rw-r--. 1 stack stack 47422 Dec  6 07:16 inspector_data-ceph01
+-rw-rw-r--. 1 stack stack 47438 Dec  6 07:16 inspector_data-ceph02
+-rw-rw-r--. 1 stack stack 47284 Dec  6 07:16 inspector_data-ceph03
+-rw-rw-r--. 1 stack stack 42540 Dec  6 07:16 inspector_data-comp01
+-rw-rw-r--. 1 stack stack 47312 Dec  6 07:16 inspector_data-comp02
+-rw-rw-r--. 1 stack stack 47311 Dec  6 07:16 inspector_data-comp03
+-rw-rw-r--. 1 stack stack 47126 Dec  6 07:16 inspector_data-cont01
+-rw-rw-r--. 1 stack stack 47149 Dec  6 07:16 inspector_data-cont02
+-rw-rw-r--. 1 stack stack 32131 Dec  6 07:16 inspector_data-cont03
+[stack@undercloud swift-data]$ for name in `openstack baremetal node list  -f value -c Name`; do echo "NODE: $name"; echo ============================; cat inspector_data-$name | jq '.inventory.interfaces' | tee ${name}.int; echo "---------------------------"; done >all_interfaces.out
+
+[stack@undercloud swift-data]$ ll
+total 592
+-rw-rw-r--. 1 stack stack 16489 Dec  6 07:25 all_disk.out
+-rw-rw-r--. 1 stack stack 53409 Dec  6 07:27 all_interfaces.out
+-rw-rw-r--. 1 stack stack  1762 Dec  6 07:25 ceph01.disk
+-rw-rw-r--. 1 stack stack  6711 Dec  6 07:27 ceph01.int
+-rw-rw-r--. 1 stack stack  1762 Dec  6 07:25 ceph02.disk
+-rw-rw-r--. 1 stack stack  6637 Dec  6 07:27 ceph02.int
+-rw-rw-r--. 1 stack stack  1762 Dec  6 07:25 ceph03.disk
+-rw-rw-r--. 1 stack stack  6341 Dec  6 07:27 ceph03.int
+-rw-rw-r--. 1 stack stack  1762 Dec  6 07:25 comp01.disk
+-rw-rw-r--. 1 stack stack  5235 Dec  6 07:27 comp01.int
+-rw-rw-r--. 1 stack stack  1762 Dec  6 07:25 comp02.disk
+-rw-rw-r--. 1 stack stack  6341 Dec  6 07:27 comp02.int
+-rw-rw-r--. 1 stack stack  1762 Dec  6 07:25 comp03.disk
+-rw-rw-r--. 1 stack stack  6341 Dec  6 07:27 comp03.int
+-rw-rw-r--. 1 stack stack  1762 Dec  6 07:25 cont01.disk
+-rw-rw-r--. 1 stack stack  6075 Dec  6 07:27 cont01.int
+-rw-rw-r--. 1 stack stack  1764 Dec  6 07:25 cont02.disk
+-rw-rw-r--. 1 stack stack  6075 Dec  6 07:27 cont02.int
+-rw-rw-r--. 1 stack stack  1761 Dec  6 07:25 cont03.disk
+-rw-rw-r--. 1 stack stack  3023 Dec  6 07:27 cont03.int
+-rw-rw-r--. 1 stack stack 47422 Dec  6 07:16 inspector_data-ceph01
+-rw-rw-r--. 1 stack stack 47438 Dec  6 07:16 inspector_data-ceph02
+-rw-rw-r--. 1 stack stack 47284 Dec  6 07:16 inspector_data-ceph03
+-rw-rw-r--. 1 stack stack 42540 Dec  6 07:16 inspector_data-comp01
+-rw-rw-r--. 1 stack stack 47312 Dec  6 07:16 inspector_data-comp02
+-rw-rw-r--. 1 stack stack 47311 Dec  6 07:16 inspector_data-comp03
+-rw-rw-r--. 1 stack stack 47126 Dec  6 07:16 inspector_data-cont01
+-rw-rw-r--. 1 stack stack 47149 Dec  6 07:16 inspector_data-cont02
+-rw-rw-r--. 1 stack stack 32131 Dec  6 07:16 inspector_data-cont03
+
+[stack@undercloud swift-data]$ more  ceph01.disk
+[
+  {
+    "size": 400088457216,
+    "rotational": false,
+    "vendor": "SanDisk",
+    "name": "/dev/sda",
+    "wwn_vendor_extension": null,
+    "wwn_with_extension": "0x5001e820027f8bf8",
+    "model": "LT0400WM",
+    "wwn": "0x5001e820027f8bf8",
+    "serial": "5001e820027f8bf8"
+  },
+  {
+    "size": 1200243695616,
+    "rotational": true,
+    "vendor": "SEAGATE",
+    "name": "/dev/sdb",
+    "wwn_vendor_extension": null,
+    "wwn_with_extension": "0x5000c50093f99c97",
+    "model": "ST1200MM0088",
+    "wwn": "0x5000c50093f99c97",
+    "serial": "5000c50093f99c97"
+  },
+  {
+    "size": 1200243695616,
+    "rotational": true,
+    "vendor": "SEAGATE",
+    "name": "/dev/sdc",
+    "wwn_vendor_extension": null,
+    "wwn_with_extension": "0x5000c50093f95e8f",
+    "model": "ST1200MM0088",
+    "wwn": "0x5000c50093f95e8f",
+    "serial": "5000c50093f95e8f"
+  },
+  {
+    "size": 1200243695616,
+    "rotational": true,
+    "vendor": "SEAGATE",
+    "name": "/dev/sdd",
+    "wwn_vendor_extension": null,
+    "wwn_with_extension": "0x5000c50093f978b7",
+    "model": "ST1200MM0088",
+    "wwn": "0x5000c50093f978b7",
+    "serial": "5000c50093f978b7"
+  },
+  {
+    "size": 1200243695616,
+    "rotational": true,
+    "vendor": "SEAGATE",
+    "name": "/dev/sde",
+    "wwn_vendor_extension": null,
+    "wwn_with_extension": "0x5000c50093f9867f",
+    "model": "ST1200MM0088",
+    "wwn": "0x5000c50093f9867f",
+    "serial": "5000c50093f9867f"
+  },
+  {
+    "size": 375809638400,
+    "rotational": true,
+    "vendor": "DELL",
+    "name": "/dev/sdf",
+    "wwn_vendor_extension": "0x21a52208448d24a4",
+    "wwn_with_extension": "0x6b083fe0dc84a50021a52208448d24a4",
+    "model": "PERC H730P Mini",
+    "wwn": "0x6b083fe0dc84a500",
+    "serial": "6b083fe0dc84a50021a52208448d24a4"
+  }
+]
+
 ```
 ## TO Be Continued ##
 ## Acknowledgments

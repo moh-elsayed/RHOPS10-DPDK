@@ -3,6 +3,7 @@
 			"mac": [
 				"EC:F4:BB:E7:FC:24"
 			],
+			"name": "cont01",
 			"pm_type": "pxe_ipmitool",
 			"pm_user": "root",
 			"pm_password": "calvin",
@@ -12,6 +13,7 @@
 			"mac": [
 				"EC:F4:BB:E8:03:54"
 			],
+			"name": "cont02",
 			"pm_type": "pxe_ipmitool",
 			"pm_user": "root",
 			"pm_password": "calvin",
@@ -21,6 +23,7 @@
 			"mac": [
 				"EC:F4:BB:E8:02:24"
 			],
+			"name": "cont03",
 			"pm_type": "pxe_ipmitool",
 			"pm_user": "root",
 			"pm_password": "calvin",
@@ -30,6 +33,7 @@
 			"mac": [
 				"EC:F4:BB:E8:03:5C"
 			],
+			"name": "comp01",
 			"pm_type": "pxe_ipmitool",
 			"pm_user": "root",
 			"pm_password": "calvin",
@@ -39,6 +43,7 @@
 			"mac": [
 				"EC:F4:BB:E7:FC:4C"
 			],
+			"name": "comp02",
 			"pm_type": "pxe_ipmitool",
 			"pm_user": "root",
 			"pm_password": "calvin",
@@ -48,6 +53,7 @@
 			"mac": [
 				"EC:F4:BB:E8:03:A4"
 			],
+			"name": "comp03",
 			"pm_type": "pxe_ipmitool",
 			"pm_user": "root",
 			"pm_password": "calvin",
@@ -57,6 +63,7 @@
 			"mac": [
 				"EC:F4:BB:E8:DA:B4"
 			],
+			"name": "ceph01",
 			"pm_type": "pxe_ipmitool",
 			"pm_user": "root",
 			"pm_password": "calvin",
@@ -66,6 +73,7 @@
 			"mac": [
 				"EC:F4:BB:E8:DF:8C"
 			],
+			"name": "ceph02",
 			"pm_type": "pxe_ipmitool",
 			"pm_user": "root",
 			"pm_password": "calvin",
@@ -75,6 +83,7 @@
 			"mac": [
 				"EC:F4:BB:E7:FC:74"
 			],
+			"name": "ceph03",
 			"pm_type": "pxe_ipmitool",
 			"pm_user": "root",
 			"pm_password": "calvin",
