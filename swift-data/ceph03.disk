@@ -1,0 +1,68 @@
+[
+  {
+    "size": 400088457216,
+    "rotational": false,
+    "vendor": "SanDisk",
+    "name": "/dev/sda",
+    "wwn_vendor_extension": null,
+    "wwn_with_extension": "0x5001e820027f5158",
+    "model": "LT0400WM",
+    "wwn": "0x5001e820027f5158",
+    "serial": "5001e820027f5158"
+  },
+  {
+    "size": 1200243695616,
+    "rotational": true,
+    "vendor": "SEAGATE",
+    "name": "/dev/sdb",
+    "wwn_vendor_extension": null,
+    "wwn_with_extension": "0x5000c50093f5ecef",
+    "model": "ST1200MM0088",
+    "wwn": "0x5000c50093f5ecef",
+    "serial": "5000c50093f5ecef"
+  },
+  {
+    "size": 1200243695616,
+    "rotational": true,
+    "vendor": "SEAGATE",
+    "name": "/dev/sdc",
+    "wwn_vendor_extension": null,
+    "wwn_with_extension": "0x5000c50093f9939b",
+    "model": "ST1200MM0088",
+    "wwn": "0x5000c50093f9939b",
+    "serial": "5000c50093f9939b"
+  },
+  {
+    "size": 1200243695616,
+    "rotational": true,
+    "vendor": "SEAGATE",
+    "name": "/dev/sdd",
+    "wwn_vendor_extension": null,
+    "wwn_with_extension": "0x5000c50093f99efb",
+    "model": "ST1200MM0088",
+    "wwn": "0x5000c50093f99efb",
+    "serial": "5000c50093f99efb"
+  },
+  {
+    "size": 1200243695616,
+    "rotational": true,
+    "vendor": "SEAGATE",
+    "name": "/dev/sde",
+    "wwn_vendor_extension": null,
+    "wwn_with_extension": "0x5000c50093f9991b",
+    "model": "ST1200MM0088",
+    "wwn": "0x5000c50093f9991b",
+    "serial": "5000c50093f9991b"
+  },
+  {
+    "size": 375809638400,
+    "rotational": true,
+    "vendor": "DELL",
+    "name": "/dev/sdf",
+    "wwn_vendor_extension": "0x21a5248856fdc677",
+    "wwn_with_extension": "0x6b083fe0dc84060021a5248856fdc677",
+    "model": "PERC H730P Mini",
+    "wwn": "0x6b083fe0dc840600",
+    "serial": "6b083fe0dc84060021a5248856fdc677"
+  }
+]

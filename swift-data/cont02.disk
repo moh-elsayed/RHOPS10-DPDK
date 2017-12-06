@@ -1,0 +1,68 @@
+[
+  {
+    "size": 400088457216,
+    "rotational": false,
+    "vendor": "TOSHIBA",
+    "name": "/dev/sda",
+    "wwn_vendor_extension": null,
+    "wwn_with_extension": "0x50000395fc89f5a8",
+    "model": "PX02SSF040",
+    "wwn": "0x50000395fc89f5a8",
+    "serial": "50000395fc89f5a8"
+  },
+  {
+    "size": 1200243695616,
+    "rotational": true,
+    "vendor": "SEAGATE",
+    "name": "/dev/sdb",
+    "wwn_vendor_extension": null,
+    "wwn_with_extension": "0x5000c50093f60663",
+    "model": "ST1200MM0088",
+    "wwn": "0x5000c50093f60663",
+    "serial": "5000c50093f60663"
+  },
+  {
+    "size": 1200243695616,
+    "rotational": true,
+    "vendor": "SEAGATE",
+    "name": "/dev/sdc",
+    "wwn_vendor_extension": null,
+    "wwn_with_extension": "0x5000c50093f95c5b",
+    "model": "ST1200MM0088",
+    "wwn": "0x5000c50093f95c5b",
+    "serial": "5000c50093f95c5b"
+  },
+  {
+    "size": 1200243695616,
+    "rotational": true,
+    "vendor": "SEAGATE",
+    "name": "/dev/sdd",
+    "wwn_vendor_extension": null,
+    "wwn_with_extension": "0x5000c50093f961e3",
+    "model": "ST1200MM0088",
+    "wwn": "0x5000c50093f961e3",
+    "serial": "5000c50093f961e3"
+  },
+  {
+    "size": 1200243695616,
+    "rotational": true,
+    "vendor": "SEAGATE",
+    "name": "/dev/sde",
+    "wwn_vendor_extension": null,
+    "wwn_with_extension": "0x5000c50093f9516f",
+    "model": "ST1200MM0088",
+    "wwn": "0x5000c50093f9516f",
+    "serial": "5000c50093f9516f"
+  },
+  {
+    "size": 375809638400,
+    "rotational": true,
+    "vendor": "DELL",
+    "name": "/dev/sdf",
+    "wwn_vendor_extension": "0x21a4cf4ec014b433",
+    "wwn_with_extension": "0x644a842011a9f60021a4cf4ec014b433",
+    "model": "PERC H730P Mini",
+    "wwn": "0x644a842011a9f600",
+    "serial": "644a842011a9f60021a4cf4ec014b433"
+  }
+]
