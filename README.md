@@ -493,7 +493,63 @@ The requested action "manage" can not be performed on node "bf1b4bd8-273e-4495-8
 | 7e0653d3-f975-48b0-9761-cad834479cdb | None | None          | power off   | manageable         | False       |
 | bf1b4bd8-273e-4495-8a6f-6eb338645c6c | None | None          | power off   | manageable         | False       |
 +--------------------------------------+------+---------------+-------------+--------------------+-------------+
+```
+Run the following command to inspect the hardware attributes of each node:
+```
+[stack@undercloud log]$ openstack overcloud node introspect --all-manageable --provide
+Started Mistral Workflow. Execution ID: f5fd2afd-7bbf-4d57-a0e9-1d9f98be58a8
+Waiting for introspection to finish...
+Introspection for UUID 87f93584-e3ff-42cb-a3b8-d1336a725ab1 finished successfully.
+Introspection for UUID 256f06d4-0cd3-4209-b0b1-89017670711f finished successfully.
+Introspection for UUID 7e5bf215-0f9b-48f6-90e0-2442b2cb6d6e finished successfully.
+Introspection for UUID 7e0653d3-f975-48b0-9761-cad834479cdb finished successfully.
+Introspection for UUID bf1b4bd8-273e-4495-8a6f-6eb338645c6c finished successfully.
+Introspection for UUID 874b1450-670e-4ef9-a3c0-e2915274ad5c finished successfully.
+Introspection for UUID 991aca8b-2f1f-49c5-ad4c-c5b93c31e3a2 finished successfully.
+Introspection for UUID 8a184931-abb7-4268-8fd8-a73313eed598 finished successfully.
+Introspection for UUID 9a0f0450-6aed-45f0-ae58-2cf603ce8d01 finished successfully.
+Introspection completed.
+Started Mistral Workflow. Execution ID: da882a31-befa-4d9f-92f4-410c76d17496
 
+```
+The command will take about 10 mins to inspect 12 nodes, you can verfiy by openning all nodes's console view to check the PXE boot process:
+![](https://i.imgur.com/0ayR17z.png)
+
+During the Inspection all nodes should be powered up:
+
+```
+[stack@undercloud ~]$ openstack baremetal node list
++--------------------------------------+------+---------------+-------------+--------------------+-------------+
+| UUID                                 | Name | Instance UUID | Power State | Provisioning State | Maintenance |
++--------------------------------------+------+---------------+-------------+--------------------+-------------+
+| 87f93584-e3ff-42cb-a3b8-d1336a725ab1 | None | None          | power on    | manageable         | False       |
+| 9a0f0450-6aed-45f0-ae58-2cf603ce8d01 | None | None          | power on    | manageable         | False       |
+| 991aca8b-2f1f-49c5-ad4c-c5b93c31e3a2 | None | None          | power on    | manageable         | False       |
+| 7e5bf215-0f9b-48f6-90e0-2442b2cb6d6e | None | None          | power on    | manageable         | False       |
+| 8a184931-abb7-4268-8fd8-a73313eed598 | None | None          | power on    | manageable         | False       |
+| 256f06d4-0cd3-4209-b0b1-89017670711f | None | None          | power on    | manageable         | False       |
+| 874b1450-670e-4ef9-a3c0-e2915274ad5c | None | None          | power on    | manageable         | False       |
+| 7e0653d3-f975-48b0-9761-cad834479cdb | None | None          | power on    | manageable         | False       |
+| bf1b4bd8-273e-4495-8a6f-6eb338645c6c | None | None          | power on    | manageable         | False       |
++--------------------------------------+------+---------------+-------------+--------------------+-------------+
+```
+
+After the inspection: all nodes will be powered-off and Provisioning Stated switched from manageable to **available**. 
+```
+[stack@undercloud log]$ openstack baremetal node list
++--------------------------------------+------+---------------+-------------+--------------------+-------------+
+| UUID                                 | Name | Instance UUID | Power State | Provisioning State | Maintenance |
++--------------------------------------+------+---------------+-------------+--------------------+-------------+
+| 87f93584-e3ff-42cb-a3b8-d1336a725ab1 | None | None          | power off   | available          | False       |
+| 9a0f0450-6aed-45f0-ae58-2cf603ce8d01 | None | None          | power off   | available          | False       |
+| 991aca8b-2f1f-49c5-ad4c-c5b93c31e3a2 | None | None          | power off   | available          | False       |
+| 7e5bf215-0f9b-48f6-90e0-2442b2cb6d6e | None | None          | power off   | available          | False       |
+| 8a184931-abb7-4268-8fd8-a73313eed598 | None | None          | power off   | available          | False       |
+| 256f06d4-0cd3-4209-b0b1-89017670711f | None | None          | power off   | available          | False       |
+| 874b1450-670e-4ef9-a3c0-e2915274ad5c | None | None          | power off   | available          | False       |
+| 7e0653d3-f975-48b0-9761-cad834479cdb | None | None          | power off   | available          | False       |
+| bf1b4bd8-273e-4495-8a6f-6eb338645c6c | None | None          | power off   | available          | False       |
++--------------------------------------+------+---------------+-------------+--------------------+-------------+
 ```
 ## Acknowledgments
 
