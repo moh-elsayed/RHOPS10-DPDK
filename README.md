@@ -13,7 +13,7 @@ These instructions will reflect the RHOSP10 on a CIP blueprint along with scaleI
    Seq  | Name | Network Address | VLAN_ID | Switch
 ------------- | ------------- | ------------- | ------------- | -------------
 1  | Public/Floating/IPMI Network  | 172.17.84.0/24| 3084 | mgmt/Global
-2  | Undercloud Private  | 10.30.100.0/24 | 100 | mgmt/Internal
+2  | Undercloud Deployment  | 10.30.100.0/24 | 100 | mgmt/Internal
 3 | Internal network | 10.30.200.0/24 | 200 | ToR Switches/Internal
 4| Tenant network | 10.30.201.0/24 | 201 | ToR Switches/Internal
 5| Storage network | 10.30.202.0/24 | 202 | ToR Switches/Internal
@@ -59,12 +59,11 @@ A step by step deployment
 
 > **Undercloud Preparation** 
 ```
-[root@undercloud ~]# hostname
-undercloud.sio.lab
 [root@undercloud ~]# more  /etc/hosts
 127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
 172.17.84.10            undercloud.sio.lab undercloud
 172.17.84.6             siorhn.sio.lab  siorhn
+#192.0.2.6              siorhn.sio.lab  siorhn
 
 [root@undercloud ~]# ip a
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN qlen 1
@@ -81,10 +80,20 @@ undercloud.sio.lab
        valid_lft forever preferred_lft forever
 3: ens34: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
     link/ether 00:50:56:92:53:0f brd ff:ff:ff:ff:ff:ff
-    inet 10.30.100.2/24 brd 10.30.100.255 scope global ens34
+    inet 192.0.2.1/24 brd 192.0.2.255 scope global ens34
        valid_lft forever preferred_lft forever
     inet6 fe80::250:56ff:fe92:530f/64 scope link
        valid_lft forever preferred_lft forever
+
+[root@undercloud ~]# netstat -rn
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags   MSS Window  irtt Iface
+0.0.0.0         172.17.84.254   0.0.0.0         UG        0 0          0 ens33
+169.254.0.0     0.0.0.0         255.255.0.0     U         0 0          0 ens33
+169.254.0.0     0.0.0.0         255.255.0.0     U         0 0          0 ens34
+172.17.84.0     0.0.0.0         255.255.255.0   U         0 0          0 ens33
+192.0.2.0       0.0.0.0         255.255.255.0   U         0 0          0 ens34
+
 
 [root@undercloud ~]# ls  -ltr  /etc/yum.repos.d/
 total 8
@@ -201,28 +210,28 @@ a modified version the undercloud.conf is shown hereunder:
 ```
 [stack@undercloud ~]$ egrep  -v "^$|#" undercloud.conf
 [DEFAULT]
-local_ip = 172.17.84.10/24
-network_gateway = 172.17.84.254
-undercloud_public_vip = 172.17.84.20
-undercloud_admin_vip = 172.17.84.21
-local_interface = ens33
-network_cidr = 172.17.84.0/24
-masquerade_network = 172.17.84.0/24
-dhcp_start = 172.17.84.45
-dhcp_end = 172.17.84.79
-inspection_iprange = 172.17.84.100,172.17.84.120
+local_ip = 192.0.2.1/24
+network_gateway = 192.0.2.1
+undercloud_public_vip = 192.0.2.2
+undercloud_admin_vip = 192.0.2.3
+local_interface = ens34
+network_cidr = 192.0.2.0/24
+masquerade_network = 192.0.2.0/24
+dhcp_start = 192.0.2.45
+dhcp_end = 192.0.2.100
+inspection_iprange = 192.0.2.101,192.0.2.120
 enable_ui = true
 [auth]
 undercloud_admin_password = Dell@123
 
-[stack@undercloud ~]$ netstat -rn
+[root@undercloud ~]# netstat -rn
 Kernel IP routing table
 Destination     Gateway         Genmask         Flags   MSS Window  irtt Iface
 0.0.0.0         172.17.84.254   0.0.0.0         UG        0 0          0 ens33
-10.30.100.0     0.0.0.0         255.255.255.0   U         0 0          0 ens34
 169.254.0.0     0.0.0.0         255.255.0.0     U         0 0          0 ens33
 169.254.0.0     0.0.0.0         255.255.0.0     U         0 0          0 ens34
 172.17.84.0     0.0.0.0         255.255.255.0   U         0 0          0 ens33
+192.0.2.0       0.0.0.0         255.255.255.0   U         0 0          0 ens34
 ```
 deploy the undercloud by running the below command, using the undercloud.conf file
 ```
