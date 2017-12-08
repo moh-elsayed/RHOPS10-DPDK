@@ -23,7 +23,7 @@ These instructions will reflect the RHOSP10 on a CIP blueprint along with scaleI
 9 | Data Network Range | | 220:230 |ToR Switches/Internal	
 > Note:
 > Undercloud deployment network must be untagged network:
-> Since i'm using a single interface for my External public network and undercloud deployment network. So VLAN 100 must be untagged and VLAN3084 should be tagged on the Dell network switch. to do that, follow the steps below:
+> Since i'm using a single 1G interface for my External public network and undercloud deployment network. So VLAN 100 must be untagged and VLAN3084 should be tagged on the Dell management switch. to do that, follow the steps below:
 > ```
 > ** Show the running configuration for one of the ports **
 > 
@@ -85,6 +85,182 @@ These instructions will reflect the RHOSP10 on a CIP blueprint along with scaleI
 11 | ScaleIO_SDS  | Dell R730 | 2 x 400 SSD & 4 x 1 TB | EC:F4:BB:E8:03:74
 12 | ScaleIO_SDS  | Dell R730 | 2 x 400 SSD & 4 x 1 TB | EC:F4:BB:E8:03:8C
 
+> Rack-Layout:
+
+![](https://i.imgur.com/MQRm0IS.png)
+
+> Server Port assignment:
+
+![](https://i.imgur.com/JCB0GCO.png)
+
+> ToR Topology:
+
+![](https://i.imgur.com/IeQxQW0.png)
+
+> ToR port assignment:
+
+![](https://i.imgur.com/CqFqqrt.png)
+
+Leaf Switches preparation
+
+```
+conf t
+interface range tengigabitethernet 1/1-1/48
+portmode hybrid
+switchport
+speed auto
+no shut
+exit
+
+#VLANs: VMware:#
+=============
+interface vlan 200
+description "vMotion-InternalRedhatOSP"
+tagged tengigabitethernet 1/1-1/48
+interface vlan 300
+description "vSAN-ScaleIO"
+tagged tengigabitethernet 1/1-1/48
+interface vlan 400
+description "VM-Replication"
+tagged tengigabitethernet 1/1-1/48
+interface vlan 500
+description "NFV-mgmt"
+tagged tengigabitethernet 1/1-1/48
+interface vlan 600
+description "NFV-Ext"
+tagged tengigabitethernet 1/1-1/48
+description "VM-VxLAN"
+interface vlan 700
+description "NFV-Ext"
+tagged tengigabitethernet 1/1-1/48
+exit
+
+#leaf-Spine:#
+==============
+interface fortyGigE 1/50
+shut
+interface fortyGigE 1/52
+shut
+exit
+
+interface fortyGigE 1/49
+switchport
+no shut
+interface fortyGigE 1/51
+switchport
+no shut
+exit
+
+interface vlan 200
+tagged fortyGigE 1/49
+tagged fortyGigE 1/51
+interface vlan 300
+tagged fortyGigE 1/49
+tagged fortyGigE 1/51
+interface vlan 400
+tagged fortyGigE 1/49
+tagged fortyGigE 1/51
+interface vlan 500
+tagged fortyGigE 1/49
+tagged fortyGigE 1/51
+interface vlan 600
+tagged fortyGigE 1/49
+tagged fortyGigE 1/51
+interface vlan 700
+tagged fortyGigE 1/49
+tagged fortyGigE 1/51
+exit
+
+Leaf-Leaf: Shutdown
+==============
+interface fortyGigE 1/53
+shut
+interface fortyGigE 1/54
+shut
+exit
+
+VLANs: Openstack
+=============
+interface vlan 201
+description "Tenant-Network"
+tagged tengigabitethernet 1/1-1/48
+tagged fortyGigE 1/49
+tagged fortyGigE 1/51
+interface vlan 202
+description "Storage-Network"
+tagged tengigabitethernet 1/1-1/48
+tagged fortyGigE 1/49
+tagged fortyGigE 1/51
+interface vlan 203
+description "Storage-mgmt"
+tagged tengigabitethernet 1/1-1/48
+tagged fortyGigE 1/49
+tagged fortyGigE 1/51
+interface vlan 220
+description "Data-Network01"
+tagged tengigabitethernet 1/1-1/48
+tagged fortyGigE 1/49
+tagged fortyGigE 1/51
+interface vlan 221
+description "Data-Network02"
+tagged tengigabitethernet 1/1-1/48
+tagged fortyGigE 1/49
+tagged fortyGigE 1/51
+
+do wr
+do show interfaces status
+```
+Spine Switches preparation
+
+```
+conf t
+interface range fortyGigE 1/7-1/14
+switchport
+no shut
+
+
+interface vlan 200
+description "vMotion-InternalRedhatOSP"
+tagged fortyGigE 1/7-1/14
+interface vlan 300
+description "vSAN-ScaleIO"
+tagged fortyGigE 1/7-1/14
+interface vlan 400
+description "VM-Replication"
+tagged fortyGigE 1/7-1/14
+interface vlan 500
+description "NFV-mgmt"
+tagged fortyGigE 1/7-1/14
+interface vlan 600
+description "NFV-Ext"
+tagged fortyGigE 1/7-1/14
+description "VM-VxLAN"
+interface vlan 700
+description "NFV-Ext"
+tagged fortyGigE 1/7-1/14
+exit
+
+
+interface vlan 201
+description "Tenant-Network"
+tagged fortyGigE 1/7-1/14
+interface vlan 202
+description "Storage-Network"
+tagged fortyGigE 1/7-1/14
+interface vlan 203
+description "Storage-mgmt"
+tagged fortyGigE 1/7-1/14
+interface vlan 220
+description "Data-Network01"
+tagged fortyGigE 1/7-1/14
+interface vlan 221
+description "Data-Network02"
+tagged fortyGigE 1/7-1/14
+do wr
+exit
+
+```
+
 ### Virtual Machine
 The entire virtual machines are running on tope ESXi R730 server. 
 
@@ -95,7 +271,7 @@ The entire virtual machines are running on tope ESXi R730 server.
 3 | Local Repo server  | RHEL7.3 | 4 | 2G
 4 | ScaleIO Gateway | RHEL7.3 | 4 | 4G
 
-> Network Topology
+> Solution Logical Diagram
 > ![](https://i.imgur.com/EBByxXy.png)
 In case of HCI "Hyper-Converged Infrastructure, SDS will be co-exist with the SDC on the compute nodes.
 
