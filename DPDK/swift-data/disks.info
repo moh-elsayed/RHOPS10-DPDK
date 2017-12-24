@@ -1,0 +1,256 @@
+NODE: 1271ee5c-7538-479a-92de-8bc3cc5b51cb
+[
+  {
+    "size": 898319253504,
+    "rotational": true,
+    "vendor": "DELL",
+    "name": "/dev/sda",
+    "wwn_vendor_extension": "0x2036c7c91b9a495f",
+    "wwn_with_extension": "0x644a842018e42e002036c7c91b9a495f",
+    "model": "PERC H730 Mini",
+    "wwn": "0x644a842018e42e00",
+    "serial": "644a842018e42e002036c7c91b9a495f"
+  }
+]
+-----
+NODE: c27a777a-2d4f-4462-a0eb-e18ff962e7f7
+[
+  {
+    "size": 898319253504,
+    "rotational": true,
+    "vendor": "DELL",
+    "name": "/dev/sda",
+    "wwn_vendor_extension": "0x2036c7b62025668a",
+    "wwn_with_extension": "0x6b083fe0c53ebf002036c7b62025668a",
+    "model": "PERC H730P Mini",
+    "wwn": "0x6b083fe0c53ebf00",
+    "serial": "6b083fe0c53ebf002036c7b62025668a"
+  }
+]
+-----
+NODE: c3c855b5-2115-44a5-9c78-57d91adfce12
+[
+  {
+    "size": 898319253504,
+    "rotational": true,
+    "vendor": "DELL",
+    "name": "/dev/sda",
+    "wwn_vendor_extension": "0x2036ee420e2ae0a3",
+    "wwn_with_extension": "0x6b083fe0c81cb1002036ee420e2ae0a3",
+    "model": "PERC H730P Mini",
+    "wwn": "0x6b083fe0c81cb100",
+    "serial": "6b083fe0c81cb1002036ee420e2ae0a3"
+  }
+]
+-----
+NODE: 58d2d719-9039-4524-b0fc-850171fff243
+[
+  {
+    "size": 438489317376,
+    "rotational": true,
+    "vendor": "DELL",
+    "name": "/dev/sda",
+    "wwn_vendor_extension": "0x2036cffc05b887d5",
+    "wwn_with_extension": "0x6b8ca3a0f2d19c002036cffc05b887d5",
+    "model": "PERC H710",
+    "wwn": "0x6b8ca3a0f2d19c00",
+    "serial": "6b8ca3a0f2d19c002036cffc05b887d5"
+  }
+]
+-----
+NODE: 509ec379-7c84-48bf-86cf-374376984cb6
+[
+  {
+    "size": 438489317376,
+    "rotational": true,
+    "vendor": "DELL",
+    "name": "/dev/sda",
+    "wwn_vendor_extension": "0x2036c8152163b194",
+    "wwn_with_extension": "0x6b8ca3a0f2d217002036c8152163b194",
+    "model": "PERC H710",
+    "wwn": "0x6b8ca3a0f2d21700",
+    "serial": "6b8ca3a0f2d217002036c8152163b194"
+  }
+]
+-----
+NODE: 4f9ce7d5-3346-4e52-972f-5ef0059231ee
+[
+  {
+    "size": 438489317376,
+    "rotational": true,
+    "vendor": "DELL",
+    "name": "/dev/sda",
+    "wwn_vendor_extension": "0x2036c77a23af30bb",
+    "wwn_with_extension": "0x6b8ca3a0f2d223002036c77a23af30bb",
+    "model": "PERC H710",
+    "wwn": "0x6b8ca3a0f2d22300",
+    "serial": "6b8ca3a0f2d223002036c77a23af30bb"
+  }
+]
+-----
+NODE: e45ce0ca-2863-49fa-afe7-ca2116d1aa0b
+[
+  {
+    "size": 146163105792,
+    "rotational": true,
+    "vendor": "DELL",
+    "name": "/dev/sda",
+    "wwn_vendor_extension": "0x19bcfb5914ae7e90",
+    "wwn_with_extension": "0x6b8ca3a0f2d20f0019bcfb5914ae7e90",
+    "model": "PERC H710",
+    "wwn": "0x6b8ca3a0f2d20f00",
+    "serial": "6b8ca3a0f2d20f0019bcfb5914ae7e90"
+  },
+  {
+    "size": 899527213056,
+    "rotational": true,
+    "vendor": "DELL",
+    "name": "/dev/sdb",
+    "wwn_vendor_extension": "0x2037a8840761fb73",
+    "wwn_with_extension": "0x6b8ca3a0f2d20f002037a8840761fb73",
+    "model": "PERC H710",
+    "wwn": "0x6b8ca3a0f2d20f00",
+    "serial": "6b8ca3a0f2d20f002037a8840761fb73"
+  },
+  {
+    "size": 899527213056,
+    "rotational": true,
+    "vendor": "DELL",
+    "name": "/dev/sdc",
+    "wwn_vendor_extension": "0x2037a88e07f60e46",
+    "wwn_with_extension": "0x6b8ca3a0f2d20f002037a88e07f60e46",
+    "model": "PERC H710",
+    "wwn": "0x6b8ca3a0f2d20f00",
+    "serial": "6b8ca3a0f2d20f002037a88e07f60e46"
+  },
+  {
+    "size": 899527213056,
+    "rotational": true,
+    "vendor": "DELL",
+    "name": "/dev/sdd",
+    "wwn_vendor_extension": "0x2037a89e08e1c848",
+    "wwn_with_extension": "0x6b8ca3a0f2d20f002037a89e08e1c848",
+    "model": "PERC H710",
+    "wwn": "0x6b8ca3a0f2d20f00",
+    "serial": "6b8ca3a0f2d20f002037a89e08e1c848"
+  },
+  {
+    "size": 2002780160,
+    "rotational": true,
+    "vendor": "STEC",
+    "name": "/dev/sde",
+    "wwn_vendor_extension": null,
+    "wwn_with_extension": null,
+    "model": "STEC USB 2.0",
+    "wwn": null,
+    "serial": "860041F83017ED99"
+  }
+]
+-----
+NODE: 8854cccf-9aa3-4af7-bb64-f47df01c5d34
+[
+  {
+    "size": 146163105792,
+    "rotational": true,
+    "vendor": "DELL",
+    "name": "/dev/sda",
+    "wwn_vendor_extension": "0x20356333050af9a7",
+    "wwn_with_extension": "0x6b8ca3a0f2d2460020356333050af9a7",
+    "model": "PERC H710",
+    "wwn": "0x6b8ca3a0f2d24600",
+    "serial": "6b8ca3a0f2d2460020356333050af9a7"
+  },
+  {
+    "size": 899527213056,
+    "rotational": true,
+    "vendor": "DELL",
+    "name": "/dev/sdb",
+    "wwn_vendor_extension": "0x20369c750a0ff544",
+    "wwn_with_extension": "0x6b8ca3a0f2d2460020369c750a0ff544",
+    "model": "PERC H710",
+    "wwn": "0x6b8ca3a0f2d24600",
+    "serial": "6b8ca3a0f2d2460020369c750a0ff544"
+  },
+  {
+    "size": 899527213056,
+    "rotational": true,
+    "vendor": "DELL",
+    "name": "/dev/sdc",
+    "wwn_vendor_extension": "0x20369c7e0a9622ac",
+    "wwn_with_extension": "0x6b8ca3a0f2d2460020369c7e0a9622ac",
+    "model": "PERC H710",
+    "wwn": "0x6b8ca3a0f2d24600",
+    "serial": "6b8ca3a0f2d2460020369c7e0a9622ac"
+  },
+  {
+    "size": 899527213056,
+    "rotational": true,
+    "vendor": "DELL",
+    "name": "/dev/sdd",
+    "wwn_vendor_extension": "0x20369c860b0c4c3e",
+    "wwn_with_extension": "0x6b8ca3a0f2d2460020369c860b0c4c3e",
+    "model": "PERC H710",
+    "wwn": "0x6b8ca3a0f2d24600",
+    "serial": "6b8ca3a0f2d2460020369c860b0c4c3e"
+  }
+]
+-----
+NODE: 31ba79d8-d4a5-4ddd-9e5c-624940a8d1c1
+[
+  {
+    "size": 146163105792,
+    "rotational": true,
+    "vendor": "DELL",
+    "name": "/dev/sda",
+    "wwn_vendor_extension": "0x2036074306601068",
+    "wwn_with_extension": "0x6b8ca3a0f2d1b9002036074306601068",
+    "model": "PERC H710",
+    "wwn": "0x6b8ca3a0f2d1b900",
+    "serial": "6b8ca3a0f2d1b9002036074306601068"
+  },
+  {
+    "size": 899527213056,
+    "rotational": true,
+    "vendor": "DELL",
+    "name": "/dev/sdb",
+    "wwn_vendor_extension": "0x2037466907125ae3",
+    "wwn_with_extension": "0x6b8ca3a0f2d1b9002037466907125ae3",
+    "model": "PERC H710",
+    "wwn": "0x6b8ca3a0f2d1b900",
+    "serial": "6b8ca3a0f2d1b9002037466907125ae3"
+  },
+  {
+    "size": 899527213056,
+    "rotational": true,
+    "vendor": "DELL",
+    "name": "/dev/sdc",
+    "wwn_vendor_extension": "0x2037411705a54104",
+    "wwn_with_extension": "0x6b8ca3a0f2d1b9002037411705a54104",
+    "model": "PERC H710",
+    "wwn": "0x6b8ca3a0f2d1b900",
+    "serial": "6b8ca3a0f2d1b9002037411705a54104"
+  },
+  {
+    "size": 899527213056,
+    "rotational": true,
+    "vendor": "DELL",
+    "name": "/dev/sdd",
+    "wwn_vendor_extension": "0x2037412406627660",
+    "wwn_with_extension": "0x6b8ca3a0f2d1b9002037412406627660",
+    "model": "PERC H710",
+    "wwn": "0x6b8ca3a0f2d1b900",
+    "serial": "6b8ca3a0f2d1b9002037412406627660"
+  },
+  {
+    "size": 1019215872,
+    "rotational": true,
+    "vendor": "Dell",
+    "name": "/dev/sde",
+    "wwn_vendor_extension": null,
+    "wwn_with_extension": null,
+    "model": "Internal Dual SD",
+    "wwn": null,
+    "serial": "0123456789AB"
+  }
+]
+-----

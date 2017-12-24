@@ -1,0 +1,104 @@
+# Enable the creation of Neutron networks for isolated Overcloud
+# traffic and configure each role to assign ports (related
+# to that role) on these networks.
+resource_registry:
+  OS::TripleO::Network::External: /home/stack/DPDK/openstack-tripleo-heat-templates/network/external.yaml
+  OS::TripleO::Network::InternalApi: /home/stack/DPDK/openstack-tripleo-heat-templates/network/internal_api.yaml
+  OS::TripleO::Network::StorageMgmt: /home/stack/DPDK/openstack-tripleo-heat-templates/network/storage_mgmt.yaml
+  OS::TripleO::Network::Storage: /home/stack/DPDK/openstack-tripleo-heat-templates/network/storage.yaml
+  OS::TripleO::Network::Tenant: /home/stack/DPDK/openstack-tripleo-heat-templates/network/tenant.yaml
+  # Management network is optional and disabled by default.
+  # To enable it, include environments/network-management.yaml
+  #OS::TripleO::Network::Management: /home/stack/DPDK/openstack-tripleo-heat-templates/network/management.yaml
+
+  # Port assignments for the VIPs
+  OS::TripleO::Network::Ports::ExternalVipPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/external.yaml
+  OS::TripleO::Network::Ports::InternalApiVipPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/internal_api.yaml
+  OS::TripleO::Network::Ports::StorageVipPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/storage.yaml
+  OS::TripleO::Network::Ports::StorageMgmtVipPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/storage_mgmt.yaml
+  OS::TripleO::Network::Ports::RedisVipPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/vip.yaml
+
+  # Port assignments for service virtual IPs for the controller role
+  OS::TripleO::Controller::Ports::RedisVipPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/vip.yaml
+  # Port assignments for the controller role
+  OS::TripleO::Controller::Ports::ExternalPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/external.yaml
+  OS::TripleO::Controller::Ports::InternalApiPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/internal_api.yaml
+  OS::TripleO::Controller::Ports::StoragePort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/storage.yaml
+  OS::TripleO::Controller::Ports::StorageMgmtPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/storage_mgmt.yaml
+  OS::TripleO::Controller::Ports::TenantPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/tenant.yaml
+  #OS::TripleO::Controller::Ports::ManagementPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/management.yaml
+
+  # Port assignments for the compute role
+  OS::TripleO::Compute::Ports::ExternalPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/external.yaml
+  OS::TripleO::Compute::Ports::InternalApiPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/internal_api.yaml
+  OS::TripleO::Compute::Ports::StoragePort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/storage.yaml
+  OS::TripleO::Compute::Ports::StorageMgmtPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/noop.yaml
+  OS::TripleO::Compute::Ports::TenantPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/tenant.yaml
+  #OS::TripleO::Compute::Ports::ManagementPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/management.yaml
+
+  # Port assignments for the ceph storage role
+  OS::TripleO::CephStorage::Ports::ExternalPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/external.yaml
+  OS::TripleO::CephStorage::Ports::InternalApiPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/noop.yaml
+  OS::TripleO::CephStorage::Ports::StoragePort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/storage.yaml
+  OS::TripleO::CephStorage::Ports::StorageMgmtPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/storage_mgmt.yaml
+  OS::TripleO::CephStorage::Ports::TenantPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/noop.yaml
+  #OS::TripleO::CephStorage::Ports::ManagementPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/management.yaml
+
+  # Port assignments for the swift storage role
+  OS::TripleO::SwiftStorage::Ports::ExternalPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/noop.yaml
+  OS::TripleO::SwiftStorage::Ports::InternalApiPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/internal_api.yaml
+  OS::TripleO::SwiftStorage::Ports::StoragePort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/storage.yaml
+  OS::TripleO::SwiftStorage::Ports::StorageMgmtPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/storage_mgmt.yaml
+  OS::TripleO::SwiftStorage::Ports::TenantPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/noop.yaml
+  #OS::TripleO::SwiftStorage::Ports::ManagementPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/management.yaml
+
+  # Port assignments for the block storage role
+  OS::TripleO::BlockStorage::Ports::ExternalPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/noop.yaml
+  OS::TripleO::BlockStorage::Ports::InternalApiPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/internal_api.yaml
+  OS::TripleO::BlockStorage::Ports::StoragePort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/storage.yaml
+  OS::TripleO::BlockStorage::Ports::StorageMgmtPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/storage_mgmt.yaml
+  OS::TripleO::BlockStorage::Ports::TenantPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/noop.yaml
+  #OS::TripleO::BlockStorage::Ports::ManagementPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/management.yaml
+
+################################
+# Moe Custom Roles
+################################
+  # Port assignments for the ComputeSriov role
+  OS::TripleO::ComputeSriov::Ports::ExternalPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/external.yaml
+  OS::TripleO::ComputeSriov::Ports::InternalApiPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/internal_api.yaml
+  OS::TripleO::ComputeSriov::Ports::StoragePort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/storage.yaml
+  OS::TripleO::ComputeSriov::Ports::StorageMgmtPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/noop.yaml
+  OS::TripleO::ComputeSriov::Ports::TenantPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/tenant.yaml
+  #OS::TripleO::ComputeSriov::Ports::ManagementPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/management.yaml
+
+  # Port assignments for the ComputeDpdk role
+  OS::TripleO::ComputeDpdk::Ports::ExternalPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/external.yaml
+  OS::TripleO::ComputeDpdk::Ports::InternalApiPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/internal_api.yaml
+  OS::TripleO::ComputeDpdk::Ports::StoragePort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/storage.yaml
+  OS::TripleO::ComputeDpdk::Ports::StorageMgmtPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/noop.yaml
+  OS::TripleO::ComputeDpdk::Ports::TenantPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/tenant.yaml
+  #OS::TripleO::ComputeDpdk::Ports::ManagementPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/management.yaml
+
+  # Port assignments for the ComputeHCI role
+  OS::TripleO::ComputeHci::Ports::ExternalPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/external.yaml
+  OS::TripleO::ComputeHci::Ports::InternalApiPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/internal_api.yaml
+  OS::TripleO::ComputeHci::Ports::StoragePort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/storage.yaml
+  OS::TripleO::ComputeHci::Ports::StorageMgmtPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/storage_mgmt.yaml
+  OS::TripleO::ComputeHci::Ports::TenantPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/tenant.yaml
+  #OS::TripleO::ComputeHci::Ports::ManagementPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/management.yaml
+
+  # Port assignments for the ComputeHCISriov role
+  OS::TripleO::ComputeHciSriov::Ports::ExternalPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/external.yaml
+  OS::TripleO::ComputeHciSriov::Ports::InternalApiPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/internal_api.yaml
+  OS::TripleO::ComputeHciSriov::Ports::StoragePort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/storage.yaml
+  OS::TripleO::ComputeHciSriov::Ports::StorageMgmtPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/storage_mgmt.yaml
+  OS::TripleO::ComputeHciSriov::Ports::TenantPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/tenant.yaml
+  #OS::TripleO::ComputeHciSriov::Ports::ManagementPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/management.yaml
+
+  # Port assignments for the ComputeHCIDpdk role
+  OS::TripleO::ComputeHciDpdk::Ports::ExternalPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/external.yaml
+  OS::TripleO::ComputeHciDpdk::Ports::InternalApiPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/internal_api.yaml
+  OS::TripleO::ComputeHciDpdk::Ports::StoragePort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/storage.yaml
+  OS::TripleO::ComputeHciDpdk::Ports::StorageMgmtPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/storage_mgmt.yaml
+  OS::TripleO::ComputeHciDpdk::Ports::TenantPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/tenant.yaml
+  #OS::TripleO::ComputeHciDpdk::Ports::ManagementPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/management.yaml

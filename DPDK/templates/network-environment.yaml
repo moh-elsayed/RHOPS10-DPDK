@@ -1,0 +1,187 @@
+#This file is an example of an environment file for defining the isolated
+#networks and related parameters.
+resource_registry:
+  # Network Interface templates to use (these files must exist)
+  OS::TripleO::Controller::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/control.yaml                       # Controller 
+  #OS::TripleO::Compute::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/compute.yaml                        # Normal Compute
+  OS::TripleO::ComputeDpdk::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/compute-dpdk.yaml               # Compute with DPDK-OVS
+  #OS::TripleO::ComputeSriov::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/compute-sriov.yaml             # Compute with SRIOV
+  #OS::TripleO::ComputeHCIDpdk::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/compute-hci-dpdk.yaml        # Compute/HCI and DPDK
+  #OS::TripleO::ComputeHCISriov::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/compute-hci-sriov.yaml      # Compute/HCI and SRIOV
+  OS::TripleO::CephStorage::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/ceph-storage.yaml               # Normal CEPH nodes
+
+  
+  ## First Boot template
+  OS::TripleO::NodeUserData: /home/stack/DPDK/templates/userdata/first-boot.yaml
+  ## Post Install templates 
+  OS::TripleO::NodeExtraConfigPost: /home/stack/DPDK/templates/userdata/post-install.yaml
+
+parameter_defaults:
+  CeilometerStoreEvents: true
+  # This section is where deployment-specific configuration is done
+  # Customize the IP subnets to match the local environment
+  InternalApiNetCidr: 10.30.200.0/24
+  TenantNetCidr: 10.30.201.0/24
+  ExternalNetCidr: 172.17.84.0/24
+  StorageNetCidr: 10.30.202.0/24
+  StorageMgmtNetCidr: 10.30.203.0/24
+  # CIDR subnet mask length for provisioning network
+  ControlPlaneSubnetCidr: "24"
+  # Customize the IP ranges on each network to use for static IPs and VIPs
+  InternalApiAllocationPools: [{'start': '110.30.200.51', 'end': '10.30.200.200'}]
+  TenantAllocationPools: [{'start': '10.30.201.51', 'end': '110.30.201.200'}]
+  StorageAllocationPools: [{'start': '10.30.202.51', 'end': '10.30.202.200'}]
+  StorageMgmtAllocationPools: [{'start': '110.30.203.51', 'end': '10.30.203.200'}]
+  # Leave room if the external network is also used for floating IPs
+  ExternalAllocationPools: [{'start': '172.17.84.151', 'end': '172.17.84.250'}]
+  # Gateway router for the external network
+  ExternalInterfaceDefaultRoute: 172.17.84.254
+  # Gateway router for the provisioning network (or Undercloud IP)
+  ControlPlaneDefaultRoute: 192.0.2.10
+  # Generally the IP of the Undercloud
+  EC2MetadataIp: 192.0.2.10
+  # Define the DNS servers (maximum 2) for the overcloud nodes
+  DnsServers: ["172.17.84.4,192.0.2.4"]
+  # Customize the VLAN IDs to match the local environment
+  InternalApiNetworkVlanID: 200
+  TenantNetworkVlanID: 201
+  StorageNetworkVlanID: 202
+  StorageMgmtNetworkVlanID: 203
+  ExternalNetworkVlanID: 3084
+
+  # Set to empty string to enable multiple external networks or VLANs
+  NeutronExternalNetworkBridge: "''"
+
+  # Messi : Need to check why to use this parameter
+  NeutronFlatNetworks: '*'
+  # The tunnel type for the tenant network (vxlan or gre). Set to '' to disable tunneling.
+  NeutronTunnelTypes: 'vxlan'
+  # The tenant network type for Neutron (vlan or vxlan).
+  NeutronNetworkType: 'vxlan'
+
+  # Messi: Mapping of teh bridge to networks The OVS logical->physical bridge mappings to use.
+  ## Moe## NeutronBridgeMappings: 'datacentre:br-ex,dpdk_data:br-link0,sriov0:br-sriov0,sriov1:br-sriov1'
+  NeutronBridgeMappings: 'NUMA0Data:br-link0,NUMA1Data:br-link1'
+  # The Neutron ML2 and OpenVSwitch vlan mapping range to support.
+  NeutronNetworkVLANRanges: 'br-link0:300:306,br-link1:300:306'
+
+  # Predictable VIPs
+  #ControlFixedIPs: [{'ip_address':'192.168.201.101'}]
+  #RedisVirtualFixedIPs: [{'ip_address':'172.16.0.8'}]
+  #InternalApiVirtualFixedIPs: [{'ip_address':'172.16.200.50'}]
+
+  PublicVirtualFixedIPs: [{'ip_address':'172.17.84.150'}]
+  StorageVirtualFixedIPs: [{'ip_address':'10.30.202.50'}]
+  StorageMgmtVirtualFixedIPs: [{'ip_address':'10.30.203.50'}]
+  BondInterfaceOvsOptions: "bond_mode=active-backup"
+  # Check: https://software.intel.com/en-us/articles/link-aggregation-configuration-and-usage-in-open-vswitch-with-dpdk
+  #BondInterfaceOvsOptions: "bond_mode=balance-tcp"
+
+  #####################################################################################################################
+  # OVS DPDK configuration
+  #####################################################################################################################
+  ###################
+  # CPU Parameters:
+  ###################
+
+  ## NeutronDpdkCoreList
+  ##########
+  # [Moe] Provides the CPU cores that are used for the DPDK poll mode drivers (" PMD ").
+  # [Moe] this is used for the pmd-cpu-mask value in the OpenvSwitch
+  # [Moe]   1) Pair the sibling threads together.
+  # [Moe]   2) Exclude all cores from the HostCpusList
+  # [Moe]   3) Avoid allocating the logical CPUs of the first physical core on both NUMA nodes as these should be used for the HostCpusList parameter.
+  # [Moe]   4) Performance depends on the number of physical cores allocated for this PMD Core list. On the NUMA node which is associated with DPDK NIC, allocate the required cores.
+  # Our Deployment Example:
+  # 2 * NIC in Numa 0 && 1 * NIC in NUMA 1
+  # For NUMA nodes with a DPDK NIC: Determine the number of physical cores required based on the performance requirement and include all the sibling threads (logical CPUs) for each physical core.
+  # For NUMA nodes without DPDK NICs: Allocate the sibling threads (logical CPUs) of one physical core (excluding the first physical core of the NUMA node). You need a minimal DPDK poll mode driver on the NUMA node even without DPDK NICs present to avoid failures in creating guest instances.
+  NeutronDpdkCoreList: "'2,22,3,23'"
+
+  ## NovaVcpuPinSet:
+  ##########
+  # Sets cores for CPU pinning. The Compute node uses these cores for guest instances. NovaVcpuPinSet is used as the vcpu_pin_set value in the nova.conf file.
+  # [Moe] Exclude all cores from the NeutronDpdkCoreList and the HostCpusList.
+  # [Moe] Include all remaining cores.
+  # [Moe] Pair the sibling threads together.
+  NovaVcpuPinSet: "'4,6,8,10,12,14,16,18,24,26,28,30,32,34,36,38,5,7,9,11,13,15,17,19,25,27,29,31,33,35,37,39'"
+
+  ## HostIsolatedCpuList
+  ##########
+  # A set of CPU cores isolated from the host processes. This parameter is used as the isolated_cores value in the cpu-partitioning-variable.conf file for the tuned-profiles-cpu-partitioning component.
+  # [Moe] Match the list of cores in NeutronDpdkCoreList and NovaVcpuPinSet.
+  # [Moe] Pair the sibling threads together.
+  HostIsolatedCoreList: "'2,4,6,8,10,12,14,16,18,22,24,26,28,30,32,34,36,38,3,5,7,9,11,13,15,17,19,23,25,27,29,31,33,35,37,39'"
+
+  ## HostCpusList
+  ##########
+  # Provides CPU cores for non data path OVS-DPDK processes, such as handler and revalidator threads. This parameter has no impact on overall data path performance on multi-NUMA node hardware. This parameter is used for the dpdk-lcore-mask value in Open vSwitch, and these cores are shared with the host.
+  # [Moe] Allocate the first physical core (and sibling thread) from each NUMA node (even if the NUMA node has no associated DPDK NIC).
+  # [Moe] These cores must be mutually exclusive from the list of cores in NeutronDpdkCoreList and NovaVcpuPinSet.
+  HostCpusList: "0,20,1,21"
+
+  ###################
+  # Memory Parameters:
+  ###################
+  
+  ## NeutronDpdkMemoryChannels
+  ##########
+  # Maps memory channels in the CPU per NUMA node. The NeutronDpdkMemoryChannels parameter is used by Open vSwitch as the other_config:dpdk-extra=”-n <value>” value.
+  # [Moe] Use dmidecode -t memory to determine the number of memory channels available.
+  # [Moe] Number of channels divided by the number of Numa nodes = 8/2
+  NeutronDpdkMemoryChannels: "4"
+
+  ## NeutronDpdkSocketMemory:
+  ##########
+  # Specifies the amount of memory in MB to pre-allocate from the hugepage pool, per NUMA node. This value is used by Open vSwitch as the other_config:dpdk-socket-mem value.
+  # [Moe] Provide as a comma-separated list. The NeutronDpdkSocketMemory value is calculated from the MTU value of each NIC on the NUMA node.
+  # [Moe] For a NUMA node without a DPDK NIC, use the static recommendation of 1024 MB (1GB)
+  # [Moe] For example, two DPDK NICs on NUMA node 1, with MTU values of 1500 and 9000 has the following value: NeutronDpdkSocketMemory: “1024,4096”
+  # [Moe] Another example, one DPDK NIC on NUMA node 0 with MTU 9000 and one DPDK NIC on NUMA node 1 with MTU 9000: results in the following value:  NeutronDpdkSocketMemory: “4096,4096”
+  # [Moe] Our test deployment is one NIC per NUMA node with 1500 MTU
+  NeutronDpdkSocketMemory: "2048,2048"
+
+  ## NovaReservedHostMemory:
+  ##########
+  # Reserves memory in MB for tasks on the host. This value is used by the Compute node as the reserved_host_memory_mb value in nova.conf.
+  # [Moe] Use the static recommended value of 4096 MB.
+  NovaReservedHostMemory: 4096
+
+  ###################
+  # Networking Parameters:
+  ###################
+  
+  ## NeutronDpdkDriverType
+  ##########
+  # Sets the driver type used by DPDK. Use the default of vfio-pci.
+  NeutronDpdkDriverType: "vfio-pci"
+
+  ## NeutronDatapathType
+  ##########
+  # Datapath type for OVS bridges. DPDK uses the default value of netdev.
+  NeutronDatapathType: "netdev"
+
+  ## NeutronVhostuserSocketDir
+  ##########
+  # The vhost-user socket directory for OVS
+  NeutronVhostuserSocketDir: "/var/lib/vhost_sockets"
+  
+  ########################
+  # Additional settings
+  ########################
+  
+  ## NovaSchedulerDefaultFilters
+  ############
+  # Provides an ordered list of filters that the Compute node uses to find a matching Compute node for a requested guest instance.
+  # An array of filters used by Nova to filter a node.These filters will be applied in the order they are listed,
+  # so place your most restrictive filters first to make the filtering process more efficient.
+  NovaSchedulerDefaultFilters: ['AvailabilityZoneFilter','RamFilter','ComputeFilter','ComputeCapabilitiesFilter','ImagePropertiesFilter','ServerGroupAntiAffinityFilter','ServerGroupAffinityFilter','PciPassthroughFilter','AggregateInstanceExtraSpecsFilter','NUMATopologyFilter']
+  NovaSchedulerAvailableFilters: ["nova.scheduler.filters.all_filters","nova.scheduler.filters.pci_passthrough_filter.PciPassthroughFilter"]
+
+  ## ComputeKernelArgs
+  ############
+  # Provides multiple kernel arguments to /etc/default/grub for the Compute node at boot time. Add the following based on your configuration:
+  # [Moe] hugepagesz: Sets the size of the huge pages on a CPU. This value can vary depending on the CPU hardware. Set to 1G for OVS-DPDK deployments (default_hugepagesz=1GB hugepagesz=1G). Check for the pdpe1gb CPU flag to ensure your CPU supports 1G.
+  # [Moe] hugepages count: Sets the number of huge pages available. This value depends on the amount of host memory available. Use most of your available memory (excluding NovaReservedHostMemory). You must also configure the huge pages count value within the OpenStack flavor associated with your Compute nodes.
+  ComputeKernelArgs: "default_hugepagesz=1GB hugepagesz=1G hugepages=512 iommu=pt intel_iommu=on"
+

@@ -303,7 +303,7 @@ A step by step deployment
        valid_lft forever preferred_lft forever
 3: ens34: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
     link/ether 00:50:56:92:53:0f brd ff:ff:ff:ff:ff:ff
-    inet 192.0.2.1/24 brd 192.0.2.255 scope global ens34
+    inet 192.0.2.10/24 brd 192.0.2.255 scope global ens34
        valid_lft forever preferred_lft forever
     inet6 fe80::250:56ff:fe92:530f/64 scope link
        valid_lft forever preferred_lft forever
@@ -849,13 +849,7 @@ total 412
 -rw-rw-r--. 1 stack stack 47149 Dec  6 07:16 inspector_data-cont02
 -rw-rw-r--. 1 stack stack 32131 Dec  6 07:16 inspector_data-cont03
 
-[stack@undercloud swift-data]$ for name in `openstack baremetal node list  -f value -c Name`
-> do
-> echo "NODE: $name"
-> echo ============================
-> cat inspector_data-$name | jq '.inventory.disks' | tee ${name}.disk
-> echo "---------------------------"
-> done >all_disk.out
+[stack@undercloud swift-data]$ for name in `openstack baremetal node list  -f value -c Name`; do echo "NODE: $name"; echo ============================; cat inspector_data-$name | jq '.inventory.disks' | tee ${name}.disk; echo "---------------------------"; done >all_disk.out
 
 [stack@undercloud swift-data]$ ll
 total 468

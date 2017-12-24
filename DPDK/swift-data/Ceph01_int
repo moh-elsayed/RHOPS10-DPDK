@@ -1,0 +1,146 @@
+[
+  {
+    "mac_address": "90:b1:1c:0e:d8:99",
+    "lldp": [],
+    "product": null,
+    "vendor": null,
+    "name": "idrac",
+    "has_carrier": true,
+    "switch_port_descr": null,
+    "switch_chassis_descr": null,
+    "ipv4_address": "169.254.0.2"
+  },
+  {
+    "mac_address": "b8:ca:3a:f5:af:7a",
+    "lldp": [],
+    "product": "0x165f",
+    "vendor": "0x14e4",
+    "name": "em4",
+    "has_carrier": false,
+    "switch_port_descr": null,
+    "switch_chassis_descr": null,
+    "ipv4_address": null
+  },
+  {
+    "mac_address": "b8:ca:3a:f5:af:78",
+    "lldp": [],
+    "product": "0x165f",
+    "vendor": "0x14e4",
+    "name": "em2",
+    "has_carrier": false,
+    "switch_port_descr": null,
+    "switch_chassis_descr": null,
+    "ipv4_address": null
+  },
+  {
+    "mac_address": "b8:ca:3a:f5:af:77",
+    "lldp": [
+      [
+        1,
+        "04f48e38299187"
+      ],
+      [
+        2,
+        "0554656e4769676162697445746865726e657420312f3134"
+      ],
+      [
+        3,
+        "0078"
+      ],
+      [
+        0,
+        ""
+      ],
+      [
+        0,
+        ""
+      ],
+      [
+        0,
+        ""
+      ]
+    ],
+    "product": "0x165f",
+    "vendor": "0x14e4",
+    "name": "em1",
+    "has_carrier": true,
+    "switch_port_descr": null,
+    "switch_chassis_descr": null,
+    "ipv4_address": "172.16.200.102"
+  },
+  {
+    "mac_address": "b8:ca:3a:f5:af:79",
+    "lldp": [],
+    "product": "0x165f",
+    "vendor": "0x14e4",
+    "name": "em3",
+    "has_carrier": false,
+    "switch_port_descr": null,
+    "switch_chassis_descr": null,
+    "ipv4_address": null
+  },
+  {
+    "mac_address": "a0:36:9f:29:3e:f4",
+    "lldp": [
+      [
+        1,
+        "04f48e38299187"
+      ],
+      [
+        2,
+        "0554656e4769676162697445746865726e657420312f35322f33"
+      ],
+      [
+        3,
+        "0078"
+      ],
+      [
+        0,
+        ""
+      ],
+      [
+        10,
+        "4e"
+      ]
+    ],
+    "product": "0x154d",
+    "vendor": "0x8086",
+    "name": "p7p1",
+    "has_carrier": true,
+    "switch_port_descr": null,
+    "switch_chassis_descr": null,
+    "ipv4_address": null
+  },
+  {
+    "mac_address": "a0:36:9f:29:3e:f6",
+    "lldp": [
+      [
+        1,
+        "04f48e38299187"
+      ],
+      [
+        2,
+        "0554656e4769676162697445746865726e657420312f35322f34"
+      ],
+      [
+        3,
+        "0078"
+      ],
+      [
+        0,
+        ""
+      ],
+      [
+        10,
+        "4e"
+      ]
+    ],
+    "product": "0x154d",
+    "vendor": "0x8086",
+    "name": "p7p2",
+    "has_carrier": true,
+    "switch_port_descr": null,
+    "switch_chassis_descr": null,
+    "ipv4_address": null
+  }
+]

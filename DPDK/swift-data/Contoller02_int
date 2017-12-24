@@ -1,0 +1,185 @@
+[
+  {
+    "mac_address": "b8:2a:72:fc:4b:fb",
+    "lldp": [],
+    "product": null,
+    "vendor": null,
+    "name": "idrac",
+    "has_carrier": true,
+    "switch_port_descr": null,
+    "switch_chassis_descr": null,
+    "ipv4_address": "169.254.0.2"
+  },
+  {
+    "mac_address": "b0:83:fe:ca:c9:53",
+    "lldp": [
+      [
+        1,
+        "04d067e5df9e83"
+      ],
+      [
+        2,
+        "054769312f302f3335"
+      ],
+      [
+        3,
+        "0078"
+      ],
+      [
+        0,
+        ""
+      ],
+      [
+        0,
+        ""
+      ],
+      [
+        0,
+        ""
+      ],
+      [
+        0,
+        ""
+      ],
+      [
+        0,
+        ""
+      ],
+      [
+        0,
+        ""
+      ],
+      [
+        0,
+        ""
+      ],
+      [
+        0,
+        ""
+      ],
+      [
+        0,
+        ""
+      ],
+      [
+        0,
+        ""
+      ],
+      [
+        0,
+        ""
+      ]
+    ],
+    "product": "0x168a",
+    "vendor": "0x14e4",
+    "name": "em4",
+    "has_carrier": true,
+    "switch_port_descr": null,
+    "switch_chassis_descr": null,
+    "ipv4_address": "192.168.2.48"
+  },
+  {
+    "mac_address": "b0:83:fe:ca:c9:4f",
+    "lldp": [
+      [
+        1,
+        "04f48e38299187"
+      ],
+      [
+        2,
+        "0554656e4769676162697445746865726e657420312f35302f32"
+      ],
+      [
+        3,
+        "0078"
+      ],
+      [
+        0,
+        ""
+      ],
+      [
+        25,
+        "00"
+      ]
+    ],
+    "product": "0x168a",
+    "vendor": "0x14e4",
+    "name": "em2",
+    "has_carrier": true,
+    "switch_port_descr": null,
+    "switch_chassis_descr": null,
+    "ipv4_address": null
+  },
+  {
+    "mac_address": "b0:83:fe:ca:c9:4d",
+    "lldp": [
+      [
+        1,
+        "04f48e38299187"
+      ],
+      [
+        2,
+        "0554656e4769676162697445746865726e657420312f35302f31"
+      ],
+      [
+        3,
+        "0078"
+      ],
+      [
+        0,
+        ""
+      ],
+      [
+        25,
+        "00"
+      ]
+    ],
+    "product": "0x168a",
+    "vendor": "0x14e4",
+    "name": "em1",
+    "has_carrier": true,
+    "switch_port_descr": null,
+    "switch_chassis_descr": null,
+    "ipv4_address": null
+  },
+  {
+    "mac_address": "b0:83:fe:ca:c9:51",
+    "lldp": [
+      [
+        1,
+        "04f48e38299187"
+      ],
+      [
+        2,
+        "0554656e4769676162697445746865726e657420312f39"
+      ],
+      [
+        3,
+        "0078"
+      ],
+      [
+        0,
+        ""
+      ],
+      [
+        0,
+        ""
+      ],
+      [
+        0,
+        ""
+      ],
+      [
+        0,
+        ""
+      ]
+    ],
+    "product": "0x168a",
+    "vendor": "0x14e4",
+    "name": "em3",
+    "has_carrier": true,
+    "switch_port_descr": null,
+    "switch_chassis_descr": null,
+    "ipv4_address": "172.16.200.106"
+  }
+]

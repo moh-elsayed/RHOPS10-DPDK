@@ -1,0 +1,23 @@
+parameter_defaults:
+  OvercloudControlFlavor: control
+  OvercloudComputeFlavor: compute
+  OvercloudComputeDpdkFlavor: computeDPDK
+  OvercloudComputeSriovFlavor: computeSriov
+  OvercloudComputeHciFlavor: computeHci
+  OvercloudComputeHciSriovFlavor: computeHciSriov
+  OvercloudComputeHciDpdkFlavor: computeHciDpdk
+  OvercloudCephStorageFlavor: ceph-storage
+  ControllerCount: 3
+  ComputeCount: 0
+  ComputeDpdkCount: 3
+  ComputeSriovCount: 0
+  ComputeHciCount: 0
+  ComputeHciSriovCount: 0
+  ComputeHciDpdkCount: 0
+  CephStorageCount: 3
+  ControllerHostnameFormat: '%stackname%-controller-%index%'
+  ComputeHostnameFormat: '%stackname%-compute-%index%'
+  ComputeDpdkHostnameFormat: '%stackname%-compute-dpdk-%index%'
+  CephStorageHostnameFormat: '%stackname%-ceph-%index%'
+  ObjectStorageHostnameFormat: '%stackname%-swift-%index%'
+  NtpServer: 172.17.84.4

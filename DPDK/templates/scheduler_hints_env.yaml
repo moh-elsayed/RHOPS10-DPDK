@@ -1,0 +1,7 @@
+parameter_defaults:
+  ControllerSchedulerHints:
+    'capabilities:node': '%stackname%-controller-%index%'
+  NovaComputeSchedulerHints:
+    'capabilities:node': '%stackname%-compute-dpdk-%index%'
+  CephStorageSchedulerHints:
+    'capabilities:node': '%stackname%-ceph-%index%'
