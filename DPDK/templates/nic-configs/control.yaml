@@ -82,9 +82,10 @@ resources:
         os_net_config:
           network_config:
             -
-              type: interface
-              name: em3
+              type: ovs_bridge
+              name: {get_input: bridge_name}
               use_dhcp: false
+              dns_servers: {get_param: DnsServers}
               addresses:
                 -
                   ip_netmask:
@@ -96,24 +97,22 @@ resources:
                 -
                   ip_netmask: 169.254.169.254/32
                   next_hop: {get_param: EC2MetadataIp}
-            ## External Network " br-ex "
-            -
-              type: ovs_bridge
-              name: {get_input: bridge_name}
-              dns_servers: {get_param: DnsServers}
               members:
                 -
                   type: interface
-                  name: em4
+                  name: em3
+                  # force the MAC address of the bridge to this interface
                   primary: true
-              addresses:
-              -
-                ip_netmask: {get_param: ExternalIpSubnet}
-              routes:
                 -
-                  default: true
-                  next_hop: {get_param: ExternalInterfaceDefaultRoute}
-
+                  type: vlan
+                  vlan_id: {get_param: ExternalNetworkVlanID}
+                  addresses:
+                  -
+                    ip_netmask: {get_param: ExternalIpSubnet}
+                  routes:
+                    -
+                      default: true
+                      next_hop: {get_param: ExternalInterfaceDefaultRoute}
             ## Isolated networks " Storage, Internal, StorageMgmt, Tenant "
             -
               type: ovs_bridge
@@ -121,44 +120,101 @@ resources:
               use_dhcp: false
               members:
                 -
-                  type: interface
-                  name: em1
-                  primary: true
+                  type: ovs_bond
+                  name: bond1
+                  ovs_options: {get_param: BondInterfaceOvsOptions}
+                  members:
+                    -
+                      type: interface
+                      name: em1
+                      primary: true
+                    -
+                      type: interface
+                      name: em2
                 -
                   type: vlan
+                  name: bond1
                   vlan_id: {get_param: InternalApiNetworkVlanID}
                   addresses:
-                  -
-                    ip_netmask: {get_param: InternalApiIpSubnet}
+                    -
+                      ip_netmask: {get_param: InternalApiIpSubnet}
                 -
                   type: vlan
+                  name: bond1
                   vlan_id: {get_param: StorageNetworkVlanID}
                   addresses:
-                  -
-                    ip_netmask: {get_param: StorageIpSubnet}
+                    -
+                      ip_netmask: {get_param: StorageIpSubnet}
                 -
                   type: vlan
+                  name: bond1
                   vlan_id: {get_param: StorageMgmtNetworkVlanID}
                   addresses:
-                  -
-                    ip_netmask: {get_param: StorageMgmtIpSubnet}
+                    -
+                      ip_netmask: {get_param: StorageMgmtIpSubnet}
+            -
+              type: ovs_bridge
+              name: br-tenant
+              use_dhcp: false
+              members:
+                -
+                  type: ovs_bond
+                  name: bond2
+                  ovs_options: {get_param: BondInterfaceOvsOptions}
+                  members:
+                    -
+                      type: interface
+                      name: p2p1
+                      primary: true
+                    -
+                      type: interface
+                      name: p2p2                    
                 -
                   type: vlan
+                  device: bond2
                   vlan_id: {get_param: TenantNetworkVlanID}
                   addresses:
                     -
                       ip_netmask: {get_param: TenantIpSubnet}        
           
-            ## Physnet 
+            ## DPDK bridge NUMA0 
             -
               type: ovs_bridge
               name: br-link0
               use_dhcp: false
               dns_servers: {get_param: DnsServers}
-              members:
+               members:
                 -
-                  type: interface
-                  name: em2
+                  type: ovs_bond
+                  name: bond3
+                  ovs_options: {get_param: BondInterfaceOvsOptions}
+                  members:
+                    -
+                      type: interface
+                      name: p5p1
+                      primary: true
+                    -
+                      type: interface
+                      name: p5p2  
+            ## DPDK bridge NUMA1 
+            -
+              type: ovs_bridge
+              name: br-link1
+              use_dhcp: false
+              dns_servers: {get_param: DnsServers}
+               members:
+                -
+                  type: ovs_bond
+                  name: bond4
+                  ovs_options: {get_param: BondInterfaceOvsOptions}
+                  members:
+                    -
+                      type: interface
+                      name: p4p1
+                      primary: true
+                    -
+                      type: interface
+                      name: p4p2                       
 
 outputs:
   OS::stack_id:

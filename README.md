@@ -978,6 +978,7 @@ total 592
 
 ```
 **Disk information:**
+1) Ceph
 ```
 [stack@undercloud swift-data]$ more   ceph01.disk | grep -e name -e size
     "size": 400088457216,
@@ -1019,7 +1020,99 @@ total 592
     "size": 399431958528,
     "name": "/dev/sdf",
 ```
+> Note: 
+> Ceph ODS disks are:sdb,sdc,sdd and sde
+> Ceph Journal disk is: sda
+> Ceph OS disk is : sdf 
 
+2) Compute
+```
+[stack@undercloud swift-data]$ more   comp01.disk | grep -e name -e size
+    "size": 400088457216,
+    "name": "/dev/sda",
+    "size": 1200243695616,
+    "name": "/dev/sdb",
+    "size": 1200243695616,
+    "name": "/dev/sdc",
+    "size": 1200243695616,
+    "name": "/dev/sdd",
+    "size": 1200243695616,
+    "name": "/dev/sde",
+    "size": 399431958528,
+    "name": "/dev/sdf",
+[stack@undercloud swift-data]$ more   comp02.disk | grep -e name -e size
+    "size": 400088457216,
+    "name": "/dev/sda",
+    "size": 1200243695616,
+    "name": "/dev/sdb",
+    "size": 1200243695616,
+    "name": "/dev/sdc",
+    "size": 1200243695616,
+    "name": "/dev/sdd",
+    "size": 1200243695616,
+    "name": "/dev/sde",
+    "size": 399431958528,
+    "name": "/dev/sdf",
+[stack@undercloud swift-data]$ more   comp03.disk | grep -e name -e size
+    "size": 400088457216,
+    "name": "/dev/sda",
+    "size": 1200243695616,
+    "name": "/dev/sdb",
+    "size": 1200243695616,
+    "name": "/dev/sdc",
+    "size": 1200243695616,
+    "name": "/dev/sdd",
+    "size": 1200243695616,
+    "name": "/dev/sde",
+    "size": 399431958528,
+    "name": "/dev/sdf",
+```
+> Note: 
+> Compute OS disk is : sdf 
+3) Controller
+```
+[stack@undercloud swift-data]$ more   cont01.disk | grep -e name -e size
+    "size": 400088457216,
+    "name": "/dev/sda",
+    "size": 1200243695616,
+    "name": "/dev/sdb",
+    "size": 1200243695616,
+    "name": "/dev/sdc",
+    "size": 1200243695616,
+    "name": "/dev/sdd",
+    "size": 1200243695616,
+    "name": "/dev/sde",
+    "size": 375809638400,
+    "name": "/dev/sdf",
+[stack@undercloud swift-data]$ more   cont02.disk | grep -e name -e size
+    "size": 400088457216,
+    "name": "/dev/sda",
+    "size": 1200243695616,
+    "name": "/dev/sdb",
+    "size": 1200243695616,
+    "name": "/dev/sdc",
+    "size": 1200243695616,
+    "name": "/dev/sdd",
+    "size": 1200243695616,
+    "name": "/dev/sde",
+    "size": 375809638400,
+    "name": "/dev/sdf",
+[stack@undercloud swift-data]$ more   cont03.disk | grep -e name -e size
+    "size": 400088457216,
+    "name": "/dev/sda",
+    "size": 1200243695616,
+    "name": "/dev/sdb",
+    "size": 1200243695616,
+    "name": "/dev/sdc",
+    "size": 1200243695616,
+    "name": "/dev/sdd",
+    "size": 1200243695616,
+    "name": "/dev/sde",
+    "size": 375809638400,
+    "name": "/dev/sdf",
+```
+> Note: 
+> Controller OS disk is : sdf 
 **Interfaces information**
 1) Compute
 ```
@@ -1337,8 +1430,357 @@ total 592
 ```
 > Note: Ceph03 missing few NIC cards, and other nodes having some link issue "has_carrier: false", we will focus on the intergrated cards.
 
+**CPU Information:**
+Since we are going to enable CPU Pinning andf DPDK, we need to plan and design the CPU for all compute nodes
 
+```
+[stack@undercloud swift-data]$ more inspector_data-comp01 |   jq '.inventory.cpu'
+{
+  "architecture": "x86_64",
+  "model_name": "Intel(R) Xeon(R) CPU E5-2667 v3 @ 3.20GHz",
+  "flags": [
+    "fpu",
+    "vme",
+    "de",
+    "pse",
+    "tsc",
+    "msr",
+    "pae",
+    "mce",
+    "cx8",
+    "apic",
+    "sep",
+    "mtrr",
+    "pge",
+    "mca",
+    "cmov",
+    "pat",
+    "pse36",
+    "clflush",
+    "dts",
+    "acpi",
+    "mmx",
+    "fxsr",
+    "sse",
+    "sse2",
+    "ss",
+    "ht",
+    "tm",
+    "pbe",
+    "syscall",
+    "nx",
+    "pdpe1gb",
+    "rdtscp",
+    "lm",
+    "constant_tsc",
+    "arch_perfmon",
+    "pebs",
+    "bts",
+    "rep_good",
+    "nopl",
+    "xtopology",
+    "nonstop_tsc",
+    "aperfmperf",
+    "eagerfpu",
+    "pni",
+    "pclmulqdq",
+    "dtes64",
+    "monitor",
+    "ds_cpl",
+    "vmx",
+    "smx",
+    "est",
+    "tm2",
+    "ssse3",
+    "fma",
+    "cx16",
+    "xtpr",
+    "pdcm",
+    "pcid",
+    "dca",
+    "sse4_1",
+    "sse4_2",
+    "x2apic",
+    "movbe",
+    "popcnt",
+    "tsc_deadline_timer",
+    "aes",
+    "xsave",
+    "avx",
+    "f16c",
+    "rdrand",
+    "lahf_lm",
+    "abm",
+    "epb",
+    "tpr_shadow",
+    "vnmi",
+    "flexpriority",
+    "ept",
+    "vpid",
+    "fsgsbase",
+    "tsc_adjust",
+    "bmi1",
+    "avx2",
+    "smep",
+    "bmi2",
+    "erms",
+    "invpcid",
+    "cqm",
+    "xsaveopt",
+    "cqm_llc",
+    "cqm_occup_llc",
+    "dtherm",
+    "ida",
+    "arat",
+    "pln",
+    "pts"
+  ],
+  "frequency": "3600.0000",
+  "count": 32
+}
+[stack@undercloud swift-data]$ more inspector_data-comp02 |   jq '.inventory.cpu'
+{
+  "architecture": "x86_64",
+  "model_name": "Intel(R) Xeon(R) CPU E5-2667 v3 @ 3.20GHz",
+  "flags": [
+    "fpu",
+    "vme",
+    "de",
+    "pse",
+    "tsc",
+    "msr",
+    "pae",
+    "mce",
+    "cx8",
+    "apic",
+    "sep",
+    "mtrr",
+    "pge",
+    "mca",
+    "cmov",
+    "pat",
+    "pse36",
+    "clflush",
+    "dts",
+    "acpi",
+    "mmx",
+    "fxsr",
+    "sse",
+    "sse2",
+    "ss",
+    "ht",
+    "tm",
+    "pbe",
+    "syscall",
+    "nx",
+    "pdpe1gb",
+    "rdtscp",
+    "lm",
+    "constant_tsc",
+    "arch_perfmon",
+    "pebs",
+    "bts",
+    "rep_good",
+    "nopl",
+    "xtopology",
+    "nonstop_tsc",
+    "aperfmperf",
+    "eagerfpu",
+    "pni",
+    "pclmulqdq",
+    "dtes64",
+    "monitor",
+    "ds_cpl",
+    "vmx",
+    "smx",
+    "est",
+    "tm2",
+    "ssse3",
+    "fma",
+    "cx16",
+    "xtpr",
+    "pdcm",
+    "pcid",
+    "dca",
+    "sse4_1",
+    "sse4_2",
+    "x2apic",
+    "movbe",
+    "popcnt",
+    "tsc_deadline_timer",
+    "aes",
+    "xsave",
+    "avx",
+    "f16c",
+    "rdrand",
+    "lahf_lm",
+    "abm",
+    "epb",
+    "tpr_shadow",
+    "vnmi",
+    "flexpriority",
+    "ept",
+    "vpid",
+    "fsgsbase",
+    "tsc_adjust",
+    "bmi1",
+    "avx2",
+    "smep",
+    "bmi2",
+    "erms",
+    "invpcid",
+    "cqm",
+    "xsaveopt",
+    "cqm_llc",
+    "cqm_occup_llc",
+    "dtherm",
+    "ida",
+    "arat",
+    "pln",
+    "pts"
+  ],
+  "frequency": "3600.0000",
+  "count": 32
+}
+[stack@undercloud swift-data]$ more inspector_data-comp03 |   jq '.inventory.cpu'
+{
+  "architecture": "x86_64",
+  "model_name": "Intel(R) Xeon(R) CPU E5-2667 v3 @ 3.20GHz",
+  "flags": [
+    "fpu",
+    "vme",
+    "de",
+    "pse",
+    "tsc",
+    "msr",
+    "pae",
+    "mce",
+    "cx8",
+    "apic",
+    "sep",
+    "mtrr",
+    "pge",
+    "mca",
+    "cmov",
+    "pat",
+    "pse36",
+    "clflush",
+    "dts",
+    "acpi",
+    "mmx",
+    "fxsr",
+    "sse",
+    "sse2",
+    "ss",
+    "ht",
+    "tm",
+    "pbe",
+    "syscall",
+    "nx",
+    "pdpe1gb",
+    "rdtscp",
+    "lm",
+    "constant_tsc",
+    "arch_perfmon",
+    "pebs",
+    "bts",
+    "rep_good",
+    "nopl",
+    "xtopology",
+    "nonstop_tsc",
+    "aperfmperf",
+    "eagerfpu",
+    "pni",
+    "pclmulqdq",
+    "dtes64",
+    "monitor",
+    "ds_cpl",
+    "vmx",
+    "smx",
+    "est",
+    "tm2",
+    "ssse3",
+    "fma",
+    "cx16",
+    "xtpr",
+    "pdcm",
+    "pcid",
+    "dca",
+    "sse4_1",
+    "sse4_2",
+    "x2apic",
+    "movbe",
+    "popcnt",
+    "tsc_deadline_timer",
+    "aes",
+    "xsave",
+    "avx",
+    "f16c",
+    "rdrand",
+    "lahf_lm",
+    "abm",
+    "epb",
+    "tpr_shadow",
+    "vnmi",
+    "flexpriority",
+    "ept",
+    "vpid",
+    "fsgsbase",
+    "tsc_adjust",
+    "bmi1",
+    "avx2",
+    "smep",
+    "bmi2",
+    "erms",
+    "invpcid",
+    "cqm",
+    "xsaveopt",
+    "cqm_llc",
+    "cqm_occup_llc",
+    "dtherm",
+    "ida",
+    "arat",
+    "pln",
+    "pts"
+  ],
+  "frequency": "3600.0000",
+  "count": 32
+}
+```
+> Note:
+> CPU Model: Intel(R) Xeon(R) CPU E5-2667 v3 @ 3.20GHz
+> Number of Sockets: 2
+> Number of cores per sockets: 8
+> With hyperthread: 16 
+> > Total CPU Count: 32
 
+**The CPU Deisgn:**
+![](https://i.imgur.com/8XJue9w.png)
+Therefore the below key=value pairs will be defined within your entwork-environment.yaml:
+1) NeutronDpdkCoreList:  "'2,18,3,19'"
+2) NovaVcpuPinSet:  "'4,6,8,10,12,14,20,22,24,26,28,30,5,7,9,11,13,15,21,23,25,27,29,31'"
+3) HostIsolatedCoreList:  "'2,4,6,8,10,12,14,18,20,22,24,26,28,30,3,5,7,9,11,13,15,19,21,23,25,27,29,31'"
+4) HostCpusList: "0,16,1,17"
+
+**Memeory Information:**
+```
+[stack@undercloud swift-data]$ more inspector_data-comp03 |   jq '.inventory.memory'
+{
+  "total": 405669965824,
+  "physical_mb": 393216
+}
+[stack@undercloud swift-data]$ more inspector_data-comp02 |   jq '.inventory.memory'
+{
+  "total": 405669965824,
+  "physical_mb": 393216
+}
+[stack@undercloud swift-data]$ more inspector_data-comp03 |   jq '.inventory.memory'
+{
+  "total": 405669965824,
+  "physical_mb": 393216
+}
+
+```
 After inspecting all interfaces and disk associated with each node, the below deployment diagram has been updated:
 
 ![](https://i.imgur.com/J4oPKYv.png)

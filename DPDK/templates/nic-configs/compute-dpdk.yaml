@@ -93,9 +93,10 @@ resources:
         os_net_config:
           network_config:
             -
-              type: interface
-              name: em1
+              type: linux_bridge
+              name: {get_input: bridge_name}
               use_dhcp: false
+              dns_servers: {get_param: DnsServers}
               addresses:
                 -
                   ip_netmask:
@@ -107,46 +108,55 @@ resources:
                 -
                   ip_netmask: 169.254.169.254/32
                   next_hop: {get_param: EC2MetadataIp}
-            ## Openstack External network ( Untagged External network and Tagged 1001:1030 on datacentre)
-            -
-              type: linux_bridge
-              name: br-ext
-              use_dhcp: false
-              dns_servers: {get_param: DnsServers}
               members:
                 -
                   type: interface
-                  name: em4
+                  name: em3
+                  # force the MAC address of the bridge to this interface
                   primary: true
+            ### External network
+            -
+              type: vlan
+              vlan_id: {get_param: ExternalNetworkVlanID}
+              device: {get_input: bridge_name}
               addresses:
-                - ip_netmask: {get_param: ExternalIpSubnet}
+                -
+                  ip_netmask: {get_param: ExternalIpSubnet}
               routes:
                 -
                   default: true
                   next_hop: {get_param: ExternalInterfaceDefaultRoute}
-            ## Isolated networks  " Storage, Internal, StorageMgmt "
-            -
-              type: linux_bridge
-              name: br-isolate
-              use_dhcp: false
-              members:
+
+            ## Isolated networks  " Storage, Internal"
+              -
+                type: linux_bond
+                name: bond_isolate
+                bonding_options: "mode=active-backup"
+                use_dhcp: false
+                dns_servers: {get_param: DnsServers}
+                members:
                 -
                   type: interface
-                  name: p6p1               
+                  name: em1
+                  primary: true
+                -
+                  type: interface
+                  name: em2
             -
               type: vlan
               vlan_id: {get_param: InternalApiNetworkVlanID}
-              device: br-isolate
+              device: bond_isolate
               addresses:
                 -
                   ip_netmask: {get_param: InternalApiIpSubnet}
             -
               type: vlan
               vlan_id: {get_param: StorageNetworkVlanID}
-              device: br-isolate
+              device: bond_isolate
               addresses:
                 -
                   ip_netmask: {get_param: StorageIpSubnet}
+
                # - un comment only in the HCI
                #   type: vlan
                #   vlan_id: {get_param: StorageMgmtNetworkVlanID}
@@ -171,7 +181,6 @@ resources:
 #              addresses:
 #                -
 #                  ip_netmask: {get_param: TenantIpSubnet}
-
             -
               type: ovs_user_bridge
               name: br-tenant
@@ -187,12 +196,23 @@ resources:
                   ip_netmask: {get_param: TenantIpSubnet}
               members:
                 -
-                  type: ovs_dpdk_port
-                  name: dpdk0
+                  type: ovs_dpdk_bond
+                  name: dpdkbondtun
                   members:
                     -
-                      type: interface
-                      name: p6p2            
+                      type: ovs_dpdk_port
+                      name: dpdk0
+                      memebers:
+                        -
+                          type: interface
+                          name: p2p1
+                    -
+                      type: ovs_dpdk_port
+                      name: dpdk1
+                      memebers:
+                        -
+                          type: interface
+                          name: p2p2              
             ## Physnet network optimized by DPDK-OVS
             -
               type: ovs_user_bridge
@@ -200,26 +220,47 @@ resources:
               use_dhcp: false
               members:
                 -
-                  type: ovs_dpdk_port
-                  name: dpdk1
+                  type: ovs_dpdk_bond
+                  name: dpdkbond0
                   members:
                     -
-                      type: interface
-                      name: p5p2
+                      type: ovs_dpdk_port
+                      name: dpdk2
+                      memebers:
+                        -
+                          type: interface
+                          name: p5p1
+                    -
+                      type: ovs_dpdk_port
+                      name: dpdk3
+                      memebers:
+                        -
+                          type: interface
+                          name: p5p2          
             -
               type: ovs_user_bridge
               name: br-link1
               use_dhcp: false
               members:
                 -
-                  type: ovs_dpdk_port
-                  name: dpdk2
+                  type: ovs_dpdk_bond
+                  name: dpdkbond1
                   members:
                     -
-                      type: interface
-                      name: p4p2
-
-            
+                      type: ovs_dpdk_port
+                      name: dpdk4
+                      memebers:
+                        -
+                          type: interface
+                          name: p4p1
+                    -
+                      type: ovs_dpdk_port
+                      name: dpdk5
+                      memebers:
+                        -
+                          type: interface
+                          name: p4p2                                              
+           
 outputs:
   OS::stack_id:
     description: The OsNetConfigImpl resource.

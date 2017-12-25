@@ -85,8 +85,8 @@ resources:
         os_net_config:
           network_config:
             -
-              type: interface
-              name: em1
+              type: ovs_bridge
+              name: {get_input: bridge_name}
               use_dhcp: false
               dns_servers: {get_param: DnsServers}
               addresses:
@@ -100,30 +100,53 @@ resources:
                 -
                   ip_netmask: 169.254.169.254/32
                   next_hop: {get_param: EC2MetadataIp}
-                -
-                  default: true
-                  next_hop: {get_param: ControlPlaneDefaultRoute}
-            -
-              type: ovs_bridge
-              name: br-storage
-              use_dhcp: false
               members:
                 -
                   type: interface
-                  name: p7p1
+                  name: em3
+                  # force the MAC address of the bridge to this interface
                   primary: true
                 -
                   type: vlan
-                  vlan_id: {get_param: StorageNetworkVlanID}
+                  vlan_id: {get_param: ExternalNetworkVlanID}
                   addresses:
-                  -
-                    ip_netmask: {get_param: StorageIpSubnet}
+                    -
+                      ip_netmask: {get_param: ExternalIpSubnet}
+                  routes:
+                    -
+                      default: true
+                      next_hop: {get_param: ExternalInterfaceDefaultRoute}
+            -
+              type: ovs_bridge
+              name: br-isolate
+              use_dhcp: false
+              members:
+                -
+                  type: ovs_bond
+                  name: bond1
+                  ovs_options: {get_param: BondInterfaceOvsOptions}
+                  members:
+                    -
+                      type: interface
+                      name: em1
+                      primary: true
+                    -
+                      type: interface
+                      name: em2
                 -
                   type: vlan
+                  device: bond1
+                  vlan_id: {get_param: StorageNetworkVlanID}
+                  addresses:
+                    -
+                      ip_netmask: {get_param: StorageIpSubnet}
+                -
+                  type: vlan
+                  device: bond1
                   vlan_id: {get_param: StorageMgmtNetworkVlanID}
                   addresses:
-                  -
-                    ip_netmask: {get_param: StorageMgmtIpSubnet}
+                    -
+                      ip_netmask: {get_param: StorageMgmtIpSubnet}
 
 outputs:
   OS::stack_id:
