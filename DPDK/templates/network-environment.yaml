@@ -33,7 +33,7 @@ parameter_defaults:
   StorageAllocationPools: [{'start': '10.30.202.51', 'end': '10.30.202.200'}]
   StorageMgmtAllocationPools: [{'start': '110.30.203.51', 'end': '10.30.203.200'}]
   # Leave room if the external network is also used for floating IPs
-  ExternalAllocationPools: [{'start': '172.17.84.151', 'end': '172.17.84.250'}]
+  ExternalAllocationPools: [{'start': '172.17.84.151', 'end': '172.17.84.240'}]
   # Gateway router for the external network
   ExternalInterfaceDefaultRoute: 172.17.84.254
   # Gateway router for the provisioning network (or Undercloud IP)

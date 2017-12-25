@@ -49,7 +49,7 @@ resources:
       parts:
       - config: {get_resource: firstboot_config}
       - config: {get_resource: swapon_config}
-#     - config: {get_resource: set_ovs_socket_config}
+      - config: {get_resource: set_ovs_socket_config}
       - config: {get_resource: set_ovs_config}
       - config: {get_resource: set_dpdk_params}
       - config: {get_resource: install_tuned}
