@@ -977,12 +977,373 @@ total 592
 ]
 
 ```
-
-**Network interfaces check:**
-1) Controller nodes:
+**Disk information:**
+```
+[stack@undercloud swift-data]$ more   ceph01.disk | grep -e name -e size
+    "size": 400088457216,
+    "name": "/dev/sda",
+    "size": 1200243695616,
+    "name": "/dev/sdb",
+    "size": 1200243695616,
+    "name": "/dev/sdc",
+    "size": 1200243695616,
+    "name": "/dev/sdd",
+    "size": 1200243695616,
+    "name": "/dev/sde",
+    "size": 375809638400,
+    "name": "/dev/sdf",
+[stack@undercloud swift-data]$ more   ceph02.disk | grep -e name -e size
+    "size": 400088457216,
+    "name": "/dev/sda",
+    "size": 1200243695616,
+    "name": "/dev/sdb",
+    "size": 1200243695616,
+    "name": "/dev/sdc",
+    "size": 1200243695616,
+    "name": "/dev/sdd",
+    "size": 1200243695616,
+    "name": "/dev/sde",
+    "size": 375809638400,
+    "name": "/dev/sdf",
+[stack@undercloud swift-data]$ more   ceph03.disk | grep -e name -e size
+    "size": 400088457216,
+    "name": "/dev/sda",
+    "size": 1200243695616,
+    "name": "/dev/sdb",
+    "size": 1200243695616,
+    "name": "/dev/sdc",
+    "size": 1200243695616,
+    "name": "/dev/sdd",
+    "size": 1200243695616,
+    "name": "/dev/sde",
+    "size": 399431958528,
+    "name": "/dev/sdf",
 ```
 
+**Interfaces information**
+1) Compute
 ```
+[stack@undercloud swift-data]$ more  comp01.int |  grep name -A 1
+    "name": "p3p1",
+    "has_carrier": true,
+--
+    "name": "p3p2",
+    "has_carrier": true,
+--
+    "name": "p2p1",
+    "has_carrier": true,
+--
+    "name": "p2p2",
+    "has_carrier": true,
+--
+    "name": "p5p2",
+    "has_carrier": true,
+--
+    "name": "p5p1",
+    "has_carrier": true,
+--
+    "name": "em4",
+    "has_carrier": false,
+--
+    "name": "em2",
+    "has_carrier": true,
+--
+    "name": "em1",
+    "has_carrier": true,
+--
+    "name": "em3",
+    "has_carrier": true,
+[stack@undercloud swift-data]$ more  comp02.int |  grep name -A 1
+    "name": "p3p1",
+    "has_carrier": true,
+--
+    "name": "p3p2",
+    "has_carrier": true,
+--
+    "name": "p2p1",
+    "has_carrier": true,
+--
+    "name": "p2p2",
+    "has_carrier": true,
+--
+    "name": "p6p2",
+    "has_carrier": true,
+--
+    "name": "p6p1",
+    "has_carrier": true,
+--
+    "name": "p5p2",
+    "has_carrier": true,
+--
+    "name": "p5p1",
+    "has_carrier": true,
+--
+    "name": "em4",
+    "has_carrier": false,
+--
+    "name": "em2",
+    "has_carrier": true,
+--
+    "name": "em1",
+    "has_carrier": true,
+--
+    "name": "em3",
+    "has_carrier": true,
+[stack@undercloud swift-data]$ more  comp03.int |  grep name -A 1
+    "name": "p3p1",
+    "has_carrier": true,
+--
+    "name": "p3p2",
+    "has_carrier": true,
+--
+    "name": "p2p1",
+    "has_carrier": true,
+--
+    "name": "p2p2",
+    "has_carrier": true,
+--
+    "name": "p6p2",
+    "has_carrier": true,
+--
+    "name": "p6p1",
+    "has_carrier": true,
+--
+    "name": "p5p2",
+    "has_carrier": true,
+--
+    "name": "p5p1",
+    "has_carrier": true,
+--
+    "name": "em4",
+    "has_carrier": false,
+--
+    "name": "em2",
+    "has_carrier": true,
+--
+    "name": "em1",
+    "has_carrier": true,
+--
+    "name": "em3",
+    "has_carrier": true,
+```
+> Note: comp01 is missing slot 6, so we will avoid that NIC card..
+
+2) Controllers
+
+```
+[stack@undercloud swift-data]$ more  cont01.int |  grep name -A 1
+    "name": "p3p1",
+    "has_carrier": true,
+--
+    "name": "p3p2",
+    "has_carrier": true,
+--
+    "name": "p2p1",
+    "has_carrier": true,
+--
+    "name": "p2p2",
+    "has_carrier": true,
+--
+    "name": "p6p2",
+    "has_carrier": true,
+--
+    "name": "p6p1",
+    "has_carrier": true,
+--
+    "name": "p5p2",
+    "has_carrier": true,
+--
+    "name": "p5p1",
+    "has_carrier": true,
+--
+    "name": "em4",
+    "has_carrier": false,
+--
+    "name": "em2",
+    "has_carrier": true,
+--
+    "name": "em1",
+    "has_carrier": true,
+--
+    "name": "em3",
+    "has_carrier": true,
+[stack@undercloud swift-data]$ more  cont02.int |  grep name -A 1
+    "name": "p3p1",
+    "has_carrier": true,
+--
+    "name": "p3p2",
+    "has_carrier": true,
+--
+    "name": "p2p1",
+    "has_carrier": true,
+--
+    "name": "p2p2",
+    "has_carrier": true,
+--
+    "name": "p6p2",
+    "has_carrier": true,
+--
+    "name": "p6p1",
+    "has_carrier": true,
+--
+    "name": "p5p2",
+    "has_carrier": true,
+--
+    "name": "p5p1",
+    "has_carrier": true,
+--
+    "name": "em4",
+    "has_carrier": false,
+--
+    "name": "em2",
+    "has_carrier": true,
+--
+    "name": "em1",
+    "has_carrier": true,
+--
+    "name": "em3",
+    "has_carrier": true,
+[stack@undercloud swift-data]$ more  cont03.int |  grep name -A 1
+    "name": "p3p1",
+    "has_carrier": true,
+--
+    "name": "p3p2",
+    "has_carrier": true,
+--
+    "name": "p2p1",
+    "has_carrier": true,
+--
+    "name": "p2p2",
+    "has_carrier": true,
+--
+    "name": "p6p2",
+    "has_carrier": true,
+--
+    "name": "p6p1",
+    "has_carrier": true,
+--
+    "name": "p5p2",
+    "has_carrier": true,
+--
+    "name": "p5p1",
+    "has_carrier": true,
+--
+    "name": "em4",
+    "has_carrier": false,
+--
+    "name": "em2",
+    "has_carrier": true,
+--
+    "name": "em1",
+    "has_carrier": true,
+--
+    "name": "em3",
+    "has_carrier": true,
+```
+> Note: No issues with all controller nodes
+
+3) Ceph
+```
+[stack@undercloud swift-data]$ more  ceph01.int |  grep name -A 1
+    "name": "p3p1",
+    "has_carrier": true,
+--
+    "name": "p3p2",
+    "has_carrier": true,
+--
+    "name": "p2p1",
+    "has_carrier": true,
+--
+    "name": "p2p2",
+    "has_carrier": true,
+--
+    "name": "p6p2",
+    "has_carrier": true,
+--
+    "name": "p6p1",
+    "has_carrier": false,
+--
+    "name": "p5p2",
+    "has_carrier": true,
+--
+    "name": "p5p1",
+    "has_carrier": true,
+--
+    "name": "em4",
+    "has_carrier": false,
+--
+    "name": "em2",
+    "has_carrier": true,
+--
+    "name": "em1",
+    "has_carrier": true,
+--
+    "name": "em3",
+    "has_carrier": true,
+[stack@undercloud swift-data]$ more  ceph02.int |  grep name -A 1
+    "name": "p3p1",
+    "has_carrier": true,
+--
+    "name": "p3p2",
+    "has_carrier": true,
+--
+    "name": "p2p1",
+    "has_carrier": false,
+--
+    "name": "p2p2",
+    "has_carrier": true,
+--
+    "name": "p6p2",
+    "has_carrier": true,
+--
+    "name": "p6p1",
+    "has_carrier": true,
+--
+    "name": "p5p2",
+    "has_carrier": true,
+--
+    "name": "p5p1",
+    "has_carrier": true,
+--
+    "name": "em4",
+    "has_carrier": false,
+--
+    "name": "em2",
+    "has_carrier": true,
+--
+    "name": "em1",
+    "has_carrier": true,
+--
+    "name": "em3",
+    "has_carrier": true,
+[stack@undercloud swift-data]$ more  ceph03.int |  grep name -A 1
+    "name": "p6p2",
+    "has_carrier": true,
+--
+    "name": "p6p1",
+    "has_carrier": true,
+--
+    "name": "em4",
+    "has_carrier": false,
+--
+    "name": "em2",
+    "has_carrier": true,
+--
+    "name": "em1",
+    "has_carrier": true,
+--
+    "name": "em3",
+    "has_carrier": true,
+```
+> Note: Ceph03 missing few NIC cards, and other nodes having some link issue "has_carrier: false", we will focus on the intergrated cards.
+
+
+
+After inspecting all interfaces and disk associated with each node, the below deployment diagram has been updated:
+
+![](https://i.imgur.com/J4oPKYv.png)
+
+
 ## TO Be Continued ##
 ## Acknowledgments
 
