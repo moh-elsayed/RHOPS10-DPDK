@@ -13,71 +13,78 @@ permit_ssh()
 ## update the hosts file with the local repo IP
 update_hosts()
 {
-  echo "10.204.24.146   rhn-localrepo.dxbdsc.loc rhn-localrepo" >> /etc/hosts
+  echo "1192.0.2.6       siorhn.sio.lab  siorhn" >> /etc/hosts
 }
 
 localRepo()
 {
 cat  > /etc/yum.repos.d/localrepo.repo <<- "EOF"
-[Local-server-extras-rpms]
-name=DSC-Local rhel-7-extras
-baseurl=http://rhn-localrepo.dxbdsc.loc/repo/rhel-7-server-extras-rpms
+[SIOLocal-server-openstack10]
+name=vlab Repo-RHOPS10
+baseurl=http://siorhn.sio.lab/repo/repos/rhel-7-server-openstack-10-rpms
 enabled=1
 gpgcheck=0
 
-[Local-server-openstack10]
-name=DSC-Local Openstack10
-baseurl=http://rhn-localrepo.dxbdsc.loc/repo/rhel-7-server-openstack-10-rpms
+[SIOLocal-server-extras]
+name=vlab Repo-extras
+baseurl=http://siorhn.sio.lab/repo/repos/rhel-7-server-extras-rpms
 enabled=1
 gpgcheck=0
 
-[Local-server-nfv]
-name=DSC-Local NFV
-baseurl=http://rhn-localrepo.dxbdsc.loc/repo/rhel-7-server-nfv-rpms
+[SIOLocal--server-rh-common]
+name=vlab Repo-common
+baseurl=http://siorhn.sio.lab/repo/repos/rhel-7-server-rh-common-rpms
 enabled=1
 gpgcheck=0
 
-[Local-server-ceph-2-mon]
-name=DSC-Local ceph-2-mon
-baseurl=http://rhn-localrepo.dxbdsc.loc/repo/rhel-7-server-rhceph-2-mon-rpms
+[SIOLocal-server]
+name=vlab Repo-server
+baseurl=http://siorhn.sio.lab/repo/repos/rhel-7-server-rpms
 enabled=1
 gpgcheck=0
 
-[Local-server-ceph-2-tools]
-name=DSC-Local ceph-2-tools
-baseurl=http://rhn-localrepo.dxbdsc.loc/repo/rhel-7-server-rhceph-2-tools-rpms
+[SIOLocal-server-satellite-tools]
+name=vlab Repo-sattool
+baseurl=http://siorhn.sio.lab/repo/repos/rhel-7-server-satellite-tools-6.2-rpms
+enabled=0
+gpgcheck=0
+
+[SIOLocal-ha-for-rhel-7-server]
+name=vlab Repo-HA
+baseurl=http://siorhn.sio.lab/repo/repos/rhel-ha-for-rhel-7-server-rpms
 enabled=1
 gpgcheck=0
 
-[Local-server-rh-common]
-name=DSC-Local server-rh-common
-baseurl=http://rhn-localrepo.dxbdsc.loc/repo/rhel-7-server-rh-common-rpms
+[SIOLocal-openstack-10-devtools]
+name=vlab devtools
+baseurl=http://siorhn.sio.lab/repo/repos/rhel-7-server-openstack-10-devtools-rpms
 enabled=1
 gpgcheck=0
 
-[Local-rhel-7-server]
-name=DSC-Local rhel-7-rpm
-baseurl=http://rhn-localrepo.dxbdsc.loc/repo/rhel-7-server-rpms
+[SIOLocal-ceph-mon]
+name=vlab Repo-Ceph-Mon
+baseurl=http://siorhn.sio.lab/repo/repos/rhel-7-server-rhceph-2-mon-rpms
 enabled=1
 gpgcheck=0
 
-[Local-satellite-tools]
-name=DSC-Local satellite-tools
-baseurl=http://rhn-localrepo.dxbdsc.loc/repo/rhel-7-server-satellite-tools-6.2-rpms
+[SIOLocal-ceph-tools]
+name=vlab Repo-CEPH-Tools
+baseurl=http://siorhn.sio.lab/repo/repos/rhel-7-server-rhceph-2-tools-rpms
 enabled=1
 gpgcheck=0
 
-[Local-ha-for-rhel-7-server]
-name=DSC-Local ha-for-rhel-7-server
-baseurl=http://rhn-localrepo.dxbdsc.loc/repo/rhel-ha-for-rhel-7-server-rpms
+[SIOLocal-NFV]
+name=vlab Repo-NFV
+baseurl=http://siorhn.sio.lab/repo/repos/rhel-7-server-nfv-rpms
 enabled=1
 gpgcheck=0
 
-[Local-openstack10-devtools]
-name=DSC-Local openstack10-devtools
-baseurl=http://rhn-localrepo.dxbdsc.loc/repo/rhel-7-server-openstack-10-devtools-rpms
+[SIOLocal-rhel-optional]
+name=vlab Repo-RHEL-Optional
+baseurl=http://siorhn.sio.lab/repo/repos/rhel-7-server-optional-rpms
 enabled=1
 gpgcheck=0
+
 
 EOF
 
@@ -176,7 +183,7 @@ prep_ceph_journal_partition()
 {
   # for Ceph that needs to have a first partition in place
   if [[ `hostname` = *"ceph"* ]]; then
-        for i in {d,e,f,g}; do
+        for i in {a}; do
                 if [ -b /dev/sd${i} ]; then
                         echo "Wiping disk /dev/sd${i} and creating journal partition..."
                         sgdisk -Z /dev/sd${i}

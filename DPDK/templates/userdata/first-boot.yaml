@@ -49,7 +49,7 @@ resources:
       parts:
       - config: {get_resource: firstboot_config}
       - config: {get_resource: swapon_config}
-      - config: {get_resource: set_ovs_socket_config}
+#     - config: {get_resource: set_ovs_socket_config}
       - config: {get_resource: set_ovs_config}
       - config: {get_resource: set_dpdk_params}
       - config: {get_resource: install_tuned}
@@ -59,7 +59,7 @@ resources:
     type: OS::Heat::SoftwareConfig
     properties:
       group: script
-      config: {get_file: /home/stack/Moe-02-DPDk/template/userdata/firstboot-setup.sh}
+      config: {get_file: /home/stack/DPDK/templates/userdata/firstboot-setup.sh}
 
   swapon_config:
     type: OS::Heat::SoftwareConfig
@@ -75,7 +75,7 @@ resources:
         fi
 
   set_ovs_socket_config:
-    type: OS::Heat::SoftwareConfig
+   type: OS::Heat::SoftwareConfig
     properties:
       config:
         str_replace:
@@ -83,7 +83,7 @@ resources:
             #!/bin/bash
             FORMAT=$COMPUTE_HOSTNAME_FORMAT
             if [[ -z $FORMAT ]] ; then
-              FORMAT="compute" ;
+              FORMAT="compute-dpdk" ;
             else
               # Assumption: only %index% and %stackname% are the variables in Host name format
               FORMAT=$(echo $FORMAT | sed  's/\%index\%//g' | sed 's/\%stackname\%//g') ;
@@ -94,7 +94,7 @@ resources:
               restorecon $NEUTRON_VHOSTUSER_SOCKET_DIR
             fi
           params:
-            $COMPUTE_HOSTNAME_FORMAT: {get_param: ComputeHostnameFormat}
+            $COMPUTE_HOSTNAME_FORMAT: {get_param: ComputeDpdkHostnameFormat}
             $NEUTRON_VHOSTUSER_SOCKET_DIR: {get_param: NeutronVhostuserSocketDir}
 
   set_ovs_config:
@@ -106,7 +106,7 @@ resources:
             #!/bin/bash
             FORMAT=$COMPUTE_HOSTNAME_FORMAT
             if [[ -z $FORMAT ]] ; then
-              FORMAT="compute" ;
+              FORMAT="compute-dpdk" ;
             else
               # Assumption: only %index% and %stackname% are the variables in Host name format
               FORMAT=$(echo $FORMAT | sed  's/\%index\%//g' | sed 's/\%stackname\%//g') ;
@@ -138,7 +138,7 @@ resources:
               fi
             fi
           params:
-            $COMPUTE_HOSTNAME_FORMAT: {get_param: ComputeHostnameFormat}
+            $COMPUTE_HOSTNAME_FORMAT: {get_param: ComputeDpdkHostnameFormat}
 
   # Verify the logs on /var/log/cloud-init.log on the overcloud node
   set_dpdk_params:
@@ -185,7 +185,7 @@ resources:
 
             FORMAT=$COMPUTE_HOSTNAME_FORMAT
             if [[ -z $FORMAT ]] ; then
-              FORMAT="compute" ;
+              FORMAT="compute-dpdk" ;
             else
               # Assumption: only %index% and %stackname% are the variables in Host name format
               FORMAT=$(echo $FORMAT | sed  's/\%index\%//g' | sed 's/\%stackname\%//g') ;
@@ -200,7 +200,7 @@ resources:
               ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-lcore-mask=$host_cpu_mask
             fi
           params:
-            $COMPUTE_HOSTNAME_FORMAT: {get_param: ComputeHostnameFormat}
+            $COMPUTE_HOSTNAME_FORMAT: {get_param: ComputeDpdkHostnameFormat}
             $LCORE_LIST: {get_param: HostCpusList}
             $PMD_CORES: {get_param: NeutronDpdkCoreList}
             $SOCKET_MEMORY: {get_param: NeutronDpdkSocketMemory}
@@ -214,7 +214,7 @@ resources:
             #!/bin/bash
             FORMAT=$COMPUTE_HOSTNAME_FORMAT
             if [[ -z $FORMAT ]] ; then
-              FORMAT="compute" ;
+              FORMAT="compute-dpdk" ;
             else
               # Assumption: only %index% and %stackname% are the variables in Host name format
               FORMAT=$(echo $FORMAT | sed  's/\%index\%//g' | sed 's/\%stackname\%//g') ;
@@ -232,7 +232,7 @@ resources:
               fi
             fi
           params:
-            $COMPUTE_HOSTNAME_FORMAT: {get_param: ComputeHostnameFormat}
+            $COMPUTE_HOSTNAME_FORMAT: {get_param: ComputeDpdkHostnameFormat}
             $TUNED_CORES: {get_param: HostIsolatedCoreList}
 
   compute_kernel_args:
@@ -244,7 +244,7 @@ resources:
             #!/bin/bash
             FORMAT=$COMPUTE_HOSTNAME_FORMAT
             if [[ -z $FORMAT ]] ; then
-              FORMAT="compute" ;
+              FORMAT="compute-dpdk" ;
             else
               # Assumption: only %index% and %stackname% are the variables in Host name format
               FORMAT=$(echo $FORMAT | sed  's/\%index\%//g' | sed 's/\%stackname\%//g') ;
@@ -256,7 +256,7 @@ resources:
             fi
           params:
             $KERNEL_ARGS: {get_param: ComputeKernelArgs}
-            $COMPUTE_HOSTNAME_FORMAT: {get_param: ComputeHostnameFormat}
+            $COMPUTE_HOSTNAME_FORMAT: {get_param: ComputeDpdkHostnameFormat}
             $TUNED_CORES: {get_param: HostIsolatedCoreList}
 
 outputs:
