@@ -55,14 +55,14 @@
     "serial": "5000c50093f964c3"
   },
   {
-    "size": 375809638400,
+    "size": 399431958528,
     "rotational": true,
     "vendor": "DELL",
     "name": "/dev/sdf",
-    "wwn_vendor_extension": "0x21a51f78c8a134fc",
-    "wwn_with_extension": "0x6b083fe0dc85c30021a51f78c8a134fc",
+    "wwn_vendor_extension": "0x21bab27b3723fa7e",
+    "wwn_with_extension": "0x6b083fe0dc85c30021bab27b3723fa7e",
     "model": "PERC H730P Mini",
     "wwn": "0x6b083fe0dc85c300",
-    "serial": "6b083fe0dc85c30021a51f78c8a134fc"
+    "serial": "6b083fe0dc85c30021bab27b3723fa7e"
   }
 ]

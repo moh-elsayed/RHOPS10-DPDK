@@ -3,32 +3,32 @@
 			"mac": [
 				"EC:F4:BB:E7:FC:24"
 			],
-			"name": "cont01",
+			"name": "ceph01",
 			"pm_type": "pxe_ipmitool",
 			"pm_user": "root",
 			"pm_password": "calvin",
 			"pm_addr": "172.17.84.5",
-			"capabilities":"profile:control"
+			"capabilities":"profile:ceph-storage"
 		}, {
 			"mac": [
 				"EC:F4:BB:E8:03:54"
 			],
-			"name": "cont02",
+			"name": "ceph02",
 			"pm_type": "pxe_ipmitool",
 			"pm_user": "root",
 			"pm_password": "calvin",
 			"pm_addr": "172.17.84.7",
-			"capabilities":"profile:control"
+			"capabilities":"profile:ceph-storage"
 		}, {
 			"mac": [
 				"EC:F4:BB:E8:02:24"
 			],
-			"name": "cont03",
+			"name": "ceph03",
 			"pm_type": "pxe_ipmitool",
 			"pm_user": "root",
 			"pm_password": "calvin",
 			"pm_addr": "172.17.84.9",
-			"capabilities":"profile:control"
+			"capabilities":"profile:ceph-storage"
 		}, {
 			"mac": [
 				"EC:F4:BB:E8:03:5C"
@@ -63,32 +63,32 @@
 			"mac": [
 				"EC:F4:BB:E8:DA:B4"
 			],
-			"name": "ceph01",
+			"name": "cont01",
 			"pm_type": "pxe_ipmitool",
 			"pm_user": "root",
 			"pm_password": "calvin",
 			"pm_addr": "172.17.84.31",
-			"capabilities":"profile:ceph-storage"
+			"capabilities":"profile:control"
 		}, {
 			"mac": [
 				"EC:F4:BB:E8:DF:8C"
 			],
-			"name": "ceph02",
+			"name": "cont02",
 			"pm_type": "pxe_ipmitool",
 			"pm_user": "root",
 			"pm_password": "calvin",
 			"pm_addr": "172.17.84.33",
-			"capabilities":"profile:ceph-storage"
+			"capabilities":"profile:control"
 		}, {
 			"mac": [
 				"EC:F4:BB:E7:FC:74"
 			],
-			"name": "ceph03",
+			"name": "cont03",
 			"pm_type": "pxe_ipmitool",
 			"pm_user": "root",
 			"pm_password": "calvin",
 			"pm_addr": "172.17.84.35",
-			"capabilities":"profile:ceph-storage"
+			"capabilities":"profile:control"
 		}
 	]
 }

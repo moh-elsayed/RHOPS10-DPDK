@@ -502,8 +502,8 @@ secured.
 #############################################################################
 ```
 
-### Overcloud
-> **Overcloud Basic Configuration**
+## Overcloud
+### Overcloud Basic Configuration
 
 We will got through a step by step verification in order to prepare for overcloud deployment
 
@@ -793,7 +793,7 @@ After the inspection: all nodes will be powered-off and Provisioning Stated swit
 +--------------------------------------+--------+---------------+-------------+--------------------+-------------+
 
 ```
-> **Introspection Data Analysis**
+### Introspection Data Analysis
 
 The following section will show how to check the introspection data collected during the pervious steps:
 
@@ -975,6 +975,12 @@ total 592
     "serial": "6b083fe0dc84a50021a52208448d24a4"
   }
 ]
+
+```
+
+**Network interfaces check:**
+1) Controller nodes:
+```
 
 ```
 ## TO Be Continued ##
