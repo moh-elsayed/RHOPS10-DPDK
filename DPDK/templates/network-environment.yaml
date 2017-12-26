@@ -61,7 +61,7 @@ parameter_defaults:
 
   # Messi: Mapping of teh bridge to networks The OVS logical->physical bridge mappings to use.
   ## Moe## NeutronBridgeMappings: 'datacentre:br-ex,dpdk_data:br-link0,sriov0:br-sriov0,sriov1:br-sriov1'
-  NeutronBridgeMappings: 'NUMA0Data:br-link0,NUMA1Data:br-link1'
+  NeutronBridgeMappings: 'datacentre:br-ex,NUMA0Data:br-link0,NUMA1Data:br-link1'
   # The Neutron ML2 and OpenVSwitch vlan mapping range to support.
   NeutronNetworkVLANRanges: 'br-link0:300:306,br-link1:300:306'
 
@@ -118,7 +118,7 @@ parameter_defaults:
   # Provides CPU cores for non data path OVS-DPDK processes, such as handler and revalidator threads. This parameter has no impact on overall data path performance on multi-NUMA node hardware. This parameter is used for the dpdk-lcore-mask value in Open vSwitch, and these cores are shared with the host.
   # [Moe] Allocate the first physical core (and sibling thread) from each NUMA node (even if the NUMA node has no associated DPDK NIC).
   # [Moe] These cores must be mutually exclusive from the list of cores in NeutronDpdkCoreList and NovaVcpuPinSet.
-  HostCpusList: "0,16,1,17"
+  HostCpusList: "'0,16,1,17'"
 
   ###################
   # Memory Parameters:

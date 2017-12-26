@@ -1914,6 +1914,83 @@ Assign the boot disk..
 ```
 
 ## Templates and Deployment
+Below are the list of templates
+```
+[stack@undercloud DPDK]$ ls  -ltr
+total 8
+-rwxrwxr-x.  1 stack stack  391 Dec 26 00:04 01-deploy-DPDK.sh
+drwxrwxr-x.  4 stack stack  245 Dec 26 00:10 templates
+drwxr-xr-x. 11 stack stack 4096 Dec 26 00:13 openstack-tripleo-heat-templates
+-rw-rw-r--.  1 stack stack    0 Dec 26 00:13 openstack-deployment.log
+
+[stack@undercloud DPDK]$ ls  -ltRr templates/
+templates/:
+total 52
+-rw-rw-r--. 1 stack stack  3214 Dec 25 09:38 storage-environment.yaml
+-rw-rw-r--. 1 stack stack   275 Dec 25 09:38 scheduler_hints_env.yaml
+-rw-rw-r--. 1 stack stack 12236 Dec 25 09:38 roles_data.yaml
+-rw-rw-r--. 1 stack stack   853 Dec 25 09:38 node-info.yaml
+-rw-rw-r--. 1 stack stack 10099 Dec 25 09:38 network-isolation.yaml
+-rw-rw-r--. 1 stack stack    50 Dec 25 09:38 timezone-environment.yaml
+drwxrwxr-x. 2 stack stack    76 Dec 25 09:39 nic-configs
+drwxrwxr-x. 2 stack stack    80 Dec 25 10:58 userdata
+-rw-rw-r--. 1 stack stack 11363 Dec 26 00:01 network-environment.yaml
+
+templates/nic-configs:
+total 28
+-rw-rw-r--. 1 stack stack 7233 Dec 25 09:38 control.yaml
+-rw-rw-r--. 1 stack stack 8819 Dec 25 09:38 compute-dpdk.yaml
+-rw-rw-r--. 1 stack stack 5013 Dec 25 09:38 ceph-storage.yaml
+
+templates/userdata:
+total 28
+-rw-rw-r--. 1 stack stack  1874 Dec 25 10:17 post-install.yaml
+-rw-rw-r--. 1 stack stack  9886 Dec 25 10:17 firstboot-setup.sh
+-rw-rw-r--. 1 stack stack 10322 Dec 25 10:58 first-boot.yaml
+
+```
+> Note: Part of the composite role setup, we have decalried a role by the name of “ComputeDpdk”, according to the roles_data.yaml template, the services part of Compute Dpdk role will look like the below:
+> - name: ComputeDpdk
+  #CountDefault: 1
+  HostnameFormatDefault: '%stackname%-compute-dpdk-%index%'
+  disable_upgrade_deployment: True
+  ServicesDefault:
+    - OS::TripleO::Services::CACerts
+    - OS::TripleO::Services::CephClient
+    - OS::TripleO::Services::CephExternal
+    - OS::TripleO::Services::Timezone
+    - OS::TripleO::Services::Ntp
+    - OS::TripleO::Services::Snmp
+    - OS::TripleO::Services::Sshd
+    - OS::TripleO::Services::NovaCompute
+    - OS::TripleO::Services::NovaLibvirt
+    - OS::TripleO::Services::Kernel
+    - OS::TripleO::Services::ComputeNeutronCorePlugin
+    **- OS::TripleO::Services::ComputeNeutronOvsDpdkAgent**      
+    - OS::TripleO::Services::ComputeCeilometerAgent
+    - OS::TripleO::Services::ComputeNeutronL3Agent
+    - OS::TripleO::Services::ComputeNeutronMetadataAgent
+    - OS::TripleO::Services::TripleoPackages
+    - OS::TripleO::Services::TripleoFirewall
+    - OS::TripleO::Services::OpenDaylightOvs
+    - OS::TripleO::Services::SensuClient
+    - OS::TripleO::Services::FluentdClient
+    - OS::TripleO::Services::VipHosts 
+
+This service **OS::TripleO::Services::ComputeNeutronOvsDpdkAgent** is a DPDK specific and it’s not part of the puppet resource registry YAML file and it must be added:
+```
+$ more /usr/share/openstack-tripleo-heat-templates/overcloud-resource-registry-puppet.j2.yaml
+[……truncated……]
+.
+.
+  OS::TripleO::Services::ComputeNeutronOvsAgent: puppet/services/neutron-ovs-agent.yaml
+  OS::TripleO::Services::ComputeNeutronOvsDpdkAgent: puppet/services/neutron-ovs-dpdk-agent.yaml
+  OS::TripleO::Services::Pacemaker: OS::Heat::None
+.
+.
+[……truncated……]
+```
+
 
 ## Acknowledgments
 
