@@ -183,7 +183,7 @@ resources:
               name: br-link0
               use_dhcp: false
               dns_servers: {get_param: DnsServers}
-               members:
+              members:
                 -
                   type: ovs_bond
                   name: bond3
@@ -202,7 +202,7 @@ resources:
               name: br-link1
               use_dhcp: false
               dns_servers: {get_param: DnsServers}
-               members:
+              members:
                 -
                   type: ovs_bond
                   name: bond4
