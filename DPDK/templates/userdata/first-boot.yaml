@@ -16,6 +16,9 @@ parameters:
   ComputeHostnameFormat:
     type: string
     default: ""
+  ComputeDpdkHostnameFormat:
+    type: string
+    default: ""
   NeutronDpdkCoreList:
     description: >
       List of logical cores for PMD threads. Its mandatory parameter.

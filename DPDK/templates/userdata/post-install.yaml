@@ -9,6 +9,9 @@ parameters:
   ComputeHostnameFormat:
     type: string
     default: ""
+  ComputeDpdkHostnameFormat:
+    type: string
+    default: ""    
 
 resources:
   ExtraDeployments:

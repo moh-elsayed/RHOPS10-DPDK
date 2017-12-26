@@ -20,4 +20,4 @@ parameter_defaults:
   ComputeDpdkHostnameFormat: '%stackname%-compute-dpdk-%index%'
   CephStorageHostnameFormat: '%stackname%-ceph-%index%'
   ObjectStorageHostnameFormat: '%stackname%-swift-%index%'
-  NtpServer: 172.17.84.4
+  NtpServer: 0.centos.pool.org,1.centos.pool.org,172.17.84.4

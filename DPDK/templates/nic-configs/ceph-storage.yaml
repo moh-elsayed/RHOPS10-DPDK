@@ -41,6 +41,10 @@ parameters:
     default: 20
     description: Vlan ID for the internal_api network traffic.
     type: number
+  BondInterfaceOvsOptions:
+    default: "bond_mode=active-backup"
+    description: The ovs_options string for the bond interface. Set things like lacp=active and/or bond_mode=balance-slb using this option.
+    type: string    
   StorageNetworkVlanID:
     default: 30
     description: Vlan ID for the storage network traffic.
