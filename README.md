@@ -1785,8 +1785,136 @@ After inspecting all interfaces and disk associated with each node, the below de
 
 ![](https://i.imgur.com/J4oPKYv.png)
 
+###  NOVA Flavor tagging
+This is a very important step in order for nova service to be able to find a match with ironic service in order to provision the overcloud nodes, failing to do so! There will be a comment error […**NOVA NO VALID HOST FOUND**…].
 
-## TO Be Continued ##
+```
+[stack@undercloud DPDK]$ openstack flavor list
++--------------------------------------+---------------+------+------+-----------+-------+-----------+
+| ID                                   | Name          |  RAM | Disk | Ephemeral | VCPUs | Is Public |
++--------------------------------------+---------------+------+------+-----------+-------+-----------+
+| 0d610894-598e-475b-8d7f-4a74bb2a480a | control       | 4096 |   40 |         0 |     1 | True      |
+| 44db1c38-2d93-4d13-9f0b-6c1836b3a161 | block-storage | 4096 |   40 |         0 |     1 | True      |
+| 50b54a35-46c4-49b9-8c57-fc01c21b30da | ceph-storage  | 4096 |   40 |         0 |     1 | True      |
+| 6f70f80b-09d6-4621-9766-a8b03061779d | baremetal     | 4096 |   40 |         0 |     1 | True      |
+| a6b361a2-e51c-4700-a09d-de77c05ec69f | swift-storage | 4096 |   40 |         0 |     1 | True      |
+| f2fcff9d-5515-4c98-a9a0-e800d8f344ec | compute       | 4096 |   40 |         0 |     1 | True      |
++--------------------------------------+---------------+------+------+-----------+-------+-----------+
+[stack@undercloud DPDK]$ openstack flavor create --id auto --ram 4096 --disk 40 --vcpus 1 --swap 4096 computeDPDK
++----------------------------+--------------------------------------+
+| Field                      | Value                                |
++----------------------------+--------------------------------------+
+| OS-FLV-DISABLED:disabled   | False                                |
+| OS-FLV-EXT-DATA:ephemeral  | 0                                    |
+| disk                       | 40                                   |
+| id                         | 72847e5c-f756-4f0a-b3cc-61c1cb0b9118 |
+| name                       | computeDPDK                          |
+| os-flavor-access:is_public | True                                 |
+| properties                 |                                      |
+| ram                        | 4096                                 |
+| rxtx_factor                | 1.0                                  |
+| swap                       | 4096                                 |
+| vcpus                      | 1                                    |
++----------------------------+--------------------------------------+
+[stack@undercloud DPDK]$ openstack flavor set --property "cpu_arch"="x86_64" --property "capabilities:boot_option"="local" --property "capabilities:profile"="computeDPDK" computeDPDK
+[stack@undercloud DPDK]$ openstack flavor show  72847e5c-f756-4f0a-b3cc-61c1cb0b9118
++----------------------------+-----------------------------------------------------------------------------------------+
+| Field                      | Value                                                                                   |
++----------------------------+-----------------------------------------------------------------------------------------+
+| OS-FLV-DISABLED:disabled   | False                                                                                   |
+| OS-FLV-EXT-DATA:ephemeral  | 0                                                                                       |
+| access_project_ids         | None                                                                                    |
+| disk                       | 40                                                                                      |
+| id                         | 72847e5c-f756-4f0a-b3cc-61c1cb0b9118                                                    |
+| name                       | computeDPDK                                                                             |
+| os-flavor-access:is_public | True                                                                                    |
+| properties                 | capabilities:boot_option='local', capabilities:profile='computeDPDK', cpu_arch='x86_64' |
+| ram                        | 4096                                                                                    |
+| rxtx_factor                | 1.0                                                                                     |
+| swap                       | 4096                                                                                    |
+| vcpus                      | 1                                                                                       |
++----------------------------+-----------------------------------------------------------------------------------------+
+[stack@undercloud DPDK]$ openstack flavor show  control
++----------------------------+------------------------------------------------------------------+
+| Field                      | Value                                                            |
++----------------------------+------------------------------------------------------------------+
+| OS-FLV-DISABLED:disabled   | False                                                            |
+| OS-FLV-EXT-DATA:ephemeral  | 0                                                                |
+| access_project_ids         | None                                                             |
+| disk                       | 40                                                               |
+| id                         | 0d610894-598e-475b-8d7f-4a74bb2a480a                             |
+| name                       | control                                                          |
+| os-flavor-access:is_public | True                                                             |
+| properties                 | capabilities:boot_option='local', capabilities:profile='control' |
+| ram                        | 4096                                                             |
+| rxtx_factor                | 1.0                                                              |
+| swap                       |                                                                  |
+| vcpus                      | 1                                                                |
++----------------------------+------------------------------------------------------------------+
+[stack@undercloud DPDK]$ openstack flavor show  ceph-storage
++----------------------------+-----------------------------------------------------------------------+
+| Field                      | Value                                                                 |
++----------------------------+-----------------------------------------------------------------------+
+| OS-FLV-DISABLED:disabled   | False                                                                 |
+| OS-FLV-EXT-DATA:ephemeral  | 0                                                                     |
+| access_project_ids         | None                                                                  |
+| disk                       | 40                                                                    |
+| id                         | 50b54a35-46c4-49b9-8c57-fc01c21b30da                                  |
+| name                       | ceph-storage                                                          |
+| os-flavor-access:is_public | True                                                                  |
+| properties                 | capabilities:boot_option='local', capabilities:profile='ceph-storage' |
+| ram                        | 4096                                                                  |
+| rxtx_factor                | 1.0                                                                   |
+| swap                       |                                                                       |
+| vcpus                      | 1                                                                     |
++----------------------------+-----------------------------------------------------------------------+
+```
+
+Assign the boot disk..
+```
+[stack@undercloud DPDK]$ for node in $(openstack baremetal node list -f value --column UUID) ; do  openstack baremetal node set --property root_device='{"name":"/dev/sdf"}' $node; done
+[stack@undercloud DPDK]$ openstack baremetal node show comp01
++------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Field                  | Value                                                                                                                                                                              |
++------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| clean_step             | {}                                                                                                                                                                                 |
+| console_enabled        | False                                                                                                                                                                              |
+| created_at             | 2017-12-25T07:15:24+00:00                                                                                                                                                          |
+| driver                 | pxe_ipmitool                                                                                                                                                                       |
+| driver_info            | {u'ipmi_password': u'******', u'ipmi_address': u'172.17.84.11', u'deploy_ramdisk': u'48424167-3f2a-40ad-85d5-9d9db0c30832', u'deploy_kernel': u'd8a06250-6539-42ea-                |
+|                        | 8e20-0aff5340af18', u'ipmi_username': u'root'}                                                                                                                                     |
+| driver_internal_info   | {}                                                                                                                                                                                 |
+| extra                  | {u'hardware_swift_object': u'extra_hardware-e533b8c4-8df1-4ae3-9057-513b76588fd3'}                                                                                                 |
+| inspection_finished_at | None                                                                                                                                                                               |
+| inspection_started_at  | None                                                                                                                                                                               |
+| instance_info          | {}                                                                                                                                                                                 |
+| instance_uuid          | None                                                                                                                                                                               |
+| last_error             | None                                                                                                                                                                               |
+| maintenance            | False                                                                                                                                                                              |
+| maintenance_reason     | None                                                                                                                                                                               |
+| name                   | comp01                                                                                                                                                                             |
+| ports                  | [{u'href': u'http://192.0.2.10:6385/v1/nodes/e533b8c4-8df1-4ae3-9057-513b76588fd3/ports', u'rel': u'self'}, {u'href':                                                              |
+|                        | u'http://192.0.2.10:6385/nodes/e533b8c4-8df1-4ae3-9057-513b76588fd3/ports', u'rel': u'bookmark'}]                                                                                  |
+| power_state            | power off                                                                                                                                                                          |
+| properties             | {u'cpu_arch': u'x86_64', u'root_device': {u'name': u'/dev/sdf'}, u'cpus': u'32', u'capabilities':                                                                                  |
+|                        | u'profile:computeDPDK,cpu_vt:true,cpu_hugepages:true,boot_option:local,cpu_txt:true,cpu_aes:true,cpu_hugepages_1g:true', u'memory_mb': u'393216', u'local_gb': u'371'}             |
+| provision_state        | available                                                                                                                                                                          |
+| provision_updated_at   | 2017-12-25T07:25:40+00:00                                                                                                                                                          |
+| raid_config            | {}                                                                                                                                                                                 |
+| reservation            | None                                                                                                                                                                               |
+| states                 | [{u'href': u'http://192.0.2.10:6385/v1/nodes/e533b8c4-8df1-4ae3-9057-513b76588fd3/states', u'rel': u'self'}, {u'href':                                                             |
+|                        | u'http://192.0.2.10:6385/nodes/e533b8c4-8df1-4ae3-9057-513b76588fd3/states', u'rel': u'bookmark'}]                                                                                 |
+| target_power_state     | None                                                                                                                                                                               |
+| target_provision_state | None                                                                                                                                                                               |
+| target_raid_config     | {}                                                                                                                                                                                 |
+| updated_at             | 2017-12-26T04:49:34+00:00                                                                                                                                                          |
+| uuid                   | e533b8c4-8df1-4ae3-9057-513b76588fd3                                                                                                                                               |
++------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+[stack@undercloud DPDK]$
+```
+
+## Templates and Deployment
+
 ## Acknowledgments
 
 * Hat tip to anyone who's code was used
