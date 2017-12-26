@@ -128,13 +128,13 @@ resources:
                   next_hop: {get_param: ExternalInterfaceDefaultRoute}
 
             ## Isolated networks  " Storage, Internal"
-              -
-                type: linux_bond
-                name: bond_isolate
-                bonding_options: "mode=active-backup"
-                use_dhcp: false
-                dns_servers: {get_param: DnsServers}
-                members:
+            -
+              type: linux_bond
+              name: bond_isolate
+              bonding_options: "mode=active-backup"
+              use_dhcp: false
+              dns_servers: {get_param: DnsServers}
+              members:
                 -
                   type: interface
                   name: em1
