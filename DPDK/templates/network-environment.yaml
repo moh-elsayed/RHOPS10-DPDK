@@ -28,10 +28,10 @@ parameter_defaults:
   # CIDR subnet mask length for provisioning network
   ControlPlaneSubnetCidr: "24"
   # Customize the IP ranges on each network to use for static IPs and VIPs
-  InternalApiAllocationPools: [{'start': '1192.30.200.51', 'end': '192.30.200.200'}]
-  TenantAllocationPools: [{'start': '192.30.201.51', 'end': '1192.30.201.200'}]
+  InternalApiAllocationPools: [{'start': '192.30.200.51', 'end': '192.30.200.200'}]
+  TenantAllocationPools: [{'start': '192.30.201.51', 'end': '192.30.201.200'}]
   StorageAllocationPools: [{'start': '192.30.202.51', 'end': '192.30.202.200'}]
-  StorageMgmtAllocationPools: [{'start': '1192.30.203.51', 'end': '192.30.203.200'}]
+  StorageMgmtAllocationPools: [{'start': '192.30.203.51', 'end': '192.30.203.200'}]
   # Leave room if the external network is also used for floating IPs
   ExternalAllocationPools: [{'start': '172.17.84.151', 'end': '172.17.84.240'}]
   # Gateway router for the external network
