@@ -118,7 +118,7 @@ parameter_defaults:
   # Provides CPU cores for non data path OVS-DPDK processes, such as handler and revalidator threads. This parameter has no impact on overall data path performance on multi-NUMA node hardware. This parameter is used for the dpdk-lcore-mask value in Open vSwitch, and these cores are shared with the host.
   # [Moe] Allocate the first physical core (and sibling thread) from each NUMA node (even if the NUMA node has no associated DPDK NIC).
   # [Moe] These cores must be mutually exclusive from the list of cores in NeutronDpdkCoreList and NovaVcpuPinSet.
-  HostCpusList: "'0,16,1,17'"
+  HostCpusList: "0,16,1,17"
 
   ###################
   # Memory Parameters:

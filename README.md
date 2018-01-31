@@ -93,10 +93,557 @@ These instructions will reflect the RHOSP10 on a CIP blueprint along with scaleI
 
 ![](https://i.imgur.com/JCB0GCO.png)
 
-> ToR Topology:
+> ToR (Spine-Leaf) Topology:
+> 
+![](https://i.imgur.com/UC84ua7.png)
 
-![](https://i.imgur.com/IeQxQW0.png)
+VLT Switch Configuration:
+- Leaf1 && Leaf2
+```
+## On Leaf1
+============
+R3R5-Leaf1-S4048#show running-config interface port-channel 127
+!
+interface Port-channel 127
+ no ip address
+ channel-member fortyGigE 1/53,1/54
+ no shutdown
+R3R5-Leaf1-S4048#show interfaces port-channel 127 brief
+Codes: L - LACP Port-channel
+       O - OpenFlow Controller Port-channel
+       A - Auto Port-channel
+       I - Internally Lagged
 
+    LAG  Mode  Status       Uptime      Ports
+    127  L2    up           3w0d20h     Fo 1/53    (Up)
+                                        Fo 1/54    (Up)
+R3R5-Leaf1-S4048#show running-config interface fortyGigE 1/53
+!
+interface fortyGigE 1/53
+ no ip address
+ no shutdown
+R3R5-Leaf1-S4048#show running-config interface fortyGigE 1/54
+!
+interface fortyGigE 1/54
+ no ip address
+ no shutdown
+R3R5-Leaf1-S4048#show running-config vlt
+!
+vlt domain 2
+ peer-link port-channel 127
+ back-up destination 172.17.84.23
+ primary-priority 1
+ unit-id 0
+
+## On Leaf2
+============
+R3R5-Leaf2-S4048#show running-config interface port-channel 127
+!
+interface Port-channel 127
+ no ip address
+ channel-member fortyGigE 1/53,1/54
+ no shutdown
+R3R5-Leaf2-S4048#show interfaces port-channel 127 brief
+Codes: L - LACP Port-channel
+       O - OpenFlow Controller Port-channel
+       A - Auto Port-channel
+       I - Internally Lagged
+
+    LAG  Mode  Status       Uptime      Ports
+    127  L2    up           3w0d20h     Fo 1/53    (Up)
+                                        Fo 1/54    (Up)
+R3R5-Leaf2-S4048#show running-config interface fortyGigE 1/53
+!
+interface fortyGigE 1/53
+ no ip address
+ no shutdown
+R3R5-Leaf2-S4048#show running-config interface fortyGigE 1/54
+!
+interface fortyGigE 1/54
+ no ip address
+ no shutdown
+R3R5-Leaf2-S4048#show running-config vlt
+!
+vlt domain 2
+ peer-link port-channel 127
+ back-up destination 172.17.84.22
+ unit-id 1
+
+```
+- Leaf3 && Leaf4
+
+```
+## On Leaf 3
+============
+
+R3R5-Leaf3-S4048#show running-config interface port-channel 127
+!
+interface Port-channel 127
+ no ip address
+ channel-member fortyGigE 1/53,1/54
+ no shutdown
+R3R5-Leaf3-S4048#show interfaces port-channel 127 brief
+Codes: L - LACP Port-channel
+       O - OpenFlow Controller Port-channel
+       A - Auto Port-channel
+       I - Internally Lagged
+
+    LAG  Mode  Status       Uptime      Ports
+    127  L2    up           2w6d23h     Fo 1/53    (Up)
+                                        Fo 1/54    (Up)
+R3R5-Leaf3-S4048#show running-config interface fortyGigE 1/53
+!
+interface fortyGigE 1/53
+ no ip address
+ no shutdown
+R3R5-Leaf3-S4048#show running-config interface fortyGigE 1/54
+!
+interface fortyGigE 1/54
+ no ip address
+ no shutdown
+R3R5-Leaf3-S4048#show running-config vlt
+!
+vlt domain 2
+ peer-link port-channel 127
+ back-up destination 172.17.84.30
+ primary-priority 1
+ unit-id 0
+
+## Onb Leaf3
+============
+
+R3R5-Leaf4-S4048#show running-config interface port-channel 127
+!
+interface Port-channel 127
+ no ip address
+ channel-member fortyGigE 1/53,1/54
+ no shutdown
+R3R5-Leaf4-S4048#show interfaces port-channel 127 brief
+Codes: L - LACP Port-channel
+       O - OpenFlow Controller Port-channel
+       A - Auto Port-channel
+       I - Internally Lagged
+
+    LAG  Mode  Status       Uptime      Ports
+    127  L2    up           2w6d23h     Fo 1/53    (Up)
+                                        Fo 1/54    (Up)
+R3R5-Leaf4-S4048#show running-config interface fortyGigE 1/53
+!
+interface fortyGigE 1/53
+ no ip address
+ no shutdown
+R3R5-Leaf4-S4048#show running-config interface fortyGigE 1/54
+!
+interface fortyGigE 1/54
+ no ip address
+ no shutdown
+R3R5-Leaf4-S4048#show running-config vlt
+!
+vlt domain 2
+ peer-link port-channel 127
+ back-up destination 172.17.84.29
+ unit-id 1
+
+```
+- Spine1 && Spine2
+
+```
+## On Spine1
+============
+
+R3R5-Spine1-S6000#show running-config interface port-channel 127
+!
+interface Port-channel 127
+ no ip address
+ channel-member fortyGigE 1/1,1/2,1/4
+ no shutdown
+R3R5-Spine1-S6000#show interfaces port-channel 127 brief
+Codes: L - LACP Port-channel
+       O - OpenFlow Controller Port-channel
+       A - Auto Port-channel
+       I - Internally Lagged
+
+    LAG  Mode  Status       Uptime      Ports
+    127  L2    up           3w0d18h     Fo 1/1     (Up)
+                                        Fo 1/2     (Up)
+                                        Fo 1/4     (Up)
+R3R5-Spine1-S6000#show running-config interface fortyGigE 1/1
+!
+interface fortyGigE 1/1
+ no ip address
+ no shutdown
+R3R5-Spine1-S6000#show running-config interface fortyGigE 1/2
+!
+interface fortyGigE 1/2
+ no ip address
+ no shutdown
+R3R5-Spine1-S6000#show running-config interface fortyGigE 1/4
+!
+interface fortyGigE 1/4
+ no ip address
+ no shutdown
+R3R5-Spine1-S6000#show running-config vlt
+!
+vlt domain 1
+ peer-link port-channel 127
+ back-up destination 172.17.84.28
+ primary-priority 1
+ unit-id 0
+
+## On Spine2
+============
+
+R3R5-Spine2-S6000#show running-config interface port-channel 127
+!
+interface Port-channel 127
+ no ip address
+ channel-member fortyGigE 1/1,1/2,1/4
+ no shutdown
+R3R5-Spine2-S6000#show interfaces port-channel 127 brief
+Codes: L - LACP Port-channel
+       O - OpenFlow Controller Port-channel
+       A - Auto Port-channel
+       I - Internally Lagged
+
+    LAG  Mode  Status       Uptime      Ports
+    127  L2    up           3w0d18h     Fo 1/1     (Up)
+                                        Fo 1/2     (Up)
+                                        Fo 1/4     (Up)
+R3R5-Spine2-S6000#show running-config interface fortyGigE 1/1
+!
+interface fortyGigE 1/1
+ no ip address
+ no shutdown
+R3R5-Spine2-S6000#show running-config interface fortyGigE 1/2
+!
+interface fortyGigE 1/2
+ no ip address
+ no shutdown
+R3R5-Spine2-S6000#show running-config interface fortyGigE 1/4
+!
+interface fortyGigE 1/4
+ no ip address
+ no shutdown
+R3R5-Spine2-S6000#show running-config vlt
+!
+vlt domain 1
+ peer-link port-channel 127
+ back-up destination 172.17.84.27
+ unit-id 1
+
+```
+
+Trunk LACP configuration:
+- Between Leaf1&2 and Spine1&2
+
+```
+## On Leaf1
+===========
+
+R3R5-Leaf1-S4048#show running-config interface port-channel 3
+!
+interface Port-channel 3
+ no ip address
+ switchport
+ vlt-peer-lag port-channel 3
+ no shutdown
+R3R5-Leaf1-S4048#show interfaces port-channel 3  brief
+Codes: L - LACP Port-channel
+       O - OpenFlow Controller Port-channel
+       A - Auto Port-channel
+       I - Internally Lagged
+
+    LAG  Mode  Status       Uptime      Ports
+L   3    L2    up           3w0d16h     Fo 1/49    (Up)
+                                        Fo 1/51    (Up)
+R3R5-Leaf1-S4048#show running-config interface fortyGigE 1/49
+!
+interface fortyGigE 1/49
+ no ip address
+ mtu 9216
+!
+ port-channel-protocol LACP
+  port-channel 3 mode active
+ no shutdown
+R3R5-Leaf1-S4048#show running-config interface fortyGigE 1/51
+!
+interface fortyGigE 1/51
+ no ip address
+ mtu 9216
+!
+ port-channel-protocol LACP
+  port-channel 3 mode active
+ no shutdown
+
+## On Leaf2
+===========
+
+R3R5-Leaf2-S4048#show running-config interface port-channel 3
+!
+interface Port-channel 3
+ no ip address
+ switchport
+ vlt-peer-lag port-channel 3
+ no shutdown
+R3R5-Leaf2-S4048#show interfaces port-channel 3  brief
+Codes: L - LACP Port-channel
+       O - OpenFlow Controller Port-channel
+       A - Auto Port-channel
+       I - Internally Lagged
+
+    LAG  Mode  Status       Uptime      Ports
+L   3    L2    up           3w0d0h      Fo 1/49    (Up)
+                                        Fo 1/51    (Up)
+R3R5-Leaf2-S4048#show running-config interface fortyGigE 1/49
+!
+interface fortyGigE 1/49
+ no ip address
+ mtu 9216
+!
+ port-channel-protocol LACP
+  port-channel 3 mode active
+ no shutdown
+R3R5-Leaf2-S4048#show running-config interface fortyGigE 1/51
+!
+interface fortyGigE 1/51
+ no ip address
+ mtu 9216
+!
+ port-channel-protocol LACP
+  port-channel 3 mode active
+ no shutdown
+
+## On Spine1
+===========
+R3R5-Spine1-S6000#show running-config interface port-channel 3
+!
+interface Port-channel 3
+ no ip address
+ switchport
+ vlt-peer-lag port-channel 3
+ no shutdown
+R3R5-Spine1-S6000#show interfaces port-channel 3  brief
+Codes: L - LACP Port-channel
+       O - OpenFlow Controller Port-channel
+       A - Auto Port-channel
+       I - Internally Lagged
+
+    LAG  Mode  Status       Uptime      Ports
+L   3    L2    up           3w0d16h     Fo 1/8     (Up)
+                                        Fo 1/9     (Up)
+R3R5-Spine1-S6000#show running-config interface fortyGigE 1/8
+!
+interface fortyGigE 1/8
+ no ip address
+ mtu 9216
+!
+ port-channel-protocol LACP
+  port-channel 3 mode active
+ no shutdown
+R3R5-Spine1-S6000#show running-config interface fortyGigE 1/9
+!
+interface fortyGigE 1/9
+ no ip address
+ mtu 9216
+!
+ port-channel-protocol LACP
+  port-channel 3 mode active
+ no shutdown
+
+
+## On Spine2
+===========
+
+R3R5-Spine2-S6000#show running-config interface port-channel 3
+!
+interface Port-channel 3
+ no ip address
+ switchport
+ vlt-peer-lag port-channel 3
+ no shutdown
+R3R5-Spine2-S6000#show interfaces port-channel 3  brief
+Codes: L - LACP Port-channel
+       O - OpenFlow Controller Port-channel
+       A - Auto Port-channel
+       I - Internally Lagged
+
+    LAG  Mode  Status       Uptime      Ports
+L   3    L2    up           3w0d16h     Fo 1/8     (Up)
+                                        Fo 1/9     (Up)
+R3R5-Spine2-S6000#show running-config interface fortyGigE 1/8
+!
+interface fortyGigE 1/8
+ no ip address
+ mtu 9216
+!
+ port-channel-protocol LACP
+  port-channel 3 mode active
+ no shutdown
+R3R5-Spine2-S6000#show running-config interface fortyGigE 1/9
+!
+interface fortyGigE 1/9
+ no ip address
+ mtu 9216
+!
+ port-channel-protocol LACP
+  port-channel 3 mode active
+ no shutdown
+
+```
+- Between Leaf3&4 and Spine1&2
+
+```
+## On Leaf3
+===========
+
+R3R5-Leaf3-S4048#show running-config interface port-channel 4
+!
+interface Port-channel 4
+ no ip address
+ switchport
+ vlt-peer-lag port-channel 4
+ no shutdown
+R3R5-Leaf3-S4048#show interfaces port-channel 4 brief
+Codes: L - LACP Port-channel
+       O - OpenFlow Controller Port-channel
+       A - Auto Port-channel
+       I - Internally Lagged
+
+    LAG  Mode  Status       Uptime      Ports
+L   4    L2    up           2w6d21h     Fo 1/49    (Up)
+                                        Fo 1/51    (Up)
+R3R5-Leaf3-S4048#show running-config interface fortyGigE 1/49
+!
+interface fortyGigE 1/49
+ no ip address
+ mtu 9216
+!
+ port-channel-protocol LACP
+  port-channel 4 mode active
+ no shutdown
+R3R5-Leaf3-S4048#show running-config interface fortyGigE 1/51
+!
+interface fortyGigE 1/51
+ no ip address
+ mtu 9216
+!
+ port-channel-protocol LACP
+  port-channel 4 mode active
+ no shutdown
+
+## Leaf4
+=========
+
+R3R5-Leaf4-S4048#show running-config interface port-channel 4
+!
+interface Port-channel 4
+ no ip address
+ switchport
+ vlt-peer-lag port-channel 4
+ no shutdown
+R3R5-Leaf4-S4048#show interfaces port-channel 4 brief
+Codes: L - LACP Port-channel
+       O - OpenFlow Controller Port-channel
+       A - Auto Port-channel
+       I - Internally Lagged
+
+    LAG  Mode  Status       Uptime      Ports
+L   4    L2    up           2w6d21h     Fo 1/49    (Up)
+                                        Fo 1/51    (Up)
+R3R5-Leaf4-S4048#show running-config interface fortyGigE 1/49
+!
+interface fortyGigE 1/49
+ no ip address
+ mtu 9216
+!
+ port-channel-protocol LACP
+  port-channel 4 mode active
+ no shutdown
+R3R5-Leaf4-S4048#show running-config interface fortyGigE 1/50
+!
+interface fortyGigE 1/50
+ no ip address
+ mtu 9216
+ shutdown
+
+
+## Spine1
+=========
+
+R3R5-Spine1-S6000#show running-config interface port-channel 4
+!
+interface Port-channel 4
+ no ip address
+ switchport
+ vlt-peer-lag port-channel 4
+ no shutdown
+R3R5-Spine1-S6000#show interfaces port-channel 4  brief
+Codes: L - LACP Port-channel
+       O - OpenFlow Controller Port-channel
+       A - Auto Port-channel
+       I - Internally Lagged
+
+    LAG  Mode  Status       Uptime      Ports
+L   4    L2    up           2w6d21h     Fo 1/11    (Up)
+                                        Fo 1/13    (Up)
+R3R5-Spine1-S6000#show running-config interface fortyGigE 1/11
+!
+interface fortyGigE 1/11
+ no ip address
+ mtu 9216
+!
+ port-channel-protocol LACP
+  port-channel 4 mode active
+ no shutdown
+R3R5-Spine1-S6000#show running-config interface fortyGigE 1/13
+!
+interface fortyGigE 1/13
+ no ip address
+ mtu 9216
+!
+ port-channel-protocol LACP
+  port-channel 4 mode active
+ no shutdown
+
+## Spine2
+=========
+
+R3R5-Spine2-S6000#show running-config interface port-channel 4
+!
+interface Port-channel 4
+ no ip address
+ switchport
+ vlt-peer-lag port-channel 4
+ no shutdown
+R3R5-Spine2-S6000#show interfaces port-channel 4  brief
+Codes: L - LACP Port-channel
+       O - OpenFlow Controller Port-channel
+       A - Auto Port-channel
+       I - Internally Lagged
+
+    LAG  Mode  Status       Uptime      Ports
+L   4    L2    up           2w6d21h     Fo 1/11    (Up)
+                                        Fo 1/13    (Up)
+R3R5-Spine2-S6000#show running-config interface fortyGigE 1/11
+!
+interface fortyGigE 1/11
+ no ip address
+ mtu 9216
+!
+ port-channel-protocol LACP
+  port-channel 4 mode active
+ no shutdown
+R3R5-Spine2-S6000#show running-config interface fortyGigE 1/13
+!
+interface fortyGigE 1/13
+ no ip address
+ mtu 9216
+!
+ port-channel-protocol LACP
+  port-channel 4 mode active
+ no shutdown
+
+```
 > ToR port assignment:
 
 ![](https://i.imgur.com/CqFqqrt.png)
