@@ -13,11 +13,11 @@ These instructions will reflect the RHOSP10 on a CIP blueprint along with scaleI
    Seq  | Name | Network Address | VLAN_ID | Switch
 ------------- | ------------- | ------------- | ------------- | -------------
 1  | Public/Floating/IPMI Network  | 172.17.84.0/24| 3084 | mgmt/Global
-2  | Undercloud Deployment  | 10.30.100.0/24 | 100 | mgmt/Internal
-3 | Internal network | 10.30.200.0/24 | 200 | ToR Switches/Internal
-4| Tenant network | 10.30.201.0/24 | 201 | ToR Switches/Internal
-5| Storage network | 10.30.202.0/24 | 202 | ToR Switches/Internal
-6| Storage management | 10.30.203.0/24 | 203 | ToR Switches/Internal
+2  | Undercloud Deployment  | 192.0.2.1.0/24 | 100 | mgmt/Internal
+3 | Internal network | 192.30.200.0/24 | 200 | ToR Switches/Internal
+4| Tenant network | 192.30.201.0/24 | 201 | ToR Switches/Internal
+5| Storage network | 192.30.202.0/24 | 202 | ToR Switches/Internal
+6| Storage management | 192.30.203.0/24 | 203 | ToR Switches/Internal
 7 | Data network01 | 10.30.220.0/24 | 220 | ToR Switches/Internal
 8 | Data Network02 | 10.30.221.0/24 | 221 | ToR Switches/Internal
 9 | Data Network Range | | 220:230 |ToR Switches/Internal	
@@ -1564,7 +1564,7 @@ total 592
     "name": "/dev/sdd",
     "size": 1200243695616,
     "name": "/dev/sde",
-    "size": 399431958528,
+    "size": 375809638400,
     "name": "/dev/sdf",
 ```
 > Note: 
@@ -1585,7 +1585,7 @@ total 592
     "name": "/dev/sdd",
     "size": 1200243695616,
     "name": "/dev/sde",
-    "size": 399431958528,
+    "size": 375809638400,
     "name": "/dev/sdf",
 [stack@undercloud swift-data]$ more   comp02.disk | grep -e name -e size
     "size": 400088457216,
@@ -1598,7 +1598,7 @@ total 592
     "name": "/dev/sdd",
     "size": 1200243695616,
     "name": "/dev/sde",
-    "size": 399431958528,
+    "size": 375809638400,
     "name": "/dev/sdf",
 [stack@undercloud swift-data]$ more   comp03.disk | grep -e name -e size
     "size": 400088457216,
@@ -1611,7 +1611,7 @@ total 592
     "name": "/dev/sdd",
     "size": 1200243695616,
     "name": "/dev/sde",
-    "size": 399431958528,
+    "size": 375809638400,
     "name": "/dev/sdf",
 ```
 > Note: 
@@ -1660,10 +1660,73 @@ total 592
 ```
 > Note: 
 > Controller OS disk is : sdf 
+
+4) SIO
+```
+[stack@undercloud swift-data]$ more   sio01.disk | grep -e name -e size
+    "size": 400088457216,
+    "name": "/dev/sda",
+    "size": 1200243695616,
+    "name": "/dev/sdb",
+    "size": 1200243695616,
+    "name": "/dev/sdc",
+    "size": 1200243695616,
+    "name": "/dev/sdd",
+    "size": 1200243695616,
+    "name": "/dev/sde",
+    "size": 375809638400,
+    "name": "/dev/sdf",
+[stack@undercloud swift-data]$ more   sio02.disk | grep -e name -e size
+    "size": 400088457216,
+    "name": "/dev/sda",
+    "size": 1200243695616,
+    "name": "/dev/sdb",
+    "size": 1200243695616,
+    "name": "/dev/sdc",
+    "size": 1200243695616,
+    "name": "/dev/sdd",
+    "size": 1200243695616,
+    "name": "/dev/sde",
+    "size": 375809638400,
+    "name": "/dev/sdf",
+[stack@undercloud swift-data]$ more   sio03.disk | grep -e name -e size
+    "size": 400088457216,
+    "name": "/dev/sda",
+    "size": 1200243695616,
+    "name": "/dev/sdb",
+    "size": 1200243695616,
+    "name": "/dev/sdc",
+    "size": 1200243695616,
+    "name": "/dev/sdd",
+    "size": 1200243695616,
+    "name": "/dev/sde",
+    "size": 375809638400,
+    "name": "/dev/sdf",
+
+```
+> Note: 
+> SIO Data disks are:sdb,sdc,sdd and sde
+> SIO cach: sda
+> SIO OS disk is : sdf 
+>
 **Interfaces information**
-1) Compute
+1) All nodes
 ```
-[stack@undercloud swift-data]$ more  comp01.int |  grep name -A 1
+[stack@undercloud swift-data]$ for i in `cat  /tmp/name`; do echo $i; echo ===================; more $i.int | grep name -A 1; done
+ceph01
+===================
+    "name": "em4",
+    "has_carrier": false,
+--
+    "name": "em2",
+    "has_carrier": true,
+--
+    "name": "em1",
+    "has_carrier": true,
+--
+    "name": "em3",
+    "has_carrier": true,
+--
     "name": "p3p1",
     "has_carrier": true,
 --
@@ -1676,12 +1739,19 @@ total 592
     "name": "p2p2",
     "has_carrier": true,
 --
+    "name": "p6p2",
+    "has_carrier": true,
+--
+    "name": "p6p1",
+    "has_carrier": false,
+--
     "name": "p5p2",
     "has_carrier": true,
 --
     "name": "p5p1",
     "has_carrier": true,
---
+ceph02
+===================
     "name": "em4",
     "has_carrier": false,
 --
@@ -1693,7 +1763,44 @@ total 592
 --
     "name": "em3",
     "has_carrier": true,
-[stack@undercloud swift-data]$ more  comp02.int |  grep name -A 1
+--
+    "name": "p3p1",
+    "has_carrier": true,
+--
+    "name": "p3p2",
+    "has_carrier": true,
+--
+    "name": "p2p1",
+    "has_carrier": false,
+--
+    "name": "p2p2",
+    "has_carrier": true,
+--
+    "name": "p6p2",
+    "has_carrier": true,
+--
+    "name": "p6p1",
+    "has_carrier": true,
+--
+    "name": "p5p2",
+    "has_carrier": true,
+--
+    "name": "p5p1",
+    "has_carrier": true,
+ceph03
+===================
+    "name": "em4",
+    "has_carrier": false,
+--
+    "name": "em2",
+    "has_carrier": true,
+--
+    "name": "em1",
+    "has_carrier": true,
+--
+    "name": "em3",
+    "has_carrier": true,
+--
     "name": "p3p1",
     "has_carrier": true,
 --
@@ -1717,7 +1824,8 @@ total 592
 --
     "name": "p5p1",
     "has_carrier": true,
---
+comp01
+===================
     "name": "em4",
     "has_carrier": false,
 --
@@ -1729,7 +1837,38 @@ total 592
 --
     "name": "em3",
     "has_carrier": true,
-[stack@undercloud swift-data]$ more  comp03.int |  grep name -A 1
+--
+    "name": "p3p1",
+    "has_carrier": true,
+--
+    "name": "p3p2",
+    "has_carrier": true,
+--
+    "name": "p2p1",
+    "has_carrier": true,
+--
+    "name": "p2p2",
+    "has_carrier": true,
+--
+    "name": "p5p2",
+    "has_carrier": true,
+--
+    "name": "p5p1",
+    "has_carrier": true,
+comp02
+===================
+    "name": "em4",
+    "has_carrier": false,
+--
+    "name": "em2",
+    "has_carrier": true,
+--
+    "name": "em1",
+    "has_carrier": true,
+--
+    "name": "em3",
+    "has_carrier": true,
+--
     "name": "p3p1",
     "has_carrier": true,
 --
@@ -1753,7 +1892,8 @@ total 592
 --
     "name": "p5p1",
     "has_carrier": true,
---
+comp03
+===================
     "name": "em4",
     "has_carrier": false,
 --
@@ -1765,217 +1905,254 @@ total 592
 --
     "name": "em3",
     "has_carrier": true,
-```
-> Note: comp01 is missing slot 6, so we will avoid that NIC card..
+--
+    "name": "p3p1",
+    "has_carrier": true,
+--
+    "name": "p3p2",
+    "has_carrier": true,
+--
+    "name": "p2p1",
+    "has_carrier": true,
+--
+    "name": "p2p2",
+    "has_carrier": true,
+--
+    "name": "p6p2",
+    "has_carrier": true,
+--
+    "name": "p6p1",
+    "has_carrier": true,
+--
+    "name": "p5p2",
+    "has_carrier": true,
+--
+    "name": "p5p1",
+    "has_carrier": true,
+cont01
+===================
+    "name": "em4",
+    "has_carrier": false,
+--
+    "name": "em2",
+    "has_carrier": true,
+--
+    "name": "em1",
+    "has_carrier": true,
+--
+    "name": "em3",
+    "has_carrier": true,
+--
+    "name": "p3p1",
+    "has_carrier": true,
+--
+    "name": "p3p2",
+    "has_carrier": true,
+--
+    "name": "p2p1",
+    "has_carrier": true,
+--
+    "name": "p2p2",
+    "has_carrier": true,
+--
+    "name": "p6p2",
+    "has_carrier": true,
+--
+    "name": "p6p1",
+    "has_carrier": true,
+--
+    "name": "p5p2",
+    "has_carrier": true,
+--
+    "name": "p5p1",
+    "has_carrier": true,
+cont02
+===================
+    "name": "em4",
+    "has_carrier": false,
+--
+    "name": "em2",
+    "has_carrier": true,
+--
+    "name": "em1",
+    "has_carrier": true,
+--
+    "name": "em3",
+    "has_carrier": true,
+--
+    "name": "p3p1",
+    "has_carrier": true,
+--
+    "name": "p3p2",
+    "has_carrier": true,
+--
+    "name": "p2p1",
+    "has_carrier": true,
+--
+    "name": "p2p2",
+    "has_carrier": true,
+--
+    "name": "p6p2",
+    "has_carrier": true,
+--
+    "name": "p6p1",
+    "has_carrier": true,
+--
+    "name": "p5p2",
+    "has_carrier": true,
+--
+    "name": "p5p1",
+    "has_carrier": true,
+cont03
+===================
+    "name": "em4",
+    "has_carrier": false,
+--
+    "name": "em2",
+    "has_carrier": true,
+--
+    "name": "em1",
+    "has_carrier": true,
+--
+    "name": "em3",
+    "has_carrier": true,
+--
+    "name": "p3p1",
+    "has_carrier": true,
+--
+    "name": "p3p2",
+    "has_carrier": true,
+--
+    "name": "p2p1",
+    "has_carrier": true,
+--
+    "name": "p2p2",
+    "has_carrier": true,
+--
+    "name": "p6p2",
+    "has_carrier": true,
+--
+    "name": "p6p1",
+    "has_carrier": true,
+--
+    "name": "p5p2",
+    "has_carrier": true,
+--
+    "name": "p5p1",
+    "has_carrier": true,
+sio01
+===================
+    "name": "em4",
+    "has_carrier": false,
+--
+    "name": "em2",
+    "has_carrier": true,
+--
+    "name": "em1",
+    "has_carrier": true,
+--
+    "name": "em3",
+    "has_carrier": true,
+--
+    "name": "p3p1",
+    "has_carrier": true,
+--
+    "name": "p3p2",
+    "has_carrier": true,
+--
+    "name": "p2p1",
+    "has_carrier": true,
+--
+    "name": "p2p2",
+    "has_carrier": true,
+--
+    "name": "p6p2",
+    "has_carrier": true,
+--
+    "name": "p6p1",
+    "has_carrier": true,
+--
+    "name": "p5p2",
+    "has_carrier": true,
+--
+    "name": "p5p1",
+    "has_carrier": true,
+sio02
+===================
+    "name": "em4",
+    "has_carrier": false,
+--
+    "name": "em2",
+    "has_carrier": true,
+--
+    "name": "em1",
+    "has_carrier": true,
+--
+    "name": "em3",
+    "has_carrier": true,
+--
+    "name": "p3p1",
+    "has_carrier": true,
+--
+    "name": "p3p2",
+    "has_carrier": true,
+--
+    "name": "p2p1",
+    "has_carrier": true,
+--
+    "name": "p2p2",
+    "has_carrier": true,
+--
+    "name": "p6p2",
+    "has_carrier": true,
+--
+    "name": "p6p1",
+    "has_carrier": true,
+--
+    "name": "p5p2",
+    "has_carrier": true,
+--
+    "name": "p5p1",
+    "has_carrier": true,
+sio03
+===================
+    "name": "em4",
+    "has_carrier": false,
+--
+    "name": "em2",
+    "has_carrier": true,
+--
+    "name": "em1",
+    "has_carrier": true,
+--
+    "name": "em3",
+    "has_carrier": true,
+--
+    "name": "p3p1",
+    "has_carrier": true,
+--
+    "name": "p3p2",
+    "has_carrier": true,
+--
+    "name": "p2p1",
+    "has_carrier": true,
+--
+    "name": "p2p2",
+    "has_carrier": true,
+--
+    "name": "p6p2",
+    "has_carrier": true,
+--
+    "name": "p6p1",
+    "has_carrier": true,
+--
+    "name": "p5p2",
+    "has_carrier": true,
+--
+    "name": "p5p1",
+    "has_carrier": true,
 
-2) Controllers
-
 ```
-[stack@undercloud swift-data]$ more  cont01.int |  grep name -A 1
-    "name": "p3p1",
-    "has_carrier": true,
---
-    "name": "p3p2",
-    "has_carrier": true,
---
-    "name": "p2p1",
-    "has_carrier": true,
---
-    "name": "p2p2",
-    "has_carrier": true,
---
-    "name": "p6p2",
-    "has_carrier": true,
---
-    "name": "p6p1",
-    "has_carrier": true,
---
-    "name": "p5p2",
-    "has_carrier": true,
---
-    "name": "p5p1",
-    "has_carrier": true,
---
-    "name": "em4",
-    "has_carrier": false,
---
-    "name": "em2",
-    "has_carrier": true,
---
-    "name": "em1",
-    "has_carrier": true,
---
-    "name": "em3",
-    "has_carrier": true,
-[stack@undercloud swift-data]$ more  cont02.int |  grep name -A 1
-    "name": "p3p1",
-    "has_carrier": true,
---
-    "name": "p3p2",
-    "has_carrier": true,
---
-    "name": "p2p1",
-    "has_carrier": true,
---
-    "name": "p2p2",
-    "has_carrier": true,
---
-    "name": "p6p2",
-    "has_carrier": true,
---
-    "name": "p6p1",
-    "has_carrier": true,
---
-    "name": "p5p2",
-    "has_carrier": true,
---
-    "name": "p5p1",
-    "has_carrier": true,
---
-    "name": "em4",
-    "has_carrier": false,
---
-    "name": "em2",
-    "has_carrier": true,
---
-    "name": "em1",
-    "has_carrier": true,
---
-    "name": "em3",
-    "has_carrier": true,
-[stack@undercloud swift-data]$ more  cont03.int |  grep name -A 1
-    "name": "p3p1",
-    "has_carrier": true,
---
-    "name": "p3p2",
-    "has_carrier": true,
---
-    "name": "p2p1",
-    "has_carrier": true,
---
-    "name": "p2p2",
-    "has_carrier": true,
---
-    "name": "p6p2",
-    "has_carrier": true,
---
-    "name": "p6p1",
-    "has_carrier": true,
---
-    "name": "p5p2",
-    "has_carrier": true,
---
-    "name": "p5p1",
-    "has_carrier": true,
---
-    "name": "em4",
-    "has_carrier": false,
---
-    "name": "em2",
-    "has_carrier": true,
---
-    "name": "em1",
-    "has_carrier": true,
---
-    "name": "em3",
-    "has_carrier": true,
-```
-> Note: No issues with all controller nodes
-
-3) Ceph
-```
-[stack@undercloud swift-data]$ more  ceph01.int |  grep name -A 1
-    "name": "p3p1",
-    "has_carrier": true,
---
-    "name": "p3p2",
-    "has_carrier": true,
---
-    "name": "p2p1",
-    "has_carrier": true,
---
-    "name": "p2p2",
-    "has_carrier": true,
---
-    "name": "p6p2",
-    "has_carrier": true,
---
-    "name": "p6p1",
-    "has_carrier": false,
---
-    "name": "p5p2",
-    "has_carrier": true,
---
-    "name": "p5p1",
-    "has_carrier": true,
---
-    "name": "em4",
-    "has_carrier": false,
---
-    "name": "em2",
-    "has_carrier": true,
---
-    "name": "em1",
-    "has_carrier": true,
---
-    "name": "em3",
-    "has_carrier": true,
-[stack@undercloud swift-data]$ more  ceph02.int |  grep name -A 1
-    "name": "p3p1",
-    "has_carrier": true,
---
-    "name": "p3p2",
-    "has_carrier": true,
---
-    "name": "p2p1",
-    "has_carrier": false,
---
-    "name": "p2p2",
-    "has_carrier": true,
---
-    "name": "p6p2",
-    "has_carrier": true,
---
-    "name": "p6p1",
-    "has_carrier": true,
---
-    "name": "p5p2",
-    "has_carrier": true,
---
-    "name": "p5p1",
-    "has_carrier": true,
---
-    "name": "em4",
-    "has_carrier": false,
---
-    "name": "em2",
-    "has_carrier": true,
---
-    "name": "em1",
-    "has_carrier": true,
---
-    "name": "em3",
-    "has_carrier": true,
-[stack@undercloud swift-data]$ more  ceph03.int |  grep name -A 1
-    "name": "p6p2",
-    "has_carrier": true,
---
-    "name": "p6p1",
-    "has_carrier": true,
---
-    "name": "em4",
-    "has_carrier": false,
---
-    "name": "em2",
-    "has_carrier": true,
---
-    "name": "em1",
-    "has_carrier": true,
---
-    "name": "em3",
-    "has_carrier": true,
-```
-> Note: Ceph03 missing few NIC cards, and other nodes having some link issue "has_carrier: false", we will focus on the intergrated cards.
 
 **CPU Information:**
 Since we are going to enable CPU Pinning andf DPDK, we need to plan and design the CPU for all compute nodes
@@ -2332,9 +2509,9 @@ After inspecting all interfaces and disk associated with each node, the below de
 
 ![](https://i.imgur.com/J4oPKYv.png)
 
-###  NOVA Flavor tagging
-This is a very important step in order for nova service to be able to find a match with ironic service in order to provision the overcloud nodes, failing to do so! There will be a comment error […**NOVA NO VALID HOST FOUND**…].
+## Pre-deploy activities 
 
+### Nova flavors 
 ```
 [stack@undercloud DPDK]$ openstack flavor list
 +--------------------------------------+---------------+------+------+-----------+-------+-----------+
@@ -2347,6 +2524,7 @@ This is a very important step in order for nova service to be able to find a mat
 | a6b361a2-e51c-4700-a09d-de77c05ec69f | swift-storage | 4096 |   40 |         0 |     1 | True      |
 | f2fcff9d-5515-4c98-a9a0-e800d8f344ec | compute       | 4096 |   40 |         0 |     1 | True      |
 +--------------------------------------+---------------+------+------+-----------+-------+-----------+
+
 [stack@undercloud DPDK]$ openstack flavor create --id auto --ram 4096 --disk 40 --vcpus 1 --swap 4096 computeDPDK
 +----------------------------+--------------------------------------+
 | Field                      | Value                                |
@@ -2363,100 +2541,77 @@ This is a very important step in order for nova service to be able to find a mat
 | swap                       | 4096                                 |
 | vcpus                      | 1                                    |
 +----------------------------+--------------------------------------+
-[stack@undercloud DPDK]$ openstack flavor set --property "cpu_arch"="x86_64" --property "capabilities:boot_option"="local" --property "capabilities:profile"="computeDPDK" computeDPDK
-[stack@undercloud DPDK]$ openstack flavor show  72847e5c-f756-4f0a-b3cc-61c1cb0b9118
-+----------------------------+-----------------------------------------------------------------------------------------+
-| Field                      | Value                                                                                   |
-+----------------------------+-----------------------------------------------------------------------------------------+
-| OS-FLV-DISABLED:disabled   | False                                                                                   |
-| OS-FLV-EXT-DATA:ephemeral  | 0                                                                                       |
-| access_project_ids         | None                                                                                    |
-| disk                       | 40                                                                                      |
-| id                         | 72847e5c-f756-4f0a-b3cc-61c1cb0b9118                                                    |
-| name                       | computeDPDK                                                                             |
-| os-flavor-access:is_public | True                                                                                    |
-| properties                 | capabilities:boot_option='local', capabilities:profile='computeDPDK', cpu_arch='x86_64' |
-| ram                        | 4096                                                                                    |
-| rxtx_factor                | 1.0                                                                                     |
-| swap                       | 4096                                                                                    |
-| vcpus                      | 1                                                                                       |
-+----------------------------+-----------------------------------------------------------------------------------------+
-[stack@undercloud DPDK]$ openstack flavor show  control
-+----------------------------+------------------------------------------------------------------+
-| Field                      | Value                                                            |
-+----------------------------+------------------------------------------------------------------+
-| OS-FLV-DISABLED:disabled   | False                                                            |
-| OS-FLV-EXT-DATA:ephemeral  | 0                                                                |
-| access_project_ids         | None                                                             |
-| disk                       | 40                                                               |
-| id                         | 0d610894-598e-475b-8d7f-4a74bb2a480a                             |
-| name                       | control                                                          |
-| os-flavor-access:is_public | True                                                             |
-| properties                 | capabilities:boot_option='local', capabilities:profile='control' |
-| ram                        | 4096                                                             |
-| rxtx_factor                | 1.0                                                              |
-| swap                       |                                                                  |
-| vcpus                      | 1                                                                |
-+----------------------------+------------------------------------------------------------------+
-[stack@undercloud DPDK]$ openstack flavor show  ceph-storage
-+----------------------------+-----------------------------------------------------------------------+
-| Field                      | Value                                                                 |
-+----------------------------+-----------------------------------------------------------------------+
-| OS-FLV-DISABLED:disabled   | False                                                                 |
-| OS-FLV-EXT-DATA:ephemeral  | 0                                                                     |
-| access_project_ids         | None                                                                  |
-| disk                       | 40                                                                    |
-| id                         | 50b54a35-46c4-49b9-8c57-fc01c21b30da                                  |
-| name                       | ceph-storage                                                          |
-| os-flavor-access:is_public | True                                                                  |
-| properties                 | capabilities:boot_option='local', capabilities:profile='ceph-storage' |
-| ram                        | 4096                                                                  |
-| rxtx_factor                | 1.0                                                                   |
-| swap                       |                                                                       |
-| vcpus                      | 1                                                                     |
-+----------------------------+-----------------------------------------------------------------------+
+[stack@undercloud ~]$ openstack flavor create --id auto --ram 4096 --disk 40 --vcpus 1 --swap 4096 sio-compute
++----------------------------+--------------------------------------+
+| Field                      | Value                                |
++----------------------------+--------------------------------------+
+| OS-FLV-DISABLED:disabled   | False                                |
+| OS-FLV-EXT-DATA:ephemeral  | 0                                    |
+| disk                       | 40                                   |
+| id                         | 7694789f-1fb0-495e-881e-8d69dd31167d |
+| name                       | sio-compute                          |
+| os-flavor-access:is_public | True                                 |
+| properties                 |                                      |
+| ram                        | 4096                                 |
+| rxtx_factor                | 1.0                                  |
+| swap                       | 4096                                 |
+| vcpus                      | 1                                    |
++----------------------------+--------------------------------------+
+[stack@undercloud ~]$ openstack flavor set --property "cpu_arch"="x86_64" --property "capabilities:boot_option"="local" --property "capabilities:profile"="sio-compute" sio-compute
+
+[stack@undercloud swift-data]$ openstack flavor set --property "cpu_arch"="x86_64" --property "capabilities:boot_option"="local" --property "capabilities:profile"="ceph-compute" ceph-compute
+
+[stack@undercloud swift-data]$ openstack flavor set --property "cpu_arch"="x86_64" --property "capabilities:boot_option"="local" --property "capabilities:profile"="compute" compute
+
+[stack@undercloud swift-data]$ openstack flavor set --property "cpu_arch"="x86_64" --property "capabilities:boot_option"="local" --property "capabilities:profile"="control" control
+
+openstack flavor set --property "cpu_arch"="x86_64" --property "capabilities:boot_option"="local" --property "capabilities:profile"="computeDPDK" computeDPDK
+
 ```
 
-Assign the boot disk..
+### Boot disk assignment
 ```
 [stack@undercloud DPDK]$ for node in $(openstack baremetal node list -f value --column UUID) ; do  openstack baremetal node set --property root_device='{"name":"/dev/sdf"}' $node; done
-[stack@undercloud DPDK]$ openstack baremetal node show comp01
-+------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Field                  | Value                                                                                                                                                                              |
-+------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| clean_step             | {}                                                                                                                                                                                 |
-| console_enabled        | False                                                                                                                                                                              |
-| created_at             | 2017-12-25T07:15:24+00:00                                                                                                                                                          |
-| driver                 | pxe_ipmitool                                                                                                                                                                       |
-| driver_info            | {u'ipmi_password': u'******', u'ipmi_address': u'172.17.84.11', u'deploy_ramdisk': u'48424167-3f2a-40ad-85d5-9d9db0c30832', u'deploy_kernel': u'd8a06250-6539-42ea-                |
-|                        | 8e20-0aff5340af18', u'ipmi_username': u'root'}                                                                                                                                     |
-| driver_internal_info   | {}                                                                                                                                                                                 |
-| extra                  | {u'hardware_swift_object': u'extra_hardware-e533b8c4-8df1-4ae3-9057-513b76588fd3'}                                                                                                 |
-| inspection_finished_at | None                                                                                                                                                                               |
-| inspection_started_at  | None                                                                                                                                                                               |
-| instance_info          | {}                                                                                                                                                                                 |
-| instance_uuid          | None                                                                                                                                                                               |
-| last_error             | None                                                                                                                                                                               |
-| maintenance            | False                                                                                                                                                                              |
-| maintenance_reason     | None                                                                                                                                                                               |
-| name                   | comp01                                                                                                                                                                             |
-| ports                  | [{u'href': u'http://192.0.2.10:6385/v1/nodes/e533b8c4-8df1-4ae3-9057-513b76588fd3/ports', u'rel': u'self'}, {u'href':                                                              |
-|                        | u'http://192.0.2.10:6385/nodes/e533b8c4-8df1-4ae3-9057-513b76588fd3/ports', u'rel': u'bookmark'}]                                                                                  |
-| power_state            | power off                                                                                                                                                                          |
-| properties             | {u'cpu_arch': u'x86_64', u'root_device': {u'name': u'/dev/sdf'}, u'cpus': u'32', u'capabilities':                                                                                  |
-|                        | u'profile:computeDPDK,cpu_vt:true,cpu_hugepages:true,boot_option:local,cpu_txt:true,cpu_aes:true,cpu_hugepages_1g:true', u'memory_mb': u'393216', u'local_gb': u'371'}             |
-| provision_state        | available                                                                                                                                                                          |
-| provision_updated_at   | 2017-12-25T07:25:40+00:00                                                                                                                                                          |
-| raid_config            | {}                                                                                                                                                                                 |
-| reservation            | None                                                                                                                                                                               |
-| states                 | [{u'href': u'http://192.0.2.10:6385/v1/nodes/e533b8c4-8df1-4ae3-9057-513b76588fd3/states', u'rel': u'self'}, {u'href':                                                             |
-|                        | u'http://192.0.2.10:6385/nodes/e533b8c4-8df1-4ae3-9057-513b76588fd3/states', u'rel': u'bookmark'}]                                                                                 |
-| target_power_state     | None                                                                                                                                                                               |
-| target_provision_state | None                                                                                                                                                                               |
-| target_raid_config     | {}                                                                                                                                                                                 |
-| updated_at             | 2017-12-26T04:49:34+00:00                                                                                                                                                          |
-| uuid                   | e533b8c4-8df1-4ae3-9057-513b76588fd3                                                                                                                                               |
-+------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+[stack@undercloud ~]$ openstack baremetal node show comp01
++------------------------+-------------------------------------------------------------------------------------------------------------------------------------+
+| Field                  | Value                                                                                                                               |
++------------------------+-------------------------------------------------------------------------------------------------------------------------------------+
+| clean_step             | {}                                                                                                                                  |
+| console_enabled        | False                                                                                                                               |
+| created_at             | 2017-12-25T07:15:24+00:00                                                                                                           |
+| driver                 | pxe_ipmitool                                                                                                                        |
+| driver_info            | {u'deploy_kernel': u'38a42e64-3409-43b7-b02f-4bc344c1c356', u'ipmi_address': u'172.17.84.11', u'deploy_ramdisk':                    |
+|                        | u'2ea5db52-04c5-4e4d-b810-ec2fd1f0865d', u'ipmi_password': u'******', u'ipmi_username': u'root'}                                    |
+| driver_internal_info   | {u'agent_url': u'http://192.0.2.50:9999', u'root_uuid_or_disk_id': u'c9efa9ba-cbb7-4fc9-b576-1f67555300d2', u'is_whole_disk_image': |
+|                        | False, u'agent_last_heartbeat': 1514296703}                                                                                         |
+| extra                  | {u'hardware_swift_object': u'extra_hardware-e533b8c4-8df1-4ae3-9057-513b76588fd3'}                                                  |
+| inspection_finished_at | None                                                                                                                                |
+| inspection_started_at  | None                                                                                                                                |
+| instance_info          | {}                                                                                                                                  |
+| instance_uuid          | None                                                                                                                                |
+| last_error             | None                                                                                                                                |
+| maintenance            | False                                                                                                                               |
+| maintenance_reason     | None                                                                                                                                |
+| name                   | comp01                                                                                                                              |
+| ports                  | [{u'href': u'http://192.0.2.10:6385/v1/nodes/e533b8c4-8df1-4ae3-9057-513b76588fd3/ports', u'rel': u'self'}, {u'href':               |
+|                        | u'http://192.0.2.10:6385/nodes/e533b8c4-8df1-4ae3-9057-513b76588fd3/ports', u'rel': u'bookmark'}]                                   |
+| power_state            | power on                                                                                                                            |
+| properties             | {u'cpu_arch': u'x86_64', u'root_device': {u'name': u'/dev/sdf'}, u'cpus': u'32', u'capabilities':                                   |
+|                        | u'profile:computeDPDK,cpu_hugepages:true,cpu_txt:true,boot_option:local,cpu_aes:true,cpu_vt:true,cpu_hugepages_1g:true',            |
+|                        | u'memory_mb': u'393216', u'local_gb': u'349'}                                                                                       |
+| provision_state        | available                                                                                                                           |
+| provision_updated_at   | 2018-02-02T18:18:22+00:00                                                                                                           |
+| raid_config            | {}                                                                                                                                  |
+| reservation            | None                                                                                                                                |
+| states                 | [{u'href': u'http://192.0.2.10:6385/v1/nodes/e533b8c4-8df1-4ae3-9057-513b76588fd3/states', u'rel': u'self'}, {u'href':              |
+|                        | u'http://192.0.2.10:6385/nodes/e533b8c4-8df1-4ae3-9057-513b76588fd3/states', u'rel': u'bookmark'}]                                  |
+| target_power_state     | None                                                                                                                                |
+| target_provision_state | None                                                                                                                                |
+| target_raid_config     | {}                                                                                                                                  |
+| updated_at             | 2018-02-03T15:04:13+00:00                                                                                                           |
+| uuid                   | e533b8c4-8df1-4ae3-9057-513b76588fd3                                                                                                |
++------------------------+-------------------------------------------------------------------------------------------------------------------------------------+
 [stack@undercloud DPDK]$
 ```
 
