@@ -102,26 +102,13 @@ resources:
                   ip_netmask: 169.254.169.254/32
                   next_hop: {get_param: EC2MetadataIp}
             -
-              type: vlan
-              vlan_id: {get_param: ExternalNetworkVlanID}
-              device: em3
-              addresses:
-                -
-                  ip_netmask: {get_param: ExternalIpSubnet}
-              routes:
-                # IPv6 Default Route
-                -
-                  default: true
-                  next_hop: {get_param: ExternalInterfaceDefaultRoute}
-            ## Isolated networks " Storage, Internal, StorageMgmt, Tenant "
-            -
               type: ovs_bridge
               name: br-isolate
               use_dhcp: false
               members:
                 -
                   type: ovs_bond
-                  name: bond1
+                  name: bond0
                   ovs_options: {get_param: BondInterfaceOvsOptions}
                   members:
                     -
@@ -133,25 +120,36 @@ resources:
                       name: em2
                 -
                   type: vlan
-                  name: bond1
+                  name: bond0
                   vlan_id: {get_param: InternalApiNetworkVlanID}
                   addresses:
                     -
                       ip_netmask: {get_param: InternalApiIpSubnet}
                 -
                   type: vlan
-                  name: bond1
+                  name: bond0
                   vlan_id: {get_param: StorageNetworkVlanID}
                   addresses:
                     -
                       ip_netmask: {get_param: StorageIpSubnet}
                 -
                   type: vlan
-                  name: bond1
+                  name: bond0
                   vlan_id: {get_param: StorageMgmtNetworkVlanID}
                   addresses:
                     -
                       ip_netmask: {get_param: StorageMgmtIpSubnet}
+                -
+                  type: vlan
+                  device: bond0
+                  vlan_id: {get_param: ExternalNetworkVlanID}
+                  addresses:
+                    -
+                      ip_netmask: {get_param: ExternalIpSubnet}
+                  routes:
+                    -
+                      default: true
+                      next_hop: {get_param: ExternalInterfaceDefaultRoute}                       
             -
               type: ovs_bridge
               name: br-tenant
