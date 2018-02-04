@@ -13,7 +13,7 @@ permit_ssh()
 ## update the hosts file with the local repo IP
 update_hosts()
 {
-  echo "1192.0.2.6       siorhn.sio.lab  siorhn" >> /etc/hosts
+  echo "192.0.2.6       siorhn.sio.lab  siorhn" >> /etc/hosts
 }
 
 localRepo()

@@ -3,13 +3,13 @@
 resource_registry:
   # Network Interface templates to use (these files must exist)
   OS::TripleO::Controller::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/control.yaml                      # Controller 
-  #OS::TripleO::Compute::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/compute.yaml                        # Normal Compute
+  #OS::TripleO::Compute::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/compute.yaml                         # Normal Compute
   OS::TripleO::ComputeDpdk::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/compute-dpdk.yaml                # Compute with DPDK-OVS
-  #OS::TripleO::ComputeSriov::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/compute-sriov.yaml             # Compute with SRIOV
-  #OS::TripleO::ComputeHCIDpdk::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/compute-hci-dpdk.yaml        # Compute/HCI and DPDK
-  #OS::TripleO::ComputeHCISriov::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/compute-hci-sriov.yaml      # Compute/HCI and SRIOV
+  #OS::TripleO::ComputeSriov::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/compute-sriov.yaml              # Compute with SRIOV
+  #OS::TripleO::ComputeHCIDpdk::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/compute-hci-dpdk.yaml         # Compute/HCI and DPDK
+  #OS::TripleO::ComputeHCISriov::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/compute-hci-sriov.yaml       # Compute/HCI and SRIOV
   OS::TripleO::CephStorage::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/ceph-storage.yaml                # Normal CEPH nodes
-  #OS::TripleO::SioStorage::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/sio-storage.yaml                # SIO
+  #OS::TripleO::SioStorage::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/sio-storage.yaml                  # SIO
 
   
   ## First Boot template
