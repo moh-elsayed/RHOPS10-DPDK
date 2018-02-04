@@ -1,0 +1,124 @@
+{
+	"nodes": [{
+			"mac": [
+				"EC:F4:BB:E7:FC:20"
+			],
+			"name": "cont00",
+			"pm_type": "pxe_ipmitool",
+			"pm_user": "root",
+			"pm_password": "calvin",
+			"pm_addr": "172.17.84.5",
+			"capabilities":"profile:control"
+		}, {
+			"mac": [
+				"EC:F4:BB:E8:03:50"
+			],
+			"name": "cont01",
+			"pm_type": "pxe_ipmitool",
+			"pm_user": "root",
+			"pm_password": "calvin",
+			"pm_addr": "172.17.84.7",
+			"capabilities":"profile:control"
+		}, {
+			"mac": [
+				"EC:F4:BB:E8:02:20"
+			],
+			"name": "cont02",
+			"pm_type": "pxe_ipmitool",
+			"pm_user": "root",
+			"pm_password": "calvin",
+			"pm_addr": "172.17.84.9",
+			"capabilities":"profile:control"
+		}, {
+			"mac": [
+				"EC:F4:BB:E8:03:58"
+			],
+			"name": "comp00",
+			"pm_type": "pxe_ipmitool",
+			"pm_user": "root",
+			"pm_password": "calvin",
+			"pm_addr": "172.17.84.11",
+			"capabilities":"profile:computeDPDK"
+		}, {
+			"mac": [
+				"EC:F4:BB:E7:FC:48"
+			],
+			"name": "comp01",
+			"pm_type": "pxe_ipmitool",
+			"pm_user": "root",
+			"pm_password": "calvin",
+			"pm_addr": "172.17.84.13",
+			"capabilities":"profile:computeDPDK"
+		}, {
+			"mac": [
+				"EC:F4:BB:E8:03:A0"
+			],
+			"name": "comp02",
+			"pm_type": "pxe_ipmitool",
+			"pm_user": "root",
+			"pm_password": "calvin",
+			"pm_addr": "172.17.84.15",
+			"capabilities":"profile:computeDPDK"
+		}, {
+			"mac": [
+				"EC:F4:BB:E8:DA:B0"
+			],
+			"name": "ceph00",
+			"pm_type": "pxe_ipmitool",
+			"pm_user": "root",
+			"pm_password": "calvin",
+			"pm_addr": "172.17.84.31",
+			"capabilities":"profile:ceph-storage"
+		}, {
+			"mac": [
+				"EC:F4:BB:E8:DF:88"
+			],
+			"name": "ceph01",
+			"pm_type": "pxe_ipmitool",
+			"pm_user": "root",
+			"pm_password": "calvin",
+			"pm_addr": "172.17.84.33",
+			"capabilities":"profile:ceph-storage"
+		}, {
+			"mac": [
+				"EC:F4:BB:E7:FC:70"
+			],
+			"name": "ceph02",
+			"pm_type": "pxe_ipmitool",
+			"pm_user": "root",
+			"pm_password": "calvin",
+			"pm_addr": "172.17.84.35",
+			"capabilities":"profile:ceph-storage"
+		}, {
+			"mac": [
+				"EC:F4:BB:E7:F8:38"
+			],
+			"name": "sio00",
+			"pm_type": "pxe_ipmitool",
+			"pm_user": "root",
+			"pm_password": "calvin",
+			"pm_addr": "172.17.84.37",
+			"capabilities":"profile:sio-storage"
+		}, {
+			"mac": [
+				"EC:F4:BB:E8:03:70"
+			],
+			"name": "sio01",
+			"pm_type": "pxe_ipmitool",
+			"pm_user": "root",
+			"pm_password": "calvin",
+			"pm_addr": "172.17.84.39",
+			"capabilities":"profile:sio-storage"
+		}, {
+			"mac": [
+				"EC:F4:BB:E8:03:88"
+			],
+			"name": "sio02",
+			"pm_type": "pxe_ipmitool",
+			"pm_user": "root",
+			"pm_password": "calvin",
+			"pm_addr": "172.17.84.41",
+			"capabilities":"profile:sio-storage"
+		}
+	]
+}
