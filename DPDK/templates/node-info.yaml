@@ -16,7 +16,7 @@ parameter_defaults:
   ComputeHciSriovCount: 0
   ComputeHciDpdkCount: 0
   CephStorageCount: 3
-  SioStorageCount: 3
+  SioStorageCount: 0
   ControllerHostnameFormat: '%stackname%-controller-%index%'
   ComputeHostnameFormat: '%stackname%-compute-%index%'
   ComputeDpdkHostnameFormat: '%stackname%-compute-dpdk-%index%'

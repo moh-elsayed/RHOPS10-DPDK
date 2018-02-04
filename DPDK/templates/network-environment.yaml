@@ -9,7 +9,7 @@ resource_registry:
   #OS::TripleO::ComputeHCIDpdk::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/compute-hci-dpdk.yaml        # Compute/HCI and DPDK
   #OS::TripleO::ComputeHCISriov::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/compute-hci-sriov.yaml      # Compute/HCI and SRIOV
   OS::TripleO::CephStorage::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/ceph-storage.yaml                # Normal CEPH nodes
-  #OS::TripleO::SioStorage::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/ceph-storage.yaml                # SIO
+  #OS::TripleO::SioStorage::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/sio-storage.yaml                # SIO
 
   
   ## First Boot template
@@ -38,7 +38,7 @@ parameter_defaults:
   # Gateway router for the external network
   ExternalInterfaceDefaultRoute: 172.17.84.254
   # Gateway router for the provisioning network (or Undercloud IP)
-  ControlPlaneDefaultRoute: 192.0.2.10
+  ControlPlaneDefaultRoute: 192.0.2.254
   # Generally the IP of the Undercloud
   EC2MetadataIp: 192.0.2.10
   # Define the DNS servers (maximum 2) for the overcloud nodes
@@ -64,7 +64,7 @@ parameter_defaults:
   ## Moe## NeutronBridgeMappings: 'datacentre:br-ex,dpdk_data:br-link0,sriov0:br-sriov0,sriov1:br-sriov1'
   NeutronBridgeMappings: 'datacentre:br-ex,NUMA0Data:br-link0,NUMA1Data:br-link1'
   # The Neutron ML2 and OpenVSwitch vlan mapping range to support.
-  NeutronNetworkVLANRanges: 'br-link0:300:306,br-link1:300:306'
+  NeutronNetworkVLANRanges: 'br-link0:300:700,br-link1:300:700'
 
   # Predictable VIPs
   #ControlFixedIPs: [{'ip_address':'192.168.201.101'}]

@@ -256,12 +256,19 @@ resources:
               ## Commented by Moe
               ##sed 's/^\(GRUB_CMDLINE_LINUX=".*\)"/\1 $KERNEL_ARGS isolcpus=$TUNED_CORES"/g' -i /etc/default/grub ;
               ##grub2-mkconfig -o /etc/grub2.cfg
-              
+
               BOOTDRV=`df  | grep sd | awk '{print $1}' | sed s/[0-9]//g`
-              echo '#!/bin/bash' | tee /tmp/moe.sh  
-              echo grubby --update-kernel=ALL --args=\"isolcpus=$TUNED_CORES\" | tee -a /tmp/moe.sh
-              echo grub2-install $BOOTDRV | tee -a /tmp/moe.sh 
-              chmod +x /tmp/moe.sh
+              #echo '#!/bin/bash' | tee /tmp/moe.sh  
+              #echo grubby --update-kernel=ALL --args=\"isolcpus=$TUNED_CORES\" | tee -a /tmp/moe.sh
+              #echo grub2-install $BOOTDRV | tee -a /tmp/moe.sh 
+              #chmod +x /tmp/moe.sh
+              #/tmp/moe.sh
+              CMD01=`echo grubby --update-kernel=ALL --args=\"isolcpus=$TUNED_CORES\"`
+              CMD02=`echo grub2-install $BOOTDRV`
+              echo $CMD01 | tee /tmp/moe
+              echo $CMD02 | tee -a /tmp/moe
+              $CMD01
+              $CMD02
               reboot
             fi
           params:

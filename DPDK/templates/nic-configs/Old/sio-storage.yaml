@@ -89,8 +89,8 @@ resources:
         os_net_config:
           network_config:
             -
-              type: interface
-              name: em3
+              type: ovs_bridge
+              name: {get_input: bridge_name}
               use_dhcp: false
               dns_servers: {get_param: DnsServers}
               addresses:
@@ -104,18 +104,22 @@ resources:
                 -
                   ip_netmask: 169.254.169.254/32
                   next_hop: {get_param: EC2MetadataIp}
-            -
-              type: vlan
-              vlan_id: {get_param: ExternalNetworkVlanID}
-              device: em3
-              addresses:
+              members:
                 -
-                  ip_netmask: {get_param: ExternalIpSubnet}
-              routes:
-                # IPv6 Default Route
+                  type: interface
+                  name: em3
+                  # force the MAC address of the bridge to this interface
+                  primary: true
                 -
-                  default: true
-                  next_hop: {get_param: ExternalInterfaceDefaultRoute}
+                  type: vlan
+                  vlan_id: {get_param: ExternalNetworkVlanID}
+                  addresses:
+                    -
+                      ip_netmask: {get_param: ExternalIpSubnet}
+                  routes:
+                    -
+                      default: true
+                      next_hop: {get_param: ExternalInterfaceDefaultRoute}
             -
               type: ovs_bridge
               name: br-isolate
