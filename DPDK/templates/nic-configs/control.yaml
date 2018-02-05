@@ -136,7 +136,7 @@ resources:
               members:
                 -
                   type: interface
-                  name: em1
+                  name: em2
                   mtu: 9000
                   # force the MAC address of the bridge to this interface
                   primary: true
