@@ -2693,7 +2693,55 @@ $ more /usr/share/openstack-tripleo-heat-templates/overcloud-resource-registry-p
 [……truncated……]
 ```
 
+## Tools & Git
+Sync up the templates modification from the git:
+```
+[stack@undercloud swift-data]$ cd ~/GIT/DPDK/
+[stack@undercloud DPDK]$ ll
+total 108
+drwxrwxr-x. 3 stack stack    48 Dec 26 08:36 DPDK
+-rw-rw-r--. 1 stack stack  2642 Feb  4 09:05 instackenv_2.json
+-rw-rw-r--. 1 stack stack  1985 Dec 25 09:38 instackenv.json
+-rw-rw-r--. 1 stack stack   674 Feb  3 10:08 instackenv_sio.json
+-rw-rw-r--. 1 stack stack 93595 Feb  3 10:08 README.md
+drwxrwxr-x. 2 stack stack   188 Dec 25 09:38 snapshots
+drwxrwxr-x. 2 stack stack  4096 Dec 25 09:38 swift-data
 
+
+[stack@undercloud DPDK]$ git pull https://github.com/moh-elsayed/RHOPS10-ScaleIO.git
+remote: Counting objects: 11, done.
+remote: Compressing objects: 100% (3/3), done.
+remote: Total 11 (delta 8), reused 11 (delta 8), pack-reused 0
+Unpacking objects: 100% (11/11), done.
+From https://github.com/moh-elsayed/RHOPS10-ScaleIO
+ * branch            HEAD       -> FETCH_HEAD
+Updating e0abdd6..bc49046
+Fast-forward
+ DPDK/templates/network-environment.yaml      |  12 ++++++------
+ DPDK/templates/network-isolation.yaml        |   6 +++---
+ DPDK/templates/nic-configs/ceph-storage.yaml |  37 ++++++++++++++++++++---------------
+ DPDK/templates/nic-configs/compute-dpdk.yaml | 150 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++---------------------------------------------------------
+ DPDK/templates/nic-configs/control.yaml      | 163 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++---------------------------------------------------------
+ DPDK/templates/nic-configs/sio-storage.yaml  |  39 ++++++++++++++++++++++---------------
+ instackenv_sio.json                          |  12 ++++++------
+ 7 files changed, 254 insertions(+), 165 deletions(-)
+
+[stack@undercloud DPDK]$ sudo  cp -rp  DPDK/*  ~/DPDK/
+[stack@undercloud DPDK]$ cd ~/DPDK/
+[stack@undercloud DPDK]$ ll
+total 120
+-rw-rw-r--.  1 stack stack    390 Dec 26 08:36 01-deploy-DPDK.sh
+-rw-rw-r--.  1 stack stack 114688 Feb  4 07:18 openstack-deployment.log
+drwxr-xr-x. 11 stack stack   4096 Dec 26 00:13 openstack-tripleo-heat-templates
+drwxrwxr-x.  4 stack stack    245 Feb  5 04:59 templates
+[stack@undercloud DPDK]$ chmod +x 01-deploy-DPDK.sh
+```
+
+Run the deployment:
+```
+[stack@undercloud DPDK]$ ./01-deploy-DPDK.sh
+
+```
 ## Acknowledgments
 
 * Hat tip to anyone who's code was used

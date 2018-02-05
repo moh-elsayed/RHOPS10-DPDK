@@ -90,7 +90,7 @@ resources:
           network_config:
             -
               type: interface
-              name: em0
+              name: em1
               use_dhcp: false
               dns_servers: {get_param: DnsServers}
               addresses:
