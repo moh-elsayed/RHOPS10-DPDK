@@ -37,7 +37,7 @@ resource_registry:
   #OS::TripleO::Compute::Ports::ManagementPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/management.yaml
 
   # Port assignments for the ceph storage role
-  OS::TripleO::CephStorage::Ports::ExternalPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/external.yaml
+  OS::TripleO::CephStorage::Ports::ExternalPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/noop.yaml
   OS::TripleO::CephStorage::Ports::InternalApiPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/noop.yaml
   OS::TripleO::CephStorage::Ports::StoragePort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/storage.yaml
   OS::TripleO::CephStorage::Ports::StorageMgmtPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/storage_mgmt.yaml
@@ -75,7 +75,7 @@ resource_registry:
   OS::TripleO::ComputeDpdk::Ports::ExternalPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/external.yaml
   OS::TripleO::ComputeDpdk::Ports::InternalApiPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/internal_api.yaml
   OS::TripleO::ComputeDpdk::Ports::StoragePort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/storage.yaml
-  OS::TripleO::ComputeDpdk::Ports::StorageMgmtPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/noop.yaml
+  OS::TripleO::ComputeDpdk::Ports::StorageMgmtPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/storage_mgmt.yaml
   OS::TripleO::ComputeDpdk::Ports::TenantPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/tenant.yaml
   #OS::TripleO::ComputeDpdk::Ports::ManagementPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/management.yaml
 
@@ -104,7 +104,7 @@ resource_registry:
   #OS::TripleO::ComputeHciDpdk::Ports::ManagementPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/management.yaml
 
   # Port assignments for the SIO storage role
-  OS::TripleO::SioStorage::Ports::ExternalPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/external.yaml
+  OS::TripleO::SioStorage::Ports::ExternalPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/noop.yaml
   OS::TripleO::SioStorage::Ports::InternalApiPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/noop.yaml
   OS::TripleO::SioStorage::Ports::StoragePort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/storage.yaml
   OS::TripleO::SioStorage::Ports::StorageMgmtPort: /home/stack/DPDK/openstack-tripleo-heat-templates/network/ports/storage_mgmt.yaml

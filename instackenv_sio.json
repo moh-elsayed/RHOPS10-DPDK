@@ -1,9 +1,9 @@
 {
 	"nodes": [{
 			"mac": [
-				"EC:F4:BB:E7:F8:3C"
+				"EC:F4:BB:E7:F8:38"
 			],
-			"name": "sio01",
+			"name": "sio00",
 			"pm_type": "pxe_ipmitool",
 			"pm_user": "root",
 			"pm_password": "calvin",
@@ -11,9 +11,9 @@
 			"capabilities":"profile:sio-storage"
 		}, {
 			"mac": [
-				"EC:F4:BB:E8:03:74"
+				"EC:F4:BB:E8:03:70"
 			],
-			"name": "sio02",
+			"name": "sio01",
 			"pm_type": "pxe_ipmitool",
 			"pm_user": "root",
 			"pm_password": "calvin",
@@ -21,9 +21,9 @@
 			"capabilities":"profile:sio-storage"
 		}, {
 			"mac": [
-				"EC:F4:BB:E8:03:8C"
+				"EC:F4:BB:E8:03:88"
 			],
-			"name": "sio03",
+			"name": "sio02",
 			"pm_type": "pxe_ipmitool",
 			"pm_user": "root",
 			"pm_password": "calvin",

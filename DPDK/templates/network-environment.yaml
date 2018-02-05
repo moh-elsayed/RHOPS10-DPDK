@@ -23,7 +23,7 @@ parameter_defaults:
   # Customize the IP subnets to match the local environment
   InternalApiNetCidr: 192.30.200.0/24
   TenantNetCidr: 192.30.201.0/24
-  ExternalNetCidr: 192.168.220.0/24
+  ExternalNetCidr: 172.17.84.0/24
   StorageNetCidr: 192.30.202.0/24
   StorageMgmtNetCidr: 192.30.203.0/24
   # CIDR subnet mask length for provisioning network
@@ -34,21 +34,21 @@ parameter_defaults:
   StorageAllocationPools: [{'start': '192.30.202.51', 'end': '192.30.202.200'}]
   StorageMgmtAllocationPools: [{'start': '192.30.203.51', 'end': '192.30.203.200'}]
   # Leave room if the external network is also used for floating IPs
-  ExternalAllocationPools: [{'start': '192.168.220.151', 'end': '192.168.220.240'}]
+  ExternalAllocationPools: [{'start': '172.17.84.151', 'end': '172.17.84.240'}]
   # Gateway router for the external network
-  ExternalInterfaceDefaultRoute: 192.168.220.254
+  ExternalInterfaceDefaultRoute: 172.17.84.254
   # Gateway router for the provisioning network (or Undercloud IP)
   ControlPlaneDefaultRoute: 192.0.2.254
   # Generally the IP of the Undercloud
   EC2MetadataIp: 192.0.2.10
   # Define the DNS servers (maximum 2) for the overcloud nodes
-  DnsServers: ["192.168.220.4,192.0.2.4"]
+  DnsServers: ["172.17.84.4,192.0.2.4"]
   # Customize the VLAN IDs to match the local environment
   InternalApiNetworkVlanID: 200
   TenantNetworkVlanID: 201
   StorageNetworkVlanID: 202
   StorageMgmtNetworkVlanID: 203
-  ExternalNetworkVlanID: 220
+  ExternalNetworkVlanID: 3084
 
   # Set to empty string to enable multiple external networks or VLANs
   NeutronExternalNetworkBridge: "''"
@@ -71,7 +71,7 @@ parameter_defaults:
   #RedisVirtualFixedIPs: [{'ip_address':'172.16.0.8'}]
   #InternalApiVirtualFixedIPs: [{'ip_address':'172.16.200.50'}]
 
-  PublicVirtualFixedIPs: [{'ip_address':'192.168.220.150'}]
+  PublicVirtualFixedIPs: [{'ip_address':'172.17.84.150'}]
   StorageVirtualFixedIPs: [{'ip_address':'192.30.202.50'}]
   StorageMgmtVirtualFixedIPs: [{'ip_address':'192.30.203.50'}]
   BondInterfaceOvsOptions: "bond_mode=active-backup"
