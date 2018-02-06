@@ -9,7 +9,7 @@ resource_registry:
   #OS::TripleO::ComputeHCIDpdk::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/compute-hci-dpdk.yaml         # Compute/HCI and DPDK
   #OS::TripleO::ComputeHCISriov::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/compute-hci-sriov.yaml       # Compute/HCI and SRIOV
   OS::TripleO::CephStorage::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/ceph-storage.yaml                # Normal CEPH nodes
-  #OS::TripleO::SioStorage::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/sio-storage.yaml                  # SIO
+  OS::TripleO::SioStorage::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/sio-storage.yaml                  # SIO
 
   
   ## First Boot template
@@ -64,7 +64,7 @@ parameter_defaults:
   ## Moe## NeutronBridgeMappings: 'datacentre:br-ex,dpdk_data:br-link0,sriov0:br-sriov0,sriov1:br-sriov1'
   NeutronBridgeMappings: 'datacentre:br-ex,NUMA0Data:br-link0,NUMA1Data:br-link1'
   # The Neutron ML2 and OpenVSwitch vlan mapping range to support.
-  NeutronNetworkVLANRanges: 'datacentre:200:700,br-link0:200:700,br-link1:200:700'
+  NeutronNetworkVLANRanges: 'datacentre:200:700,NUMA0Data:200:700,NUMA1Data:200:700'
 
   # Predictable VIPs
   #ControlFixedIPs: [{'ip_address':'192.168.201.101'}]
@@ -81,6 +81,8 @@ parameter_defaults:
   #####################################################################################################################
   # OVS DPDK configuration
   #####################################################################################################################
+  # Global MTU configuration on Neutron
+  NeutronGlobalPhysnetMtu: 2000
   ###################
   # CPU Parameters:
   ###################
@@ -119,7 +121,7 @@ parameter_defaults:
   # Provides CPU cores for non data path OVS-DPDK processes, such as handler and revalidator threads. This parameter has no impact on overall data path performance on multi-NUMA node hardware. This parameter is used for the dpdk-lcore-mask value in Open vSwitch, and these cores are shared with the host.
   # [Moe] Allocate the first physical core (and sibling thread) from each NUMA node (even if the NUMA node has no associated DPDK NIC).
   # [Moe] These cores must be mutually exclusive from the list of cores in NeutronDpdkCoreList and NovaVcpuPinSet.
-  HostCpusList: "0,16,1,17"
+  HostCpusList: "'0,16,1,17'"
 
   ###################
   # Memory Parameters:
@@ -140,7 +142,7 @@ parameter_defaults:
   # [Moe] For example, two DPDK NICs on NUMA node 1, with MTU values of 1500 and 9000 has the following value: NeutronDpdkSocketMemory: “1024,4096”
   # [Moe] Another example, one DPDK NIC on NUMA node 0 with MTU 9000 and one DPDK NIC on NUMA node 1 with MTU 9000: results in the following value:  NeutronDpdkSocketMemory: “4096,4096”
   # [Moe] Our test deployment is one NIC per NUMA node with 1500 MTU
-  NeutronDpdkSocketMemory: "2048,2048"
+  NeutronDpdkSocketMemory: "4096,4096"
 
   ## NovaReservedHostMemory:
   ##########
@@ -165,7 +167,7 @@ parameter_defaults:
   ## NeutronVhostuserSocketDir
   ##########
   # The vhost-user socket directory for OVS
-  NeutronVhostuserSocketDir: "/var/lib/vhost_sockets"
+  NeutronVhostuserSocketDir: "/var/run/openvswitch"
   
   ########################
   # Additional settings

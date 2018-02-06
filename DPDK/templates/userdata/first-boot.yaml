@@ -51,8 +51,7 @@ resources:
     properties:
       parts:
       - config: {get_resource: firstboot_config}
-      - config: {get_resource: swapon_config}
-      - config: {get_resource: set_ovs_socket_config}
+      #- config: {get_resource: swapon_config}
       - config: {get_resource: set_ovs_config}
       - config: {get_resource: set_dpdk_params}
       - config: {get_resource: install_tuned}
@@ -76,29 +75,6 @@ resources:
           chmod 755
           swapon
         fi
-
-  set_ovs_socket_config:
-    type: OS::Heat::SoftwareConfig
-    properties:
-      config:
-        str_replace:
-          template: |
-            #!/bin/bash
-            FORMAT=$COMPUTE_HOSTNAME_FORMAT
-            if [[ -z $FORMAT ]] ; then
-              FORMAT="compute" ;
-            else
-              # Assumption: only %index% and %stackname% are the variables in Host name format
-              FORMAT=$(echo $FORMAT | sed  's/\%index\%//g' | sed 's/\%stackname\%//g') ;
-            fi
-            if [[ $(hostname) == *$FORMAT* ]] ; then
-              mkdir -p $NEUTRON_VHOSTUSER_SOCKET_DIR
-              chown -R qemu:qemu $NEUTRON_VHOSTUSER_SOCKET_DIR
-              restorecon $NEUTRON_VHOSTUSER_SOCKET_DIR
-            fi
-          params:
-            $COMPUTE_HOSTNAME_FORMAT: {get_param: ComputeDpdkHostnameFormat}
-            $NEUTRON_VHOSTUSER_SOCKET_DIR: {get_param: NeutronVhostuserSocketDir}
 
   set_ovs_config:
     type: OS::Heat::SoftwareConfig
@@ -263,7 +239,7 @@ resources:
               #echo grub2-install $BOOTDRV | tee -a /tmp/moe.sh 
               #chmod +x /tmp/moe.sh
               #/tmp/moe.sh
-              CMD01=`echo grubby --update-kernel=ALL --args=\"isolcpus=$TUNED_CORES\"`
+              CMD01=`echo grubby --update-kernel=ALL --args=\"$KERNEL_ARGS isolcpus=$TUNED_CORES\"`
               CMD02=`echo grub2-install $BOOTDRV`
               echo $CMD01 | tee /tmp/moe
               echo $CMD02 | tee -a /tmp/moe

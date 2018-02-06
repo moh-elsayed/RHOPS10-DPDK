@@ -1,0 +1,258 @@
+heat_template_version: 2014-10-16
+
+parameters:
+  ComputeKernelArgs:
+    description: >
+      Space seprated list of Kernel args to be update to grub.
+      The given args will be appended to existing args of GRUB_CMDLINE_LINUX in file /etc/default/grub
+      Example: "intel_iommu=on default_hugepagesz=1GB hugepagesz=1G hugepages=1"
+    type: string
+    default: ""
+  NeutronDpdkCoreList:
+    description: >
+      List of logical cores for PMD threads. Its mandatory parameter.
+    type: string
+  NeutronDpdkSocketMemory:
+    description: Memory allocated for each socket
+    default: ""
+    type: string
+  NeutronVhostuserSocketDir:
+    description: The vhost-user socket directory for OVS.
+    default: ""
+    type: string
+  HostIsolatedCoreList:
+    description: >
+      A list or range of physical CPU cores to be tuned as isolated_cores.
+      The given args will be appended to the tuned cpu-partitioning profile.
+      Ex. HostIsolatedCoreList: '4-12' will tune cores from 4-12
+    type: string
+    default: ""
+  HostCpusList:
+    description: >
+      List of logical cores to be used by ovs-dpdk processess (dpdk-lcore-mask)
+    type: string
+    constraints:
+      - allowed_pattern: "'[0-9,]+'"
+      
+resources:
+  userdata:
+    type: OS::Heat::MultipartMime
+    properties:
+      parts:
+      - config: {get_resource: wipe_disk}
+      - config: {get_resource: generate_parameters}
+      - config: {get_resource: set_ovs_config}
+      - config: {get_resource: set_dpdk_params}
+      - config: {get_resource: install_tuned}
+      - config: {get_resource: compute_kernel_args}
+
+  generate_parameters:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      config: |
+        #!/bin/python
+        
+    
+  wipe_disk:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      config: |
+        #!/bin/bash
+        if [[ $HOSTNAME =~ "cephstorage" ]]; then
+        {
+          # LVM partitions are always in use by the kernel.  Destroy all of the
+          # LVM components here so the disks are not in use and sgdisk and
+          # partprobe can do their thing
+
+          # Destroy all the logical volumes and volume groups
+          vgs --noheadings -o vg_name | awk '{print $1}' | while read lvg;
+          do
+              cmd="lvremove -f $lvg"
+              echo $cmd
+              $cmd
+
+              cmd="vgremove -f $lvg"
+              echo $cmd
+              $cmd
+          done
+
+          # Destroy all the physical volumes
+          pvs --noheadings -o pv_name | awk '{print $1}' | while read pv;
+          do
+              cmd="pvremove -ff $pv"
+              echo $cmd
+              $cmd
+          done
+
+          lsblk -dno NAME,TYPE | \
+          while read disk type; do
+            # Skip if the device type isn't "disk" or if it's mounted
+            [ "${type}" == "disk" ] || continue
+            device="/dev/${disk}"
+            if grep -q ^${device}[1-9] /proc/mounts; then
+              echo "Skipping ${device} because it's mounted"
+              continue
+            fi
+
+            # Delete all of the partitions on the disk
+            partitions=$(parted -sm $device print|tail -n +3|awk -F: '{print $1}')
+            for partition in $partitions; do
+                cmd="parted -s $device rm $partition"
+                echo $cmd
+                $cmd
+            done
+
+            # In case the disk has a non-gpt partition type, convert it to gpt
+            cmd="parted -s $device mklabel gpt"
+            echo $cmd
+            $cmd
+
+            # Zap the disk for good measure
+            cmd="sgdisk -Z $device"
+            echo $cmd
+            $cmd
+
+            echo "Partitioning disk: ${disk}"
+            cmd="sgdisk -og ${device}"
+            echo $cmd
+            $cmd
+            echo
+          done
+          partprobe
+          parted -lm
+        } > /root/wipe-disk.txt 2>&1
+        fi
+
+
+  set_ovs_config:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      config: |
+        #!/bin/bash
+        set -x
+        if [[ $HOSTNAME =~ "compute" ]] ; then 
+          if [ -f /usr/lib/systemd/system/openvswitch-nonetwork.service ]; then
+            ovs_service_path="/usr/lib/systemd/system/openvswitch-nonetwork.service"
+          elif [ -f /usr/lib/systemd/system/ovs-vswitchd.service ]; then
+            ovs_service_path="/usr/lib/systemd/system/ovs-vswitchd.service"
+          fi
+          grep -q "RuntimeDirectoryMode=.*" $ovs_service_path
+          if [ "$?" -eq 0 ]; then
+            sed -i 's/RuntimeDirectoryMode=.*/RuntimeDirectoryMode=0775/' $ovs_service_path
+          else
+            echo "RuntimeDirectoryMode=0775" >> $ovs_service_path
+          fi
+          grep -Fxq "Group=qemu" $ovs_service_path
+          if [ ! "$?" -eq 0 ]; then
+            echo "Group=qemu" >> $ovs_service_path
+          fi
+          grep -Fxq "UMask=0002" $ovs_service_path
+          if [ ! "$?" -eq 0 ]; then
+            echo "UMask=0002" >> $ovs_service_path
+          fi
+          ovs_ctl_path='/usr/share/openvswitch/scripts/ovs-ctl'
+          grep -q "umask 0002 \&\& start_daemon \"\$OVS_VSWITCHD_PRIORITY\"" $ovs_ctl_path
+          if [ ! "$?" -eq 0 ]; then
+            sed -i 's/start_daemon \"\$OVS_VSWITCHD_PRIORITY.*/umask 0002 \&\& start_daemon \"$OVS_VSWITCHD_PRIORITY\" \"$OVS_VSWITCHD_WRAPPER\" \"$@\"/' $ovs_ctl_path
+          fi
+        fi
+
+  # Verify the logs on /var/log/cloud-init.log on the overcloud node
+  set_dpdk_params:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      config:
+        str_replace:
+          template: |
+            #!/bin/bash
+            set -x
+            get_mask()
+            {
+              local list=$1
+              local mask=0
+              declare -a bm
+              max_idx=0
+              for core in $(echo $list | sed 's/,/ /g')
+              do
+                  index=$(($core/32))
+                  bm[$index]=0
+                  if [ $max_idx -lt $index ]; then
+                     max_idx=$(($index))
+                  fi
+              done
+              for ((i=$max_idx;i>=0;i--));
+              do
+                  bm[$i]=0
+              done
+              for core in $(echo $list | sed 's/,/ /g')
+              do
+                  index=$(($core/32))
+                  temp=$((1<<$(($core % 32))))
+                  bm[$index]=$((${bm[$index]} | $temp))
+              done
+
+              printf -v mask "%x" "${bm[$max_idx]}"
+              for ((i=$max_idx-1;i>=0;i--));
+              do
+                  printf -v hex "%08x" "${bm[$i]}"
+                  mask+=$hex
+              done
+              printf "%s" "$mask"
+            }
+
+            if [[ $HOSTNAME =~ "compute" ]] ; then
+              pmd_cpu_mask=$( get_mask $PMD_CORES )
+              host_cpu_mask=$( get_mask $LCORE_LIST )
+              socket_mem=$(echo $SOCKET_MEMORY | sed s/\'//g )
+              ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-init=true
+              ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-socket-mem=$socket_mem
+              ovs-vsctl --no-wait set Open_vSwitch . other_config:pmd-cpu-mask=$pmd_cpu_mask
+              ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-lcore-mask=$host_cpu_mask
+            fi
+          params:
+            $LCORE_LIST: {get_param: HostCpusList}
+            $PMD_CORES: {get_param: NeutronDpdkCoreList}
+            $SOCKET_MEMORY: {get_param: NeutronDpdkSocketMemory}
+
+  install_tuned:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      config:
+        str_replace:
+          template: |
+            #!/bin/bash
+            set -x
+            if [[ $HOSTNAME =~ "compute" ]] ; then
+              tuned_conf_path="/etc/tuned/cpu-partitioning-variables.conf"
+              if [ -n "$TUNED_CORES" ]; then
+                grep -q "^isolated_cores" $tuned_conf_path
+                if [ "$?" -eq 0 ]; then
+                  sed -i 's/^isolated_cores=.*/isolated_cores=$TUNED_CORES/' $tuned_conf_path
+                else
+                  echo "isolated_cores=$TUNED_CORES" >> $tuned_conf_path
+                fi
+                tuned-adm profile cpu-partitioning
+              fi
+            fi
+          params:
+            $TUNED_CORES: {get_param: HostIsolatedCoreList}
+
+  compute_kernel_args:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      config:
+        str_replace:
+          template: |
+            #!/bin/bash
+            set -x
+            if [[ $HOSTNAME =~ "compute" ]] ; then
+              sed 's/^\(GRUB_CMDLINE_LINUX=".*\)"/\1 $KERNEL_ARGS"/g' -i /etc/default/grub ;
+              grub2-mkconfig -o /etc/grub2.cfg
+              reboot
+            fi
+          params:
+            $KERNEL_ARGS: {get_param: ComputeKernelArgs}
+
+outputs:
+  OS::stack_id:
+    value: {get_resource: userdata}

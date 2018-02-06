@@ -16,11 +16,11 @@ parameter_defaults:
   ComputeHciSriovCount: 0
   ComputeHciDpdkCount: 0
   CephStorageCount: 3
-  SioStorageCount: 0
+  SioStorageCount: 3
   ControllerHostnameFormat: '%stackname%-controller-%index%'
   ComputeHostnameFormat: '%stackname%-compute-%index%'
   ComputeDpdkHostnameFormat: '%stackname%-compute-dpdk-%index%'
   CephStorageHostnameFormat: '%stackname%-ceph-%index%'
   ObjectStorageHostnameFormat: '%stackname%-swift-%index%'
   SioStorageHostnameFormat: '%stackname%-sio-%index%'
-  NtpServer: 0.centos.pool.org,1.centos.pool.org,172.17.84.4
+  NtpServer: 192.0.2.4,172.17.84.4,0.centos.pool.org,1.centos.pool.org
