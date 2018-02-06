@@ -30,7 +30,7 @@ parameters:
     description: Vlan ID for the storage network traffic.
     type: number
   BondInterfaceOvsOptions:
-    default: "bond_mode=active-backup"
+    default: 'bond_mode=active-backup'
     description: The ovs_options string for the bond interface. Set things like lacp=active and/or bond_mode=balance-slb using this option.
     type: string    
   StorageMgmtNetworkVlanID:
@@ -101,30 +101,8 @@ resources:
                 -
                   ip_netmask: 169.254.169.254/32
                   next_hop: {get_param: EC2MetadataIp}
-######################################################################               
-            ## External Network Linux Bridge
-#            -
-#              type: linux_bridge
-#              name: {get_input: bridge_name}
-#              use_dhcp: false
-#              dns_servers: {get_param: DnsServers}
-#              members:
-#                -
-#                  type: interface
-#                  name: em3
-#                  # force the MAC address of the bridge to this interface
-#                  primary: true
-#            -
-#              type: vlan
-#              vlan_id: {get_param: ExternalNetworkVlanID}
-#              device: {get_input: bridge_name}
-#              addresses:
-#                -
-#                  ip_netmask: {get_param: ExternalIpSubnet}
-#              routes:
-#                -
-#                  default: true
-#                  next_hop: {get_param: ExternalInterfaceDefaultRoute}
+######################################################################    
+            ## External network OVS-Bridge           
             -
               type: ovs_bridge
               name: br-ex
@@ -144,29 +122,8 @@ resources:
                     -
                       default: true
                       next_hop: {get_param: ExternalInterfaceDefaultRoute}                      
-######################################################################                       
-            ## Internal Network Linux Bridge
-            #-
-            #  type: linux_bridge
-            #  name: br-api
-            #  mtu: 9000
-            #  use_dhcp: false
-            #  dns_servers: {get_param: DnsServers}
-            #  members:
-            #    -
-            #      type: interface
-            #      name: em2
-            #      mtu: 9000
-            #      # force the MAC address of the bridge to this interface
-            #      primary: true
-            #-
-            #  type: vlan
-            #  vlan_id: {get_param: InternalApiNetworkVlanID}
-            #  device: em2
-            #  mtu: 9000
-            #  addresses:
-            #    -
-            #      ip_netmask: {get_param: InternalApiIpSubnet}                       
+######################################################################  
+            ## Isolate OVS-Bridge (Internal && Tenant networks )
             -
               type: ovs_bridge
               name: br-isolate
@@ -174,7 +131,7 @@ resources:
               members:
                 -
                   type: ovs_bond
-                  name: bond1
+                  name: bond0
                   mtu: 9000
                   ovs_options: {get_param: BondInterfaceOvsOptions}
                   members:
@@ -189,7 +146,7 @@ resources:
                       mtu: 9000
                 -
                   type: vlan
-                  device: bond1
+                  device: bond0
                   mtu: 9000
                   vlan_id: {get_param: InternalApiNetworkVlanID}
                   addresses:
@@ -197,7 +154,7 @@ resources:
                       ip_netmask: {get_param: InternalApiIpSubnet}
                 -
                   type: vlan
-                  device: bond1
+                  device: bond0
                   mtu: 9000
                   vlan_id: {get_param: TenantNetworkVlanID}
                   addresses:
@@ -212,7 +169,7 @@ resources:
               members:
                 -
                   type: ovs_bond
-                  name: bond0
+                  name: bond1
                   mtu: 9000
                   ovs_options: {get_param: BondInterfaceOvsOptions}
                   members:
@@ -227,7 +184,7 @@ resources:
                       mtu: 9000
                 -
                   type: vlan
-                  device: bond0
+                  device: bond1
                   mtu: 9000
                   vlan_id: {get_param: StorageNetworkVlanID}
                   addresses:
@@ -235,62 +192,11 @@ resources:
                       ip_netmask: {get_param: StorageIpSubnet}
                 -
                   type: vlan
-                  device: bond0
+                  device: bond1
                   vlan_id: {get_param: StorageMgmtNetworkVlanID}
                   addresses:
                     -
-                      ip_netmask: {get_param: StorageMgmtIpSubnet}                 
-######################################################################                                          
-#            -
-#              type: ovs_bridge
-#              name: br-isolate
-#              use_dhcp: false
-#              members:
-#                -
-#                  type: interface
-#                  name: em1             
-#                -
-#                  type: vlan
-#                  vlan_id: {get_param: InternalApiNetworkVlanID}
-#                  addresses:
-#                    -
-#                      ip_netmask: {get_param: InternalApiIpSubnet}                      
-#            -
-#              type: ovs_bridge
-#             name: br-ex
-#              use_dhcp: false
-#              members:
-#                -
-#                  type: interface
-#                  name: em3
-#                -
-#                  type: vlan
-#                  vlan_id: {get_param: ExternalNetworkVlanID}
-#                  addresses:
-#                    -
-#                      ip_netmask: {get_param: ExternalIpSubnet}
-#                  routes:
-#                    -
-#                      default: true
-#                      next_hop: {get_param: ExternalInterfaceDefaultRoute}                     
-###################################################################### 
-            ### Tenant network optimized by OVS
-            -
-              type: ovs_bridge
-              name: br-tenant
-              use_dhcp: false
-              members:
-                -
-                  type: interface
-                  name: p5p1
-                  mtu: 2000                                  
-                -
-                  type: vlan
-                  vlan_id: {get_param: TenantNetworkVlanID}
-                  mtu: 2000
-                  addresses:
-                    -
-                      ip_netmask: {get_param: TenantIpSubnet}
+                      ip_netmask: {get_param: StorageMgmtIpSubnet}                                    
 ######################################################################                            
           
             ## DPDK bridge NUMA0 

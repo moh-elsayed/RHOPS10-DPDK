@@ -4,12 +4,12 @@ resource_registry:
   # Network Interface templates to use (these files must exist)
   OS::TripleO::Controller::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/control.yaml                      # Controller 
   #OS::TripleO::Compute::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/compute.yaml                         # Normal Compute
-  OS::TripleO::ComputeDpdk::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/compute-dpdk.yaml                # Compute with DPDK-OVS
+#  OS::TripleO::ComputeDpdk::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/compute-dpdk.yaml                # Compute with DPDK-OVS
   #OS::TripleO::ComputeSriov::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/compute-sriov.yaml              # Compute with SRIOV
   #OS::TripleO::ComputeHCIDpdk::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/compute-hci-dpdk.yaml         # Compute/HCI and DPDK
   #OS::TripleO::ComputeHCISriov::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/compute-hci-sriov.yaml       # Compute/HCI and SRIOV
-  OS::TripleO::CephStorage::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/ceph-storage.yaml                # Normal CEPH nodes
-  OS::TripleO::SioStorage::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/sio-storage.yaml                  # SIO
+#  OS::TripleO::CephStorage::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/ceph-storage.yaml                # Normal CEPH nodes
+#  OS::TripleO::SioStorage::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/sio-storage.yaml                  # SIO
 
   
   ## First Boot template
@@ -74,7 +74,7 @@ parameter_defaults:
   PublicVirtualFixedIPs: [{'ip_address':'172.17.84.150'}]
   StorageVirtualFixedIPs: [{'ip_address':'192.30.202.50'}]
   StorageMgmtVirtualFixedIPs: [{'ip_address':'192.30.203.50'}]
-  BondInterfaceOvsOptions: "bond_mode=active-backup"
+  BondInterfaceOvsOptions: 'bond_mode=active-backup'
   # Check: https://software.intel.com/en-us/articles/link-aggregation-configuration-and-usage-in-open-vswitch-with-dpdk
   #BondInterfaceOvsOptions: "bond_mode=balance-tcp"
 
@@ -121,7 +121,7 @@ parameter_defaults:
   # Provides CPU cores for non data path OVS-DPDK processes, such as handler and revalidator threads. This parameter has no impact on overall data path performance on multi-NUMA node hardware. This parameter is used for the dpdk-lcore-mask value in Open vSwitch, and these cores are shared with the host.
   # [Moe] Allocate the first physical core (and sibling thread) from each NUMA node (even if the NUMA node has no associated DPDK NIC).
   # [Moe] These cores must be mutually exclusive from the list of cores in NeutronDpdkCoreList and NovaVcpuPinSet.
-  HostCpusList: "'0,16,1,17'"
+  HostCpusList: "0,16,1,17"
 
   ###################
   # Memory Parameters:
