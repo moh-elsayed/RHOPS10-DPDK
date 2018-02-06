@@ -8,7 +8,7 @@ resource_registry:
   #OS::TripleO::ComputeSriov::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/compute-sriov.yaml              # Compute with SRIOV
   #OS::TripleO::ComputeHCIDpdk::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/compute-hci-dpdk.yaml         # Compute/HCI and DPDK
   #OS::TripleO::ComputeHCISriov::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/compute-hci-sriov.yaml       # Compute/HCI and SRIOV
-#  OS::TripleO::CephStorage::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/ceph-storage.yaml                # Normal CEPH nodes
+  OS::TripleO::CephStorage::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/ceph-storage.yaml                # Normal CEPH nodes
 #  OS::TripleO::SioStorage::Net::SoftwareConfig:  /home/stack/DPDK/templates/nic-configs/sio-storage.yaml                  # SIO
 
   
