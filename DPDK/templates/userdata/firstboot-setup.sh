@@ -19,9 +19,9 @@ update_hosts()
 localRepo()
 {
 cat  > /etc/yum.repos.d/localrepo.repo <<- "EOF"
-[SIOLocal-server-openstack10]
-name=vlab Repo-RHOPS10
-baseurl=http://siorhn.sio.lab/repo/repos/rhel-7-server-openstack-10-rpms
+[SIOLocal-server]
+name=vlab Repo-server
+baseurl=http://siorhn.sio.lab/repo/repos/rhel-7-server-rpms
 enabled=1
 gpgcheck=0
 
@@ -37,12 +37,6 @@ baseurl=http://siorhn.sio.lab/repo/repos/rhel-7-server-rh-common-rpms
 enabled=1
 gpgcheck=0
 
-[SIOLocal-server]
-name=vlab Repo-server
-baseurl=http://siorhn.sio.lab/repo/repos/rhel-7-server-rpms
-enabled=1
-gpgcheck=0
-
 [SIOLocal-server-satellite-tools]
 name=vlab Repo-sattool
 baseurl=http://siorhn.sio.lab/repo/repos/rhel-7-server-satellite-tools-6.2-rpms
@@ -55,14 +49,26 @@ baseurl=http://siorhn.sio.lab/repo/repos/rhel-ha-for-rhel-7-server-rpms
 enabled=1
 gpgcheck=0
 
+[SIOLocal-server-openstack10]
+name=vlab Repo-RHOPS10
+baseurl=http://siorhn.sio.lab/repo/repos/rhel-7-server-openstack-10-rpms
+enabled=1
+gpgcheck=0
+
 [SIOLocal-openstack-10-devtools]
 name=vlab devtools
 baseurl=http://siorhn.sio.lab/repo/repos/rhel-7-server-openstack-10-devtools-rpms
 enabled=1
 gpgcheck=0
 
+[SIOLocal-ceph-osd]
+name=vlab Repo-Ceph-OSD
+baseurl=http://siorhn.sio.lab/repo/repos/rhel-7-server-rhceph-2-osd-rpms
+enabled=1
+gpgcheck=0
+
 [SIOLocal-ceph-mon]
-name=vlab Repo-Ceph-Mon
+name=vlab Repo-Ceph-MON
 baseurl=http://siorhn.sio.lab/repo/repos/rhel-7-server-rhceph-2-mon-rpms
 enabled=1
 gpgcheck=0
