@@ -52,10 +52,10 @@ resources:
       parts:
       - config: {get_resource: firstboot_config}
       #- config: {get_resource: swapon_config}
-      - config: {get_resource: set_ovs_config}
-      - config: {get_resource: set_dpdk_params}
-      - config: {get_resource: install_tuned}
-      - config: {get_resource: compute_kernel_args}
+      #- config: {get_resource: set_ovs_config}
+      #- config: {get_resource: set_dpdk_params}
+      #- config: {get_resource: install_tuned}
+      #- config: {get_resource: compute_kernel_args}
 
   firstboot_config:
     type: OS::Heat::SoftwareConfig
@@ -79,35 +79,45 @@ resources:
   set_ovs_config:
     type: OS::Heat::SoftwareConfig
     properties:
-      config: |
-        #!/bin/bash
-        set -x
-        if [[ $HOSTNAME =~ "compute" ]] ; then 
-          if [ -f /usr/lib/systemd/system/openvswitch-nonetwork.service ]; then
-            ovs_service_path="/usr/lib/systemd/system/openvswitch-nonetwork.service"
-          elif [ -f /usr/lib/systemd/system/ovs-vswitchd.service ]; then
-            ovs_service_path="/usr/lib/systemd/system/ovs-vswitchd.service"
-          fi
-          grep -q "RuntimeDirectoryMode=.*" $ovs_service_path
-          if [ "$?" -eq 0 ]; then
-            sed -i 's/RuntimeDirectoryMode=.*/RuntimeDirectoryMode=0775/' $ovs_service_path
-          else
-            echo "RuntimeDirectoryMode=0775" >> $ovs_service_path
-          fi
-          grep -Fxq "Group=qemu" $ovs_service_path
-          if [ ! "$?" -eq 0 ]; then
-            echo "Group=qemu" >> $ovs_service_path
-          fi
-          grep -Fxq "UMask=0002" $ovs_service_path
-          if [ ! "$?" -eq 0 ]; then
-            echo "UMask=0002" >> $ovs_service_path
-          fi
-          ovs_ctl_path='/usr/share/openvswitch/scripts/ovs-ctl'
-          grep -q "umask 0002 \&\& start_daemon \"\$OVS_VSWITCHD_PRIORITY\"" $ovs_ctl_path
-          if [ ! "$?" -eq 0 ]; then
-            sed -i 's/start_daemon \"\$OVS_VSWITCHD_PRIORITY.*/umask 0002 \&\& start_daemon \"$OVS_VSWITCHD_PRIORITY\" \"$OVS_VSWITCHD_WRAPPER\" \"$@\"/' $ovs_ctl_path
-          fi
-        fi
+      config:
+        str_replace:
+          template: |
+            #!/bin/bash
+            FORMAT=$COMPUTE_HOSTNAME_FORMAT
+            if [[ -z $FORMAT ]] ; then
+              FORMAT="compute-dpdk" ;
+            else
+              # Assumption: only %index% and %stackname% are the variables in Host name format
+              FORMAT=$(echo $FORMAT | sed  's/\%index\%//g' | sed 's/\%stackname\%//g') ;
+            fi
+            if [[ $(hostname) == *$FORMAT* ]] ; then
+              if [ -f /usr/lib/systemd/system/openvswitch-nonetwork.service ]; then
+                ovs_service_path="/usr/lib/systemd/system/openvswitch-nonetwork.service"
+              elif [ -f /usr/lib/systemd/system/ovs-vswitchd.service ]; then
+                ovs_service_path="/usr/lib/systemd/system/ovs-vswitchd.service"
+              fi
+              grep -q "RuntimeDirectoryMode=.*" $ovs_service_path
+              if [ "$?" -eq 0 ]; then
+                sed -i 's/RuntimeDirectoryMode=.*/RuntimeDirectoryMode=0775/' $ovs_service_path
+              else
+                echo "RuntimeDirectoryMode=0775" >> $ovs_service_path
+              fi
+              grep -Fxq "Group=qemu" $ovs_service_path
+              if [ ! "$?" -eq 0 ]; then
+                echo "Group=qemu" >> $ovs_service_path
+              fi
+              grep -Fxq "UMask=0002" $ovs_service_path
+              if [ ! "$?" -eq 0 ]; then
+                echo "UMask=0002" >> $ovs_service_path
+              fi
+              ovs_ctl_path='/usr/share/openvswitch/scripts/ovs-ctl'
+              grep -q "umask 0002 \&\& start_daemon \"\$OVS_VSWITCHD_PRIORITY\"" $ovs_ctl_path
+              if [ ! "$?" -eq 0 ]; then
+                sed -i 's/start_daemon \"\$OVS_VSWITCHD_PRIORITY.*/umask 0002 \&\& start_daemon \"$OVS_VSWITCHD_PRIORITY\" \"$OVS_VSWITCHD_WRAPPER\" \"$@\"/' $ovs_ctl_path
+              fi
+            fi
+          params:
+            $COMPUTE_HOSTNAME_FORMAT: {get_param: ComputeDpdkHostnameFormat}
 
   # Verify the logs on /var/log/cloud-init.log on the overcloud node
   set_dpdk_params:
@@ -152,7 +162,14 @@ resources:
               printf "%s" "$mask"
             }
 
-            if [[ $HOSTNAME =~ "compute" ]] ; then
+            FORMAT=$COMPUTE_HOSTNAME_FORMAT
+            if [[ -z $FORMAT ]] ; then
+              FORMAT="compute-dpdk" ;
+            else
+              # Assumption: only %index% and %stackname% are the variables in Host name format
+              FORMAT=$(echo $FORMAT | sed  's/\%index\%//g' | sed 's/\%stackname\%//g') ;
+            fi
+            if [[ $(hostname) == *$FORMAT* ]] ; then
               pmd_cpu_mask=$( get_mask $PMD_CORES )
               host_cpu_mask=$( get_mask $LCORE_LIST )
               socket_mem=$(echo $SOCKET_MEMORY | sed s/\'//g )
@@ -162,6 +179,7 @@ resources:
               ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-lcore-mask=$host_cpu_mask
             fi
           params:
+            $COMPUTE_HOSTNAME_FORMAT: {get_param: ComputeDpdkHostnameFormat}
             $LCORE_LIST: {get_param: HostCpusList}
             $PMD_CORES: {get_param: NeutronDpdkCoreList}
             $SOCKET_MEMORY: {get_param: NeutronDpdkSocketMemory}
@@ -173,8 +191,14 @@ resources:
         str_replace:
           template: |
             #!/bin/bash
-            set -x
-            if [[ $HOSTNAME =~ "compute" ]] ; then
+            FORMAT=$COMPUTE_HOSTNAME_FORMAT
+            if [[ -z $FORMAT ]] ; then
+              FORMAT="compute-dpdk" ;
+            else
+              # Assumption: only %index% and %stackname% are the variables in Host name format
+              FORMAT=$(echo $FORMAT | sed  's/\%index\%//g' | sed 's/\%stackname\%//g') ;
+            fi
+            if [[ $(hostname) == *$FORMAT* ]] ; then
               tuned_conf_path="/etc/tuned/cpu-partitioning-variables.conf"
               if [ -n "$TUNED_CORES" ]; then
                 grep -q "^isolated_cores" $tuned_conf_path
@@ -187,6 +211,7 @@ resources:
               fi
             fi
           params:
+            $COMPUTE_HOSTNAME_FORMAT: {get_param: ComputeDpdkHostnameFormat}
             $TUNED_CORES: {get_param: HostIsolatedCoreList}
 
   compute_kernel_args:
@@ -196,9 +221,24 @@ resources:
         str_replace:
           template: |
             #!/bin/bash
-            set -x  
-            if [[ $HOSTNAME =~ "compute-dpdk" ]] ; then
+            FORMAT=$COMPUTE_HOSTNAME_FORMAT
+            if [[ -z $FORMAT ]] ; then
+              FORMAT="compute-dpdk" ;
+            else
+              # Assumption: only %index% and %stackname% are the variables in Host name format
+              FORMAT=$(echo $FORMAT | sed  's/\%index\%//g' | sed 's/\%stackname\%//g') ;
+            fi
+            if [[ $(hostname) == *$FORMAT* ]] ; then
+              ## Commented by Moe
+              ##sed 's/^\(GRUB_CMDLINE_LINUX=".*\)"/\1 $KERNEL_ARGS isolcpus=$TUNED_CORES"/g' -i /etc/default/grub ;
+              ##grub2-mkconfig -o /etc/grub2.cfg
+
               BOOTDRV=`df  | grep sd | awk '{print $1}' | sed s/[0-9]//g`
+              #echo '#!/bin/bash' | tee /tmp/moe.sh  
+              #echo grubby --update-kernel=ALL --args=\"isolcpus=$TUNED_CORES\" | tee -a /tmp/moe.sh
+              #echo grub2-install $BOOTDRV | tee -a /tmp/moe.sh 
+              #chmod +x /tmp/moe.sh
+              #/tmp/moe.sh
               CMD01=`echo grubby --update-kernel=ALL --args=\"$KERNEL_ARGS isolcpus=$TUNED_CORES\"`
               CMD02=`echo grub2-install $BOOTDRV`
               echo $CMD01 | tee /tmp/moe
@@ -209,6 +249,7 @@ resources:
             fi
           params:
             $KERNEL_ARGS: {get_param: ComputeKernelArgs}
+            $COMPUTE_HOSTNAME_FORMAT: {get_param: ComputeDpdkHostnameFormat}
             $TUNED_CORES: {get_param: HostIsolatedCoreList}
 
 outputs:

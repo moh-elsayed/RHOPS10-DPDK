@@ -1,0 +1,48 @@
+## A Heat environment that can be used to deploy DPDK with OVS
+resource_registry:
+  OS::TripleO::Compute::Net::SoftwareConfig: ./nic-configs/compute-ovs-dpdk.yaml
+  OS::TripleO::Services::ComputeNeutronOvsAgent: ./overcloud/puppet/services/neutron-ovs-dpdk-agent.yaml
+  OS::TripleO::NodeUserData: ./first-boot-ovs-dpdk.yaml
+  OS::TripleO::NodeExtraConfigPost: post-install.yaml
+
+parameter_defaults:
+  ## NeutronDpdkCoreList and NeutronDpdkMemoryChannels are REQUIRED settings.
+  ## Attempting to deploy DPDK without appropriate values will cause deployment to fail or lead to unstable deployments.
+  ########################
+  # OVS DPDK configuration
+  ########################
+  ## NeutronDpdkCoreList and NeutronDpdkMemoryChannels are REQUIRED settings.
+  ## Attempting to deploy DPDK without appropriate values will cause deployment to fail or lead to unstable deployments.
+  # List of cores to be used for DPDK Poll Mode Driver
+  NeutronDpdkCoreList: "'4,32,6,34,8,36,5,33,7,35,9,37'"
+  # Number of memory channels to be used for DPDK
+  NeutronDpdkMemoryChannels: "4"
+  # NeutronDpdkSocketMemory
+  NeutronDpdkSocketMemory: "2048,2048"
+  # NeutronDpdkDriverType
+  NeutronDpdkDriverType: "vfio-pci"
+  # Datapath type for ovs bridges
+  NeutronDatapathType: "netdev"
+  # The vhost-user socket directory for OVS
+  NeutronVhostuserSocketDir: "/var/run/openvswitch"
+
+  ########################
+  # Additional settings  # 
+  ########################
+  # Reserved RAM for host processes
+  NovaReservedHostMemory: 4096
+  # A list or range of physical CPU cores to reserve for virtual machine processes.
+  # Example: NovaVcpuPinSet: ['4-12','^8'] will reserve cores from 4-12 excluding 8
+  NovaVcpuPinSet: "10,38,12,40,14,42,16,44,18,46,20,48,22,50,24,52,26,54,11,39,13,41,15,43,17,45,19,47,21,49,23,51,25,53,27,55"
+  #NovaVcpuPinSet: "8,28,10,30,12,32,14,34,16,36,18,38,9,29,11,31,13,33,15,35"
+  # An array of filters used by Nova to filter a node.These filters will be applied in the order they are listed,
+  # so place your most restrictive filters first to make the filtering process more efficient.
+  NovaSchedulerDefaultFilters: "RamFilter,ComputeFilter,AvailabilityZoneFilter,ComputeCapabilitiesFilter,ImagePropertiesFilter,PciPassthroughFilter,NUMATopologyFilter"
+  # Kernel arguments for Compute node
+  ComputeKernelArgs: "default_hugepagesz=1GB hugepagesz=1G hugepages=96 iommu=pt intel_iommu=on"
+  # A list or range of physical CPU cores to be tuned.
+  # The given args will be appended to the tuned cpu-partitioning profile.
+  HostIsolatedCoreList: "4,32,6,34,8,36,10,38,12,40,14,42,16,44,18,46,20,48,22,50,24,52,26,54,5,33,7,35,9,37,11,39,13,41,15,43,17,45,19,47,21,49,23,51,25,53,27,55"
+  #HostIsolatedCoreList: "2,22,4,24,6,26,1,21,8,28,10,30,12,32,14,34,16,36,18,38,9,29,11,31,13,33,15,35"
+  # List of logical cores to be used by ovs-dpdk processess (dpdk-lcore-mask)
+  HostCpusList: "'0,28,2,30,1,29,3,31'"

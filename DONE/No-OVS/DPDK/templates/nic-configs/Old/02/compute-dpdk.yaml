@@ -107,24 +107,24 @@ resources:
               routes:
                 -
                   ip_netmask: 169.254.169.254/32
-                  next_hop: {get_param: EC2MetadataIp}                
+                  next_hop: {get_param: EC2MetadataIp}
 ######################################################################               
             ## External Network Linux Bridge
-            -
-              type: linux_bridge
-              name: {get_input: bridge_name}
-              use_dhcp: false
-              dns_servers: {get_param: DnsServers}
-              members:
-                -
-                  type: interface
-                  name: em3
-                  # force the MAC address of the bridge to this interface
-                  primary: true
+            #-
+            #  type: linux_bridge
+            #  name: {get_input: bridge_name}
+            #  use_dhcp: false
+            #  dns_servers: {get_param: DnsServers}
+            #  members:
+            #    -
+            #      type: interface
+            #      name: em3
+            #      # force the MAC address of the bridge to this interface
+            #      primary: true
             -
               type: vlan
               vlan_id: {get_param: ExternalNetworkVlanID}
-              device: {get_input: bridge_name}
+              device: em3
               addresses:
                 -
                   ip_netmask: {get_param: ExternalIpSubnet}
@@ -147,54 +147,19 @@ resources:
             #      name: em2
             #      # force the MAC address of the bridge to this interface
             #      primary: true
-
-            ## Internal Network VLAN interface
-            #-
-            #  type: vlan
-            #  mtu: 9000
-            #  vlan_id: {get_param: InternalApiNetworkVlanID}
-            #  device: em2
-            #  addresses:
-            #    -
-            #      ip_netmask: {get_param: InternalApiIpSubnet}
-            -
-              type: linux_bond
-              name: bond0
-              mtu: 9000
-              bonding_options: "mode=active-backup"
-              use_dhcp: false
-              dns_servers: {get_param: DnsServers}
-              members:
-                -
-                  type: interface
-                  name: em2
-                  mtu: 9000
-                  primary: true
-                -
-                  type: interface
-                  name: p5p2
-                  mtu: 9000
             -
               type: vlan
-              vlan_id: {get_param: InternalApiNetworkVlanID}
-              device: bond0
               mtu: 9000
+              vlan_id: {get_param: InternalApiNetworkVlanID}
+              device: em2
               addresses:
                 -
                   ip_netmask: {get_param: InternalApiIpSubnet}
-            -
-              type: vlan
-              vlan_id: {get_param: TenantNetworkVlanID}
-              device: bond0
-              mtu: 9000
-              addresses:
-                -
-                  ip_netmask: {get_param: TenantIpSubnet}             
 ######################################################################                  
             ## Storage and Storage Management Networks Linux bond                 
             -
               type: linux_bond
-              name: bond1
+              name: bond_stor
               mtu: 9000
               bonding_options: "mode=active-backup"
               use_dhcp: false
@@ -212,7 +177,7 @@ resources:
             -
               type: vlan
               vlan_id: {get_param: StorageNetworkVlanID}
-              device: bond1
+              device: bond_stor
               mtu: 9000
               addresses:
                 -
@@ -220,38 +185,37 @@ resources:
             -
               type: vlan
               vlan_id: {get_param: StorageMgmtNetworkVlanID}
-              device: bond1
+              device: bond_stor
               addresses:
                 -
                   ip_netmask: {get_param: StorageMgmtIpSubnet}                  
                               
 ######################################################################
 #            ### Tenant network optimized by DPDK-OVS    
-#            -
-#              type: ovs_user_bridge
-#              name: br-tenant
-#              use_dhcp: false
-#              ovs_extra:
-#                -
-#                  str_replace:
-#                    template: set port br-tenant tag=_VLAN_TAG_
-#                    params:
-#                      _VLAN_TAG_: {get_param: TenantNetworkVlanID}
-#              addresses:
-#                -
-#                  ip_netmask: {get_param: TenantIpSubnet}
-#              members:
-#                -
-#                  type: ovs_dpdk_port
-#                  name: dpdk0
-#                  mtu: 2000
-#                  ovs_extra:
-#                  - set interface $DEVICE mtu_request=$MTU
-#                  members:
-#                    -
-#                      type: interface
-#                      name: p5p2
-                      ################# In case of Bond ############
+            -
+              type: ovs_user_bridge
+              name: br-tenant
+              use_dhcp: false
+              ovs_extra:
+                -
+                  str_replace:
+                    template: set port br-tenant tag=_VLAN_TAG_
+                    params:
+                      _VLAN_TAG_: {get_param: TenantNetworkVlanID}
+              addresses:
+                -
+                  ip_netmask: {get_param: TenantIpSubnet}
+              members:
+                -
+                  type: ovs_dpdk_port
+                  name: dpdk0
+                  mtu: 2000
+                  ovs_extra:
+                  - set interface $DEVICE mtu_request=$MTU
+                  members:
+                    -
+                      type: interface
+                      name: p5p2
 #                  type: ovs_dpdk_bond
 #                  name: dpdkbondtun
 #                  members:
@@ -313,22 +277,22 @@ resources:
                   ovs_options: {get_param: BondInterfaceOvsOptions}
                   mtu: 2000
                   ovs_extra:
-                 - set interface dpdk4 mtu_request=$MTU
+                  - set interface dpdk4 mtu_request=$MTU
                   - set interface dpdk5 mtu_request=$MTU                  
-                 members:
-                   -
-                     type: ovs_dpdk_port
-                     name: dpdk4
-                     memebers:
-                       -
-                         type: interface
-                         name: p2p1
-                   -
-                     type: ovs_dpdk_port
-                     name: dpdk5
-                     memebers:
-                       -
-                         type: interface
+                  members:
+                    -
+                      type: ovs_dpdk_port
+                      name: dpdk4
+                      memebers:
+                        -
+                          type: interface
+                          name: p2p1
+                    -
+                      type: ovs_dpdk_port
+                      name: dpdk5
+                      memebers:
+                        -
+                          type: interface
                           name: p3p1                                              
            
 outputs:

@@ -15,7 +15,7 @@ resource_registry:
   ## First Boot template
   OS::TripleO::NodeUserData: /home/stack/DPDK/templates/userdata/first-boot.yaml
   ## Post Install templates 
-  OS::TripleO::NodeExtraConfigPost: /home/stack/DPDK/templates/userdata/post-install.yaml
+  #OS::TripleO::NodeExtraConfigPost: /home/stack/DPDK/templates/userdata/post-install.yaml
 
 parameter_defaults:
   CeilometerStoreEvents: true

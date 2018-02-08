@@ -93,8 +93,8 @@ resources:
         os_net_config:
           network_config:
             -
-              type: interface
-              name: em1
+              type: linux_bridge
+              name: {get_input: bridge_name}
               use_dhcp: false
               dns_servers: {get_param: DnsServers}
               addresses:
@@ -107,14 +107,7 @@ resources:
               routes:
                 -
                   ip_netmask: 169.254.169.254/32
-                  next_hop: {get_param: EC2MetadataIp}                
-######################################################################               
-            ## External Network Linux Bridge
-            -
-              type: linux_bridge
-              name: {get_input: bridge_name}
-              use_dhcp: false
-              dns_servers: {get_param: DnsServers}
+                  next_hop: {get_param: EC2MetadataIp}
               members:
                 -
                   type: interface
@@ -129,149 +122,98 @@ resources:
                 -
                   ip_netmask: {get_param: ExternalIpSubnet}
               routes:
+                # IPv6 Default Route
                 -
                   default: true
                   next_hop: {get_param: ExternalInterfaceDefaultRoute}
-######################################################################                  
-            ## Internal Network Linux Bridge
-            #-
-            #  type: linux_bridge
-            #  mtu: 9000
-            #  name: br-api
-            #  use_dhcp: false
-            #  dns_servers: {get_param: DnsServers}
-            #  members:
-            #    -
-            #      type: interface
-            #      mtu: 9000
-            #      name: em2
-            #      # force the MAC address of the bridge to this interface
-            #      primary: true
 
-            ## Internal Network VLAN interface
-            #-
-            #  type: vlan
-            #  mtu: 9000
-            #  vlan_id: {get_param: InternalApiNetworkVlanID}
-            #  device: em2
-            #  addresses:
-            #    -
-            #      ip_netmask: {get_param: InternalApiIpSubnet}
+            ## Isolated networks  " Storage, Internal"
             -
               type: linux_bond
-              name: bond0
-              mtu: 9000
+              name: bond_isolate
               bonding_options: "mode=active-backup"
               use_dhcp: false
               dns_servers: {get_param: DnsServers}
               members:
                 -
                   type: interface
-                  name: em2
-                  mtu: 9000
+                  name: em1
                   primary: true
                 -
                   type: interface
-                  name: p5p2
-                  mtu: 9000
+                  name: em2
             -
               type: vlan
               vlan_id: {get_param: InternalApiNetworkVlanID}
-              device: bond0
-              mtu: 9000
+              device: bond_isolate
               addresses:
                 -
                   ip_netmask: {get_param: InternalApiIpSubnet}
             -
               type: vlan
-              vlan_id: {get_param: TenantNetworkVlanID}
-              device: bond0
-              mtu: 9000
-              addresses:
-                -
-                  ip_netmask: {get_param: TenantIpSubnet}             
-######################################################################                  
-            ## Storage and Storage Management Networks Linux bond                 
-            -
-              type: linux_bond
-              name: bond1
-              mtu: 9000
-              bonding_options: "mode=active-backup"
-              use_dhcp: false
-              dns_servers: {get_param: DnsServers}
-              members:
-                -
-                  type: interface
-                  name: p2p2
-                  mtu: 9000
-                  primary: true
-                -
-                  type: interface
-                  name: p3p2
-                  mtu: 9000
-            -
-              type: vlan
               vlan_id: {get_param: StorageNetworkVlanID}
-              device: bond1
-              mtu: 9000
+              device: bond_isolate
               addresses:
                 -
                   ip_netmask: {get_param: StorageIpSubnet}
-            -
-              type: vlan
-              vlan_id: {get_param: StorageMgmtNetworkVlanID}
-              device: bond1
-              addresses:
-                -
-                  ip_netmask: {get_param: StorageMgmtIpSubnet}                  
-                              
-######################################################################
-#            ### Tenant network optimized by DPDK-OVS    
+
+               # - un comment only in the HCI
+               #   type: vlan
+               #   vlan_id: {get_param: StorageMgmtNetworkVlanID}
+               #   addresses:
+               #   -
+               #     ip_netmask: {get_param: StorageMgmtIpSubnet}
+
+
+            ### Tenant network optimized by DPDK-OVS    
 #            -
-#              type: ovs_user_bridge
+#              type: linux_bridge
 #              name: br-tenant
 #              use_dhcp: false
-#              ovs_extra:
+#              members:
 #                -
-#                  str_replace:
-#                    template: set port br-tenant tag=_VLAN_TAG_
-#                    params:
-#                      _VLAN_TAG_: {get_param: TenantNetworkVlanID}
+#                  type: interface
+#                  name: p6p1
+#            -
+#              type: vlan
+#              vlan_id: {get_param: TenantNetworkVlanID}
+#              device: br-tenant
 #              addresses:
 #                -
 #                  ip_netmask: {get_param: TenantIpSubnet}
-#              members:
-#                -
-#                  type: ovs_dpdk_port
-#                  name: dpdk0
-#                  mtu: 2000
-#                  ovs_extra:
-#                  - set interface $DEVICE mtu_request=$MTU
-#                  members:
-#                    -
-#                      type: interface
-#                      name: p5p2
-                      ################# In case of Bond ############
-#                  type: ovs_dpdk_bond
-#                  name: dpdkbondtun
-#                  members:
-#                    -
-#                      type: ovs_dpdk_port
-#                      name: dpdk0
-#                      memebers:
-#                        -
-#                          type: interface
-#                          name: p5p2
-#                    -
-#                      type: ovs_dpdk_port
-#                      name: dpdk1
-#                      memebers:
-#                        -
-#                          type: interface
-#                          name: p6p2
-######################################################################                                        
+            -
+              type: ovs_user_bridge
+              name: br-tenant
+              use_dhcp: false
+              ovs_extra:
+                -
+                  str_replace:
+                    template: set port br-tenant tag=_VLAN_TAG_
+                    params:
+                      _VLAN_TAG_: {get_param: TenantNetworkVlanID}
+              addresses:
+                -
+                  ip_netmask: {get_param: TenantIpSubnet}
+              members:
+                -
+                  type: ovs_dpdk_bond
+                  name: dpdkbondtun
+                  members:
+                    -
+                      type: ovs_dpdk_port
+                      name: dpdk0
+                      memebers:
+                        -
+                          type: interface
+                          name: p2p1
+                    -
+                      type: ovs_dpdk_port
+                      name: dpdk1
+                      memebers:
+                        -
+                          type: interface
+                          name: p2p2              
             ## Physnet network optimized by DPDK-OVS
-            ## NUMA0 Interfaces
             -
               type: ovs_user_bridge
               name: br-link0
@@ -280,11 +222,6 @@ resources:
                 -
                   type: ovs_dpdk_bond
                   name: dpdkbond0
-                  ovs_options: {get_param: BondInterfaceOvsOptions}
-                  mtu: 2000
-                  ovs_extra:
-                  - set interface dpdk2 mtu_request=$MTU
-                  - set interface dpdk3 mtu_request=$MTU
                   members:
                     -
                       type: ovs_dpdk_port
@@ -299,9 +236,7 @@ resources:
                       memebers:
                         -
                           type: interface
-                          name: p6p1 
-            ## Physnet network optimized by DPDK-OVS
-            ## NUMA1 Interfaces                                   
+                          name: p5p2          
             -
               type: ovs_user_bridge
               name: br-link1
@@ -310,26 +245,21 @@ resources:
                 -
                   type: ovs_dpdk_bond
                   name: dpdkbond1
-                  ovs_options: {get_param: BondInterfaceOvsOptions}
-                  mtu: 2000
-                  ovs_extra:
-                 - set interface dpdk4 mtu_request=$MTU
-                  - set interface dpdk5 mtu_request=$MTU                  
-                 members:
-                   -
-                     type: ovs_dpdk_port
-                     name: dpdk4
-                     memebers:
-                       -
-                         type: interface
-                         name: p2p1
-                   -
-                     type: ovs_dpdk_port
-                     name: dpdk5
-                     memebers:
-                       -
-                         type: interface
-                          name: p3p1                                              
+                  members:
+                    -
+                      type: ovs_dpdk_port
+                      name: dpdk4
+                      memebers:
+                        -
+                          type: interface
+                          name: p4p1
+                    -
+                      type: ovs_dpdk_port
+                      name: dpdk5
+                      memebers:
+                        -
+                          type: interface
+                          name: p4p2                                              
            
 outputs:
   OS::stack_id:

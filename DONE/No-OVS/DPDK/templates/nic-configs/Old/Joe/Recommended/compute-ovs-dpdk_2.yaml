@@ -1,0 +1,43 @@
+## A Heat environment that can be used to deploy DPDK with OVS
+resource_registry:
+  OS::TripleO::Compute::Net::SoftwareConfig: ./nic-configs/compute-ovs-dpdk.yaml
+  OS::TripleO::Services::ComputeNeutronOvsAgent: ./overcloud/puppet/services/neutron-ovs-dpdk-agent.yaml
+  OS::TripleO::NodeUserData: ./first-boot-ovs-dpdk.yaml
+  OS::TripleO::NodeExtraConfigPost: post-install.yaml
+
+parameter_defaults:
+  ## NeutronDpdkCoreList and NeutronDpdkMemoryChannels are REQUIRED settings.
+  ## Attempting to deploy DPDK without appropriate values will cause deployment to fail or lead to unstable deployments.
+  ########################
+  # OVS DPDK configuration
+  ########################
+  ## NeutronDpdkCoreList and NeutronDpdkMemoryChannels are REQUIRED settings.
+  ## Attempting to deploy DPDK without appropriate values will cause deployment to fail or lead to unstable deployments.
+  # List of cores to be used for DPDK Poll Mode Driver
+  # Number of Host OS CPUs on each socket/NUMA node.
+  HostCpusNumber: "4,4"
+  # Number of PMD CPUs on each socket/NUMA node
+  PmdCoresNumber: "2,4"
+  # Ignore this parameter. Do not remove this parameter
+  NeutronDpdkCoreList: "'0'"
+  # Number of memory channels to be used for DPDK
+  NeutronDpdkMemoryChannels: "4"
+  # NeutronDpdkSocketMemory
+  NeutronDpdkSocketMemory: "2048,2048"
+  # NeutronDpdkDriverType
+  NeutronDpdkDriverType: "vfio-pci"
+  # Datapath type for ovs bridges
+  NeutronDatapathType: "netdev"
+  # The vhost-user socket directory for OVS
+  NeutronVhostuserSocketDir: "/var/run/openvswitch"
+
+  ########################
+  # Additional settings  # 
+  ########################
+  # Reserved RAM for host processes
+  NovaReservedHostMemory: 4096
+  # An array of filters used by Nova to filter a node.These filters will be applied in the order they are listed,
+  # so place your most restrictive filters first to make the filtering process more efficient.
+  NovaSchedulerDefaultFilters: "RamFilter,ComputeFilter,AvailabilityZoneFilter,ComputeCapabilitiesFilter,ImagePropertiesFilter,PciPassthroughFilter,NUMATopologyFilter"
+  # Kernel arguments for Compute node
+  ComputeKernelArgs: "default_hugepagesz=1GB hugepagesz=1G hugepages=96 iommu=pt intel_iommu=on"
