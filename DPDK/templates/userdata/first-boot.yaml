@@ -52,10 +52,10 @@ resources:
       parts:
       - config: {get_resource: firstboot_config}
       #- config: {get_resource: swapon_config}
-      - config: {get_resource: set_ovs_config}
-      - config: {get_resource: set_dpdk_params}
-      - config: {get_resource: install_tuned}
-      - config: {get_resource: compute_kernel_args}
+      #- config: {get_resource: set_ovs_config}
+      #- config: {get_resource: set_dpdk_params}
+      #- config: {get_resource: install_tuned}
+      #- config: {get_resource: compute_kernel_args}
 
   firstboot_config:
     type: OS::Heat::SoftwareConfig
