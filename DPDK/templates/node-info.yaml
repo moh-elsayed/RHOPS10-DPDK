@@ -10,7 +10,7 @@ parameter_defaults:
   vercloudCephStorageFlavor: sio-storage
   ControllerCount: 3
   ComputeCount: 0
-  ComputeDpdkCount: 0
+  ComputeDpdkCount: 3
   ComputeSriovCount: 0
   ComputeHciCount: 0
   ComputeHciSriovCount: 0
