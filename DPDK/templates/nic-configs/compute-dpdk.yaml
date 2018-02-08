@@ -272,6 +272,7 @@ resources:
 ######################################################################                                        
             ## Physnet network optimized by DPDK-OVS
             ## NUMA0 Interfaces
+
             -
               type: ovs_user_bridge
               name: br-link0
@@ -313,22 +314,22 @@ resources:
                   ovs_options: {get_param: BondInterfaceOvsOptions}
                   mtu: 2000
                   ovs_extra:
-                 - set interface dpdk4 mtu_request=$MTU
+                  - set interface dpdk4 mtu_request=$MTU
                   - set interface dpdk5 mtu_request=$MTU                  
-                 members:
-                   -
-                     type: ovs_dpdk_port
-                     name: dpdk4
-                     memebers:
-                       -
-                         type: interface
-                         name: p2p1
-                   -
-                     type: ovs_dpdk_port
-                     name: dpdk5
-                     memebers:
-                       -
-                         type: interface
+                  members:
+                    -
+                      type: ovs_dpdk_port
+                      name: dpdk4
+                      memebers:
+                        -
+                          type: interface
+                          name: p2p1
+                    -
+                      type: ovs_dpdk_port
+                      name: dpdk5
+                      memebers:
+                        -
+                          type: interface
                           name: p3p1                                              
            
 outputs:
