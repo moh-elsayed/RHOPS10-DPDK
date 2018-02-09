@@ -6,12 +6,6 @@ description: >
 parameters:
   servers:
     type: json
-  ComputeHostnameFormat:
-    type: string
-    default: ""
-  ComputeDpdkHostnameFormat:
-    type: string
-    default: ""    
 
 resources:
   ExtraDeployments:
@@ -26,35 +20,24 @@ resources:
     type: OS::Heat::SoftwareConfig
     properties:
       group: script
-      config:
-        str_replace:
-          template: |
-            #!/bin/bash
+      config: |
+        #!/bin/bash
 
-            set -x
-            FORMAT=$COMPUTE_HOSTNAME_FORMAT
-            if [[ -z $FORMAT ]] ; then
-              FORMAT="compute-dpdk" ;
+        set -x
+        if [[ $HOSTNAME =~ "compute-dpdk" ]] ; then
+          tuned_service=/usr/lib/systemd/system/tuned.service
+          grep -q "network.target" $tuned_service
+          if [ "$?" -eq 0 ]; then
+            sed -i '/After=.*/s/network.target//g' $tuned_service
+          fi
+          grep -q "Before=.*network.target" $tuned_service
+          if [ ! "$?" -eq 0 ]; then
+            grep -q "Before=.*" $tuned_service
+            if [ "$?" -eq 0 ]; then
+              sed -i 's/^\(Before=.*\)/\1 network.target openvswitch.service/g' $tuned_service
             else
-              # Assumption: only %index% and %stackname% are the variables in Host name format
-              FORMAT=$(echo $FORMAT | sed  's/\%index\%//g' | sed 's/\%stackname\%//g') ;
+              sed -i '/After/i Before=network.target openvswitch.service' $tuned_service
             fi
-            if [[ $(hostname) == *$FORMAT* ]] ; then
-              tuned_service=/usr/lib/systemd/system/tuned.service
-              grep -q "network.target" $tuned_service
-              if [ "$?" -eq 0 ]; then
-                sed -i '/After=.*/s/network.target//g' $tuned_service
-              fi
-              grep -q "Before=.*network.target" $tuned_service
-              if [ ! "$?" -eq 0 ]; then
-                grep -q "Before=.*" $tuned_service
-                if [ "$?" -eq 0 ]; then
-                  sed -i 's/^\(Before=.*\)/\1 network.target openvswitch.service/g' $tuned_service
-                else
-                  sed -i '/After/i Before=network.target openvswitch.service' $tuned_service
-                fi
-              fi
-              systemctl daemon-reload
-            fi
-          params:
-            $COMPUTE_HOSTNAME_FORMAT: {get_param: ComputeDpdkHostnameFormat}
+          fi
+          systemctl daemon-reload
+        fi

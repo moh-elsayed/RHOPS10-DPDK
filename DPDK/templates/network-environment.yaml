@@ -63,9 +63,9 @@ parameter_defaults:
 
   # Messi: Mapping of teh bridge to networks The OVS logical->physical bridge mappings to use.
   ## Moe## NeutronBridgeMappings: 'datacentre:br-ex,dpdk_data:br-link0,sriov0:br-sriov0,sriov1:br-sriov1'
-  NeutronBridgeMappings: 'datacentre:br-ex,NUMA0Data:br-link0,NUMA1Data:br-link1'
+  NeutronBridgeMappings: 'NUMA0Data:br-link0,NUMA1Data:br-link1'
   # The Neutron ML2 and OpenVSwitch vlan mapping range to support.
-  NeutronNetworkVLANRanges: 'datacentre:200:700,NUMA0Data:200:700,NUMA1Data:200:700'
+  NeutronNetworkVLANRanges: 'NUMA0Data:200:700,NUMA1Data:200:700'
 
   # Predictable VIPs
   #ControlFixedIPs: [{'ip_address':'192.168.201.101'}]
@@ -187,5 +187,5 @@ parameter_defaults:
   # Provides multiple kernel arguments to /etc/default/grub for the Compute node at boot time. Add the following based on your configuration:
   # [Moe] hugepagesz: Sets the size of the huge pages on a CPU. This value can vary depending on the CPU hardware. Set to 1G for OVS-DPDK deployments (default_hugepagesz=1GB hugepagesz=1G). Check for the pdpe1gb CPU flag to ensure your CPU supports 1G.
   # [Moe] hugepages count: Sets the number of huge pages available. This value depends on the amount of host memory available. Use most of your available memory (excluding NovaReservedHostMemory). You must also configure the huge pages count value within the OpenStack flavor associated with your Compute nodes.
-  ComputeKernelArgs: "default_hugepagesz=1GB hugepagesz=1G hugepages=512 iommu=pt intel_iommu=on"
+  ComputeKernelArgs: "default_hugepagesz=1GB hugepagesz=1G hugepages=96 iommu=pt intel_iommu=on"
 

@@ -56,7 +56,7 @@ resources:
       - config: {get_resource: set_ovs_config}
       - config: {get_resource: set_dpdk_params}
       - config: {get_resource: install_tuned}
-      # - config: {get_resource: compute_kernel_args}
+      - config: {get_resource: compute_kernel_args}
 
   firstboot_config:
     type: OS::Heat::SoftwareConfig
@@ -260,27 +260,27 @@ resources:
           params:
             $TUNED_CORES: {get_param: HostIsolatedCoreList}
 
-#  compute_kernel_args:
-#    type: OS::Heat::SoftwareConfig
-#    properties:
-#      config:
-#        str_replace:
-#          template: |
-#            #!/bin/bash
-#            set -x  
-#            if [[ $HOSTNAME =~ "compute-dpdk" ]] ; then
-#              BOOTDRV=`df  | grep sd | awk '{print $1}' | sed s/[0-9]//g`
-#              CMD01=`echo grubby --update-kernel=ALL --args=\"$KERNEL_ARGS isolcpus=$TUNED_CORES\"`
-#              CMD02=`echo grub2-install $BOOTDRV`
-#              echo $CMD01 | tee /tmp/moe
-#              echo $CMD02 | tee -a /tmp/moe
-#              $CMD01
-#              $CMD02
-#              reboot
-#            fi
-#          params:
-#            $KERNEL_ARGS: {get_param: ComputeKernelArgs}
-#            $TUNED_CORES: {get_param: HostIsolatedCoreList}
+  compute_kernel_args:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      config:
+        str_replace:
+          template: |
+            #!/bin/bash
+            set -x  
+            if [[ $HOSTNAME =~ "compute-dpdk" ]] ; then
+              BOOTDRV=`df  | grep sd | awk '{print $1}' | sed s/[0-9]//g`
+              CMD01=`echo grubby --update-kernel=ALL --args=\"$KERNEL_ARGS isolcpus=$TUNED_CORES\"`
+              CMD02=`echo grub2-install $BOOTDRV`
+              echo $CMD01 | tee /tmp/moe
+              echo $CMD02 | tee -a /tmp/moe
+              $CMD01
+              $CMD02
+              reboot
+            fi
+          params:
+            $KERNEL_ARGS: {get_param: ComputeKernelArgs}
+            $TUNED_CORES: {get_param: HostIsolatedCoreList}
 
 outputs:
   # This means get_resource from the parent template will get the userdata, see:
