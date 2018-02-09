@@ -58,7 +58,8 @@ parameter_defaults:
   # The tunnel type for the tenant network (vxlan or gre). Set to '' to disable tunneling.
   NeutronTunnelTypes: 'vxlan'
   # The tenant network type for Neutron (vlan or vxlan).
-  NeutronNetworkType: 'vxlan'
+  # NeutronNetworkType: 'vxlan'
+  NeutronNetworkType: 'vlan'
 
   # Messi: Mapping of teh bridge to networks The OVS logical->physical bridge mappings to use.
   ## Moe## NeutronBridgeMappings: 'datacentre:br-ex,dpdk_data:br-link0,sriov0:br-sriov0,sriov1:br-sriov1'

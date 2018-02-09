@@ -108,7 +108,7 @@ Install_tuna()
 set_rootpw()
 {
   # Update the root password to something we know
-  echo changeme | sudo passwd root --stdin
+  echo medomoe | sudo passwd root --stdin
 }
 
 rp_filter_accept()
@@ -321,9 +321,9 @@ set_rootpw
 update_hosts
 localRepo
 #rp_filter_accept
-Install_tuna
-replace_partx
-prep_cheph_disks
+#Install_tuna
+#replace_partx
+#prep_cheph_disks
 #prep_ceph_journal_partition
 #prep_local_storage
 #patch_pcsd
