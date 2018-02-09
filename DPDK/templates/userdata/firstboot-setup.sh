@@ -31,7 +31,7 @@ baseurl=http://siorhn.sio.lab/repo/repos/rhel-7-server-extras-rpms
 enabled=1
 gpgcheck=0
 
-[SIOLocal--server-rh-common]
+[SIOLocal-server-rh-common]
 name=vlab Repo-common
 baseurl=http://siorhn.sio.lab/repo/repos/rhel-7-server-rh-common-rpms
 enabled=1
@@ -40,7 +40,7 @@ gpgcheck=0
 [SIOLocal-server-satellite-tools]
 name=vlab Repo-sattool
 baseurl=http://siorhn.sio.lab/repo/repos/rhel-7-server-satellite-tools-6.2-rpms
-enabled=0
+enabled=1
 gpgcheck=0
 
 [SIOLocal-ha-for-rhel-7-server]

@@ -10,12 +10,12 @@ parameter_defaults:
   vercloudCephStorageFlavor: sio-storage
   ControllerCount: 3
   ComputeCount: 0
-  ComputeDpdkCount: 1
+  ComputeDpdkCount: 3
   ComputeSriovCount: 0
   ComputeHciCount: 0
   ComputeHciSriovCount: 0
   ComputeHciDpdkCount: 0
-  CephStorageCount: 1
+  CephStorageCount: 3
   SioStorageCount: 0
   ControllerHostnameFormat: '%stackname%-controller-%index%'
   ComputeHostnameFormat: '%stackname%-compute-%index%'

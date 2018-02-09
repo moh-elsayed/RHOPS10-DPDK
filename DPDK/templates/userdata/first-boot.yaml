@@ -51,7 +51,7 @@ resources:
     properties:
       parts:
       - config: {get_resource: firstboot_config}
-      #- config: {get_resource: swapon_config}
+      - config: {get_resource: swapon_config}
       - config: {get_resource: wipe_disk}
       - config: {get_resource: set_ovs_config}
       - config: {get_resource: set_dpdk_params}
@@ -64,18 +64,18 @@ resources:
       group: script
       config: {get_file: /home/stack/DPDK/templates/userdata/firstboot-setup.sh}
 
-#  swapon_config:
-#    type: OS::Heat::SoftwareConfig
-#    properties:
-#      config: |
-#        #!/bin/bash
-#        swap_device=
-#        if [[  &&  ]]; then
-#          rc_local="/etc/rc.d/rc.local"
-#          echo "swapon  " >>
-#          chmod 755
-#          swapon
-#        fi
+  swapon_config:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      config: |
+        #!/bin/bash
+        swap_device=
+        if [[  &&  ]]; then
+          rc_local="/etc/rc.d/rc.local"
+          echo "swapon  " >>
+          chmod 755
+          swapon
+        fi
 
   wipe_disk:
     type: OS::Heat::SoftwareConfig
