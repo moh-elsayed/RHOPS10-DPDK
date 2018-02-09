@@ -343,7 +343,7 @@ resources:
                   mtu: 2000
                   ovs_extra:
                   - set interface $DEVICE mtu_request=$MTU
-                  memebers:
+                  members:
                     -
                       type: interface
                       name: p6p1
@@ -359,7 +359,7 @@ resources:
                   mtu: 2000
                   ovs_extra:
                   - set interface $DEVICE mtu_request=$MTU
-                  memebers:
+                  members:
                     -
                       type: interface
                       name: p2p1                      
