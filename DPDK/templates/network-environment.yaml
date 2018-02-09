@@ -187,5 +187,5 @@ parameter_defaults:
   # Provides multiple kernel arguments to /etc/default/grub for the Compute node at boot time. Add the following based on your configuration:
   # [Moe] hugepagesz: Sets the size of the huge pages on a CPU. This value can vary depending on the CPU hardware. Set to 1G for OVS-DPDK deployments (default_hugepagesz=1GB hugepagesz=1G). Check for the pdpe1gb CPU flag to ensure your CPU supports 1G.
   # [Moe] hugepages count: Sets the number of huge pages available. This value depends on the amount of host memory available. Use most of your available memory (excluding NovaReservedHostMemory). You must also configure the huge pages count value within the OpenStack flavor associated with your Compute nodes.
-  ComputeKernelArgs: "intel_iommu=on default_hugepagesz=1GB hugepagesz=1G hugepages=32"
+  ComputeKernelArgs: "default_hugepagesz=1GB hugepagesz=1G hugepages=12 iommu=pt intel_iommu=on"
 

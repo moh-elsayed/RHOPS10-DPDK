@@ -260,6 +260,28 @@ resources:
           params:
             $TUNED_CORES: {get_param: HostIsolatedCoreList}
 
+#  compute_kernel_args:
+#    type: OS::Heat::SoftwareConfig
+#    properties:
+#      config:
+#        str_replace:
+#          template: |
+#            #!/bin/bash
+#            set -x  
+#            if [[ $(hostname) == *compute-dpdk* ]] ; then
+#              BOOTDRV=`df  | grep sd | awk '{print $1}' | sed s/[0-9]//g`
+#              CMD01=`echo grubby --update-kernel=ALL --args=\"$KERNEL_ARGS isolcpus=$TUNED_CORES\"`
+#              CMD02=`echo grub2-install $BOOTDRV`
+#              echo $CMD01 | tee /tmp/moe
+#              echo $CMD02 | tee -a /tmp/moe
+#              $CMD01 > /tmp/moe.out 2>&1
+#              $CMD02 >> /tmp/moe.out 2>&1
+#              reboot
+#            fi
+#          params:
+#            $KERNEL_ARGS: {get_param: ComputeKernelArgs}
+#            $TUNED_CORES: {get_param: HostIsolatedCoreList}
+
   compute_kernel_args:
     type: OS::Heat::SoftwareConfig
     properties:
@@ -267,20 +289,15 @@ resources:
         str_replace:
           template: |
             #!/bin/bash
-            set -x  
-            if [[ $(hostname) == *compute-dpdk* ]] ; then
-              BOOTDRV=`df  | grep sd | awk '{print $1}' | sed s/[0-9]//g`
-              CMD01=`echo grubby --update-kernel=ALL --args=\"$KERNEL_ARGS isolcpus=$TUNED_CORES\"`
-              CMD02=`echo grub2-install $BOOTDRV`
-              echo $CMD01 | tee /tmp/moe
-              echo $CMD02 | tee -a /tmp/moe
-              $CMD01 > /tmp/moe.out 2>&1
-              $CMD02 >> /tmp/moe.out 2>&1
+            set -x
+            if [[ $HOSTNAME =~ "compute-dpdk" ]] ; then
+              sed 's/^\(GRUB_CMDLINE_LINUX=".*\)"/\1 $KERNEL_ARGS isolcpus=$TUNED_CORES"/g' -i /etc/default/grub ;
+              grub2-mkconfig -o /etc/grub2.cfg
               reboot
             fi
           params:
             $KERNEL_ARGS: {get_param: ComputeKernelArgs}
-            $TUNED_CORES: {get_param: HostIsolatedCoreList}
+            $TUNED_CORES: {get_param: HostIsolatedCoreList}            
 
 outputs:
   # This means get_resource from the parent template will get the userdata, see:
