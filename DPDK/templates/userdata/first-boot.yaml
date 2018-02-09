@@ -295,12 +295,15 @@ resources:
             set -x  
             if [[ $HOSTNAME =~ "compute-dpdk" ]] ; then
               BOOTDRV=`df  | grep sd | awk '{print $1}' | sed s/[0-9]//g`
+              cat  > /tmp/moe.sh <<- "EOF"
+              #!/bin/bash
+              EOF
               CMD01=`echo grubby --update-kernel=ALL --args=\"$KERNEL_ARGS isolcpus=$TUNED_CORES\"`
               CMD02=`echo grub2-install $BOOTDRV`
-              echo $CMD01 | tee /tmp/moe
-              echo $CMD02 | tee -a /tmp/moe
-              $CMD01
-              $CMD02
+              echo $CMD01 | tee -a /tmp/moe.sh
+              echo $CMD02 | tee -a /tmp/moe.sh
+              chmod +x /tmp/moe.sh
+              /tmp/moe.sh
               reboot
             fi
           params:
