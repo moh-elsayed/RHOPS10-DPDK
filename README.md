@@ -95,7 +95,7 @@ These instructions will reflect the RHOSP10 on a CIP blueprint along with scaleI
 
 > ToR (Spine-Leaf) Topology:
 > 
-![](https://i.imgur.com/UC84ua7.png)
+![](https://i.imgur.com/6RR8ls5.png)
 
 VLT Switch Configuration:
 - Leaf1 && Leaf2
